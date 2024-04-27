@@ -5,4 +5,39 @@
 * {
 	--border: #292929;
 	--background: #131313;
+	--color: #fff;
+}
+
+/* Body Styles */
+html,
+body {
+	background-color: var(--background);
+	color: var(--color);
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+/* Heading Styles */
+h1 {
+	font-size: 2.7em;
+	font-weight: 600;
+	line-height: 40px;
+	font-family: "Clash Display";
+}
+
+h2 {
+	font-size: 1.5em;
+	font-weight: 600;
+	line-height: 30px;
+	font-family: "Clash Display";
+}
+
+h3 {
+	font-size: 1.2em;
+	font-weight: 700;
+	line-height: 30px;
+}
+
+.sidebar-border {
+	border-right: 1px solid var(--border);
 }

@@ -8,24 +8,24 @@ datasource db {
 }
 
 model User {
-   id                  String               @id @default(cuid())
-   name                String?
-   username            String?              @unique
-   bio                 String?
-   email               String?              @unique
-   emailVerified       DateTime?            @map("email_verified")
-   password            String?
-   posts               Post[]
-   comments            Comment[]
-   bookmarks           Bookmark[]
-   groups              InGroups[]
-   accounts            Account[]
-   sessions            Session[]
-   ownedGroups         Group[]              @relation("GroupOwner")
-   userProfilePictures UserProfilePictures?
-   groupViewed         GroupView[]
-   notifications       Notification[]
-   postViewed          PostViews[]
+   id                 String              @id @default(cuid())
+   name               String?
+   username           String?             @unique
+   bio                String?
+   email              String?             @unique
+   emailVerified      DateTime?           @map("email_verified")
+   password           String?
+   posts              Post[]
+   comments           Comment[]
+   bookmarks          Bookmark[]
+   groups             InGroup[]
+   accounts           Account[]
+   sessions           Session[]
+   ownedGroups        Group[]             @relation("GroupOwner")
+   userProfilePicture UserProfilePicture?
+   groupViewed        GroupView[]
+   notifications      Notification[]
+   postViewed         PostView[]
 
    createdReports  Report[] @relation("ReportCreator")
    receivedReports Report[] @relation("ReportedUser")
@@ -80,14 +80,14 @@ model Report {
    @@map("report")
 }
 
-model UserProfilePictures {
+model UserProfilePicture {
    id     String  @id @default(cuid())
    userId String  @unique
    user   User    @relation(fields: [userId], references: [id])
    avatar String?
    banner String?
 
-   @@map("user_profile_pics")
+   @@map("user_profile_pic")
 }
 
 model Post {
@@ -100,7 +100,7 @@ model Post {
    comments  Comment[]
    bookmarks Bookmark[]
    postMedia PostMedia[]
-   postViews PostViews[]
+   postView  PostView[]
    group     Group       @relation(fields: [groupId], references: [id])
    groupId   String
    createdAt DateTime    @default(now())
@@ -108,7 +108,7 @@ model Post {
    @@map("posts")
 }
 
-model PostViews {
+model PostView {
    id       String   @id @default(cuid())
    viewedAt DateTime @default(now())
 
@@ -118,7 +118,7 @@ model PostViews {
    viewerId String
 
    @@unique([postId, viewerId])
-   @@map("post_views")
+   @@map("post_view")
 }
 
 model PostMedia {
@@ -171,7 +171,7 @@ model Bookmark {
    @@map("bookmarks")
 }
 
-model InGroups {
+model InGroup {
    id      String @id @default(cuid())
    user    User   @relation(fields: [userId], references: [id])
    userId  String
@@ -179,7 +179,7 @@ model InGroups {
    groupId String
 
    @@unique([groupId, userId])
-   @@map("in_groups")
+   @@map("in_group")
 }
 
 model Group {
@@ -187,7 +187,7 @@ model Group {
    name             String            @unique
    groupName        String?
    description      String?
-   members          InGroups[]
+   members          InGroup[]
    posts            Post[]
    owner            User              @relation("GroupOwner", fields: [ownerId], references: [id])
    ownerId          String
@@ -197,7 +197,7 @@ model Group {
    groupProfilePics GroupProfilePics?
    groupViews       GroupView[]
 
-   @@map("groups")
+   @@map("group")
 }
 
 model GroupView {
@@ -210,7 +210,7 @@ model GroupView {
    viewerId String
 
    @@unique([groupId, viewerId])
-   @@map("group_views")
+   @@map("group_view")
 }
 
 model GroupProfilePics {
@@ -242,7 +242,7 @@ model Account {
    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
    @@unique([provider, providerAccountId])
-   @@map("accounts")
+   @@map("account")
 }
 
 model Session {
@@ -252,7 +252,7 @@ model Session {
    expires      DateTime
    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-   @@map("sessions")
+   @@map("session")
 }
 
 model VerificationToken {
@@ -261,5 +261,5 @@ model VerificationToken {
    expires    DateTime
 
    @@unique([identifier, token])
-   @@map("verification_tokens")
+   @@map("verification_token")
 }

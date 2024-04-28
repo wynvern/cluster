@@ -6,10 +6,19 @@ import UserDropdown from "./UserDropdown";
 
 export default function UserDisplay({ user }: { user: User }) {
 	const router = useRouter();
+	console.log(user);
 
 	return (
 		<div className="w-full max-w-[1000px] h-full">
-			<div className="w-full bg-neutral-500 h-full max-h-[350px] relative">
+			<div
+				className="w-full bg-neutral-500 relative"
+				style={{ aspectRatio: "1000 / 400" }}
+			>
+				<Image
+					className="absolute w-full h-full rounded-none object-cover z-1"
+					src={user.banner as string}
+					removeWrapper={true}
+				/>
 				<div>
 					<Button
 						isIconOnly={true}
@@ -22,14 +31,15 @@ export default function UserDisplay({ user }: { user: User }) {
 				</div>
 				<div className="absolute -bottom-20 left-10">
 					<Image
-						src={"/brand/default-avatar.svg"}
+						src={user.image || "/brand/default-avatar.svg"}
 						removeWrapper={true}
+						className="h-60 w-60 object-cover"
 					/>
 				</div>
 			</div>
 			<div className="w-full px-10 flex flex-col gap-y-4">
 				<div className="w-full h-20 flex items-center justify-end">
-					<UserDropdown />
+					<UserDropdown defaultUser={user} />
 				</div>
 				<div>
 					<h1>{user.name}</h1>

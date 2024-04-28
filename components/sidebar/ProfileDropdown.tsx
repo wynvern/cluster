@@ -17,7 +17,6 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 export default function ProfileDropdown() {
 	const [signOutModal, setSignOutModal] = useState(false);

@@ -7,26 +7,23 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Image, Input, Textarea } from "@nextui-org/react";
 import { signOut } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
 import { updateUser } from "@/lib/db/user/user";
-import getFileBase64 from "@/util/getFile";
-import { uploadUserAvatar } from "@/lib/blob/userBlob";
+import { uploadUserAvatar, uploadUserBanner } from "@/lib/blob/userBlob";
 import getFileAndPreview from "@/util/getFile";
+import type User from "@/lib/db/user/type";
 
 interface CustomizeProfileProps {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-interface ImageState {
-	file: File | null;
-	preview: string;
+	defaultUser: User;
 }
 
 export default function CustomizeProfile({
 	active,
 	setActive,
+	defaultUser,
 }: CustomizeProfileProps) {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
@@ -35,12 +32,17 @@ export default function CustomizeProfile({
 		signOut();
 	}
 
-	const [selectedImages, setSelectedImages] = useState<{
-		banner: ImageState;
-		avatar: ImageState;
-	}>({
-		banner: { file: null, preview: "" },
-		avatar: { file: null, preview: "" },
+	const [selectedImages, setSelectedImages] = useState({
+		avatar: {
+			base64: "",
+			preview: "",
+			error: "",
+		},
+		banner: {
+			base64: "",
+			preview: "",
+			error: "",
+		},
 	});
 
 	async function handleUpdateProfile(e: React.FormEvent<HTMLFormElement>) {
@@ -51,20 +53,13 @@ export default function CustomizeProfile({
 		const name = form.get("name") as string;
 		const bio = form.get("bio") as string;
 
-		let avatarBase64: string | undefined;
-
-		if (selectedImages.avatar.file) {
-			avatarBase64 = await new Promise((resolve, reject) => {
-				const reader = new FileReader();
-				reader.onloadend = () => resolve(reader.result as string);
-				reader.onerror = reject;
-				reader.readAsDataURL(selectedImages.avatar.file as File);
-			});
-
-			if (avatarBase64) await uploadUserAvatar(avatarBase64);
+		if (selectedImages.avatar.base64) {
+			await uploadUserAvatar(selectedImages.avatar.base64);
+		}
+		if (selectedImages.banner.base64) {
+			await uploadUserBanner(selectedImages.banner.base64);
 		}
 
-		alert("ok");
 		const data = await updateUser(name, bio);
 
 		if (!data) {
@@ -74,31 +69,90 @@ export default function CustomizeProfile({
 		console.log(data);
 
 		setLoading(false);
+		setSuccess(true);
+		setTimeout(() => setActive(false), 1000);
 	}
 
 	async function handleSelectBanner() {
-		const data = await getFileAndPreview(["jpg", "jpeg", "png", "webp"]);
+		try {
+			const data = await getFileAndPreview([
+				"jpg",
+				"jpeg",
+				"png",
+				"webp",
+			]);
 
-		if (!data) return false;
+			if (!data) return false;
 
-		setSelectedImages((prev) => ({
-			...prev,
-			banner: data,
-		}));
-
-		console.log(selectedImages);
+			setSelectedImages((prev) => ({
+				...prev,
+				banner: { ...data, error: "" },
+			}));
+		} catch (e) {
+			if ((e as { message: string }).message === "image-too-big") {
+				setSelectedImages((prev) => ({
+					banner: { base64: "", preview: "", error: "image-too-big" },
+					avatar: prev.avatar,
+				}));
+				setTimeout(() => {
+					setSelectedImages((prev) => ({
+						banner: { base64: "", preview: "", error: "" },
+						avatar: prev.avatar,
+					}));
+				}, 3000);
+			}
+		}
 	}
 
 	async function handleSelectAvatar() {
-		const data = await getFileAndPreview(["jpg", "jpeg", "png", "webp"]);
+		try {
+			const data = await getFileAndPreview([
+				"jpg",
+				"jpeg",
+				"png",
+				"webp",
+			]);
 
-		if (!data) return false;
+			if (!data) return false;
 
-		setSelectedImages((prev) => ({
-			...prev,
-			avatar: data,
-		}));
+			setSelectedImages((prev) => ({
+				...prev,
+				avatar: { ...data, error: "" },
+			}));
+		} catch (e) {
+			if ((e as { message: string }).message === "image-too-big") {
+				setSelectedImages((prev) => ({
+					avatar: { base64: "", preview: "", error: "image-too-big" },
+					banner: prev.banner,
+				}));
+				setTimeout(() => {
+					setSelectedImages((prev) => ({
+						avatar: { base64: "", preview: "", error: "" },
+						banner: prev.banner,
+					}));
+				}, 3000);
+			}
+		}
 	}
+
+	useEffect(() => {
+		if (!active) {
+			setSelectedImages({
+				avatar: {
+					base64: "",
+					preview: "",
+					error: "",
+				},
+				banner: {
+					base64: "",
+					preview: "",
+					error: "",
+				},
+			});
+			setSuccess(false);
+			setLoading(false);
+		}
+	}, [active]);
 
 	return (
 		<BaseModal
@@ -111,12 +165,15 @@ export default function CustomizeProfile({
 					<div
 						className="w-full bg-default-500 flex items-center justify-center rounded-large relative"
 						style={{
-							aspectRatio: "1000 / 350",
+							aspectRatio: "1000 / 400",
 						}}
 					>
 						<Image
 							removeWrapper={true}
-							src={selectedImages.banner.preview}
+							src={
+								defaultUser.banner ||
+								selectedImages.banner.preview
+							}
 							className="absolute w-full h-full object-cover z-1"
 						/>
 						<Button
@@ -135,8 +192,9 @@ export default function CustomizeProfile({
 								<PhotoIcon className="h-6" />
 							</Button>
 							<Image
-								className="h-[120px] w-[120px] object-cover z-1"
+								className="h-[140px] w-[140px] object-cover z-1"
 								src={
+									defaultUser.image ||
 									selectedImages.avatar.preview ||
 									"/brand/default-avatar.svg"
 								}
@@ -150,6 +208,15 @@ export default function CustomizeProfile({
 							id="update-profile-form"
 							onSubmit={handleUpdateProfile}
 						>
+							{selectedImages.avatar.error ||
+								(selectedImages.banner.error && (
+									<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
+										<p className="text-danger">
+											Imagem selecionada muito grande,
+											máximo 4.5 Mb
+										</p>
+									</div>
+								))}
 							<Input
 								name="name"
 								placeholder="Nome"
@@ -159,6 +226,7 @@ export default function CustomizeProfile({
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
 								max={50}
+								defaultValue={defaultUser.name || ""}
 							/>
 							<Textarea
 								name="bio"
@@ -169,6 +237,7 @@ export default function CustomizeProfile({
 									input: "mt-[2px]",
 								}}
 								max={200}
+								defaultValue={defaultUser.bio || ""}
 								startContent={
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
@@ -180,10 +249,11 @@ export default function CustomizeProfile({
 			footer={
 				<>
 					<Button
-						isLoading={loading}
 						aria-label="cancelar-perfil"
+						isDisabled={loading || success}
 						startContent={<XMarkIcon className="h-6" />}
 						variant="bordered"
+						onClick={() => setActive(false)}
 					>
 						Cancelar
 					</Button>
@@ -192,7 +262,7 @@ export default function CustomizeProfile({
 						type="submit"
 						form="update-profile-form"
 						isLoading={loading}
-						isDisabled={loading}
+						isDisabled={loading || success}
 						aria-label="salvar-perfil"
 						startContent={
 							loading ? (

@@ -20,6 +20,8 @@ export default async function fetchUser(
 		select: {
 			id: true,
 			name: true,
+			image: true,
+			banner: true,
 			username: true,
 			bio: true,
 			_count: {

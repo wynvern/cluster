@@ -15,6 +15,8 @@ model User {
    email              String?             @unique
    emailVerified      DateTime?           @map("email_verified")
    password           String?
+   image              String?
+   banner             String?
    posts              Post[]
    comments           Comment[]
    bookmarks          Bookmark[]

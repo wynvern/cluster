@@ -9,5 +9,7 @@ export default interface User {
 	name: string | null;
 	username: string | null;
 	bio: string | null;
+	image: string | null;
+	banner: string | null;
 	_count: Count;
 }

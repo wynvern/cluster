@@ -1,6 +1,7 @@
 "use client";
 
 import CustomizeProfile from "@/components/modal/CustomizeProfile";
+import type User from "@/lib/db/user/type";
 import {
 	EllipsisHorizontalIcon,
 	PencilIcon,
@@ -14,7 +15,7 @@ import {
 } from "@nextui-org/react";
 import { useState } from "react";
 
-export default function UserDropdown() {
+export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 	const [customizeProfileActive, setCustomizeProfileActive] = useState(false);
 
 	return (
@@ -45,6 +46,7 @@ export default function UserDropdown() {
 			<CustomizeProfile
 				active={customizeProfileActive}
 				setActive={setCustomizeProfileActive}
+				defaultUser={defaultUser}
 			/>
 		</>
 	);

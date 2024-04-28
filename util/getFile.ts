@@ -1,13 +1,12 @@
-"use client";
-
-interface FileAndPreview {
-	file: File;
+interface FileBase64Info {
+	base64: string;
 	preview: string;
 }
 
-const getFileAndPreview = (
-	acceptedTypes: string[]
-): Promise<FileAndPreview> => {
+const getFileBase64 = (
+	acceptedTypes: string[],
+	maxSize = 4.5
+): Promise<FileBase64Info> => {
 	return new Promise((resolve, reject) => {
 		const fileInput = document.createElement("input");
 		fileInput.type = "file";
@@ -25,6 +24,12 @@ const getFileAndPreview = (
 				fileType.includes(type)
 			);
 
+			if (file.size > maxSize * 1024 * 1024) {
+				console.log(file.size);
+				reject(new Error("image-too-big"));
+				return;
+			}
+
 			if (!isAcceptedType) {
 				reject(
 					new Error(
@@ -36,15 +41,23 @@ const getFileAndPreview = (
 				return;
 			}
 
-			// Generate the file's URL for preview
-			const preview = URL.createObjectURL(file);
-
-			// Resolve the promise with the File object and the preview URL
-			resolve({ file, preview });
+			const reader = new FileReader();
+			reader.onload = () => {
+				if (typeof reader.result === "string") {
+					const [, base64] = reader.result.split(",");
+					// Use createObjectURL to generate the file's URL for preview
+					const preview = URL.createObjectURL(file);
+					resolve({ base64, preview });
+				} else {
+					reject(new Error("Failed to read file as base64."));
+				}
+			};
+			reader.onerror = (error) => reject(error);
+			reader.readAsDataURL(file);
 		});
 
 		fileInput.click();
 	});
 };
 
-export default getFileAndPreview;
+export default getFileBase64;

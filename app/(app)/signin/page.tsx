@@ -101,6 +101,7 @@ export default function Login() {
 						placeholder="Email"
 						type="text"
 						name="email"
+						color="default"
 						variant="bordered"
 						classNames={{ inputWrapper: "h-14" }}
 						startContent={
@@ -119,6 +120,7 @@ export default function Login() {
 						<Input
 							placeholder="Senha"
 							type="password"
+							color="default"
 							variant="bordered"
 							name="password"
 							classNames={{ inputWrapper: "h-14" }}

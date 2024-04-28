@@ -11,6 +11,7 @@ const config: Config = {
 	theme: {
 		extend: {},
 	},
+	darkMode: "class",
 	plugins: [
 		nextui({
 			themes: {
@@ -19,6 +20,22 @@ const config: Config = {
 						primary: {
 							DEFAULT: "#fff", // Primary color of the application
 							foreground: "#000000",
+						},
+						content1: {
+							DEFAULT: "#131313",
+							foreground: "#E0E0E0",
+						},
+						content2: {
+							DEFAULT: "#131313",
+							foreground: "#E0E0E0",
+						},
+						content3: {
+							DEFAULT: "#131313",
+							foreground: "#E0E0E0",
+						},
+						content4: {
+							DEFAULT: "#131313",
+							foreground: "#E0E0E0",
 						},
 					},
 					layout: {},

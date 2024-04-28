@@ -40,10 +40,19 @@ h3 {
 	line-height: 30px;
 }
 
+header {
+	font-family: "ClashDisplay-Semibold";
+}
+
 .sidebar-border {
 	border-right: 1px solid var(--border);
 }
 
 .default-border {
 	border: 1px solid var(--border);
+}
+
+.side-borders {
+	border-left: 1px solid var(--border);
+	border-right: 1px solid var(--border);
 }

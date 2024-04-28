@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react";
 export default function Cluster({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<NextUIProvider className="dark min-h-dvh">
+			<NextUIProvider className="min-h-dvh">
 				<SessionProvider>{children}</SessionProvider>
 			</NextUIProvider>
 		</>

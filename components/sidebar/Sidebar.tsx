@@ -6,6 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link } from "@nextui-org/react";
 import Image from "next/image";
+import ProfileDropdown from "./ProfileDropdown";
 
 export default function Sidebar() {
 	return (
@@ -31,7 +32,9 @@ export default function Sidebar() {
 					<UserGroupIcon className="h-8" />
 				</Link>
 			</div>
-			<div>a</div>
+			<div>
+				<ProfileDropdown />
+			</div>
 		</div>
 	);
 }

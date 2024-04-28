@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("./clash-display.css");
+
 * {
 	--border: #292929;
 	--background: #131313;
@@ -22,14 +24,14 @@ h1 {
 	font-size: 2.7em;
 	font-weight: 600;
 	line-height: 40px;
-	font-family: "Clash Display";
+	font-family: "ClashDisplay-Semibold";
 }
 
 h2 {
 	font-size: 1.5em;
 	font-weight: 600;
 	line-height: 30px;
-	font-family: "Clash Display";
+	font-family: "ClashDisplay-Semibold";
 }
 
 h3 {
@@ -40,4 +42,8 @@ h3 {
 
 .sidebar-border {
 	border-right: 1px solid var(--border);
+}
+
+.default-border {
+	border: 1px solid var(--border);
 }

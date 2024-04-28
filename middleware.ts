@@ -19,7 +19,8 @@ export default async function middleware(req: NextRequest) {
 	if (!session) {
 		if (
 			!url.pathname.includes("/signin") &&
-			!url.pathname.includes("/signup")
+			!url.pathname.includes("/signup") &&
+			!url.pathname.includes("reset-password")
 		) {
 			return NextResponse.redirect(new URL("/signin", req.url));
 		}

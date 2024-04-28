@@ -137,7 +137,7 @@ export default function Login() {
 					</div>
 					<div>
 						<p className="text-center">
-							<Link href="/forgot-password">
+							<Link href="/reset-password">
 								Esqueceu sua senha?
 							</Link>
 						</p>

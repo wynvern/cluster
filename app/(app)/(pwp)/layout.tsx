@@ -1,4 +1,4 @@
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 import React, { type ReactNode } from "react";
 
 export default function Test({ children }: { children: ReactNode }) {

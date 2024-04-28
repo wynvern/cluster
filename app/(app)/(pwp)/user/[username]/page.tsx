@@ -4,6 +4,7 @@ import type User from "@/lib/db/user/type";
 import fetchUser from "@/lib/db/user/user";
 import { useEffect, useState } from "react";
 import UserDisplay from "./UserDisplay";
+import TabContent from "./TabContent";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [notFound, setNotFound] = useState(false);
@@ -30,6 +31,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			<div className="side-borders w-full max-w-[1000px] h-full">
 				{notFound ? <>User was not found</> : ""}
 				{user ? <UserDisplay user={user} /> : ""}
+				<TabContent />
 			</div>
 		</div>
 	);

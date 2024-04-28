@@ -19,6 +19,12 @@ body {
 	margin: 0 !important;
 }
 
+.border-default,
+.border-medium {
+	border-width: 1px !important;
+	border-color: var(--border) !important;
+}
+
 /* Heading Styles */
 h1 {
 	font-size: 2.7em;
@@ -55,4 +61,8 @@ header {
 .side-borders {
 	border-left: 1px solid var(--border);
 	border-right: 1px solid var(--border);
+}
+
+.bottom-border {
+	border-bottom: 1px solid var(--border);
 }

@@ -9,7 +9,7 @@ export default function UserDisplay({ user }: { user: User }) {
 	console.log(user);
 
 	return (
-		<div className="w-full max-w-[1000px] h-full">
+		<div className="w-full">
 			<div
 				className="w-full bg-neutral-500 relative"
 				style={{ aspectRatio: "1000 / 400" }}
@@ -22,22 +22,22 @@ export default function UserDisplay({ user }: { user: User }) {
 				<div>
 					<Button
 						isIconOnly={true}
-						color="default"
-						className="ml-10 mt-4"
+						color="secondary"
+						className="ml-4 sm:ml-10 mt-4"
 						onClick={() => router.back()}
 					>
 						<ArrowLeftIcon className="h-6" />
 					</Button>
 				</div>
-				<div className="absolute -bottom-20 left-10">
+				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
 						src={user.image || "/brand/default-avatar.svg"}
 						removeWrapper={true}
-						className="h-60 w-60 object-cover"
+						className="h-[150px] sm:h-60 w-auto object-cover"
 					/>
 				</div>
 			</div>
-			<div className="w-full px-10 flex flex-col gap-y-4">
+			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
 				<div className="w-full h-20 flex items-center justify-end">
 					<UserDropdown defaultUser={user} />
 				</div>

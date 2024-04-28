@@ -21,6 +21,10 @@ const config: Config = {
 							DEFAULT: "#fff", // Primary color of the application
 							foreground: "#000000",
 						},
+						secondary: {
+							DEFAULT: "#131313",
+							foreground: "#E0E0E0",
+						},
 						content1: {
 							DEFAULT: "#131313",
 							foreground: "#E0E0E0",

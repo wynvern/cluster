@@ -10,7 +10,7 @@ import ProfileDropdown from "./ProfileDropdown";
 
 export default function Sidebar() {
 	return (
-		<div className="h-dvh items-center sidebar-border flex flex-col justify-between py-6 w-20">
+		<div className="h-dvh items-center sidebar-border flex-col justify-between py-6 w-20 hidden sm:flex">
 			<Image
 				alt="logo"
 				className="h-8"

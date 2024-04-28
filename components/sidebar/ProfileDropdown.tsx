@@ -29,7 +29,10 @@ export default function ProfileDropdown() {
 					<Link className="p-4">
 						<Image
 							removeWrapper={true}
-							src="/brand/default-avatar.svg"
+							src={
+								session.data?.user.image ||
+								"/brand/default-avatar.svg"
+							}
 						/>
 					</Link>
 				</DropdownTrigger>

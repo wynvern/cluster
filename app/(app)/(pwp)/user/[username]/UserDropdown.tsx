@@ -44,6 +44,7 @@ export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 			</Dropdown>
 
 			<CustomizeProfile
+				onUpdate={() => window.location.reload()}
 				active={customizeProfileActive}
 				setActive={setCustomizeProfileActive}
 				defaultUser={defaultUser}

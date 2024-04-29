@@ -68,7 +68,7 @@ export default function Finish() {
 		}
 	}
 
-	async function handleFinish(e: React.FormEvent<HTMLFormElement>) {
+	async function handleComplete(e: React.FormEvent<HTMLFormElement>) {
 		setIsLoading(true);
 		e.preventDefault();
 
@@ -113,10 +113,13 @@ export default function Finish() {
 
 	return (
 		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="flex flex-col gap-y-6 w-full max-w-[400px] px-4">
+			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
 				<LogoTitle />
 				<h2 className="w-[280px]">Complete seu perfil</h2>
-				<form className="gap-y-6 flex flex-col" onSubmit={handleFinish}>
+				<form
+					className="gap-y-6 flex flex-col"
+					onSubmit={handleComplete}
+				>
 					<Input
 						placeholder="Nome de usuário"
 						type="text"
@@ -140,14 +143,18 @@ export default function Finish() {
 
 					<div className="flex items-center justify-between">
 						<div>
-							<Link onClick={assignRandomUsername}>
-								Gerar nome aleatório
+							<Link
+								onClick={assignRandomUsername}
+								isDisabled={isLoading || success}
+							>
+								Nome aleatório
 							</Link>
 						</div>
 						<Button
 							type="submit"
 							color={success ? "success" : "primary"}
 							isLoading={isLoading}
+							isDisabled={isLoading || success}
 							startContent={
 								<>
 									{isLoading ? (

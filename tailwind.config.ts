@@ -42,7 +42,12 @@ const config: Config = {
 							foreground: "#E0E0E0",
 						},
 					},
-					layout: {},
+					layout: {
+						fontSize: {
+							small: "16px",
+							tiny: "14px",
+						},
+					},
 				},
 			},
 		}),

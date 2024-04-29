@@ -37,7 +37,7 @@ export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
 
 	return (
 		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="flex flex-col gap-y-6 lg:w-[400px] md:w-[400px] sm:w-[300px]">
+			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
 				<LogoTitle />
 				<div>
 					<h2>Verificar Email</h2>
@@ -50,7 +50,7 @@ export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
 					<div className="flex items-center justify-between">
 						<p>
 							<Link onClick={() => onCodeSent()}>
-								Já possuí um código?
+								Possuí um código?
 							</Link>
 						</p>
 						<Button

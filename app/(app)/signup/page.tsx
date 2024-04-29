@@ -2,13 +2,15 @@
 
 import GoogleLoginButton from "@/components/sign/GLoginButton";
 import LogoTitle from "@/components/sign/LogoTitle";
+import { createUser } from "@/lib/db/user/user";
 import {
+	CheckIcon,
 	EnvelopeIcon,
 	KeyIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import { Button, Input, Link, Image } from "@nextui-org/react";
-import { signIn } from "next-auth/react";
+import { SignInResponse, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -19,63 +21,53 @@ export default function SignUp() {
 		password: "",
 		repeatPassword: "",
 	});
-	const router = useRouter();
+	const [success, setSucess] = useState(false);
 
 	function validateInputs(
 		email: string,
 		password: string,
 		repeatPassword: string
 	) {
-		let valid = true;
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		const errors = {
+			email: "",
+			password: "",
+			repeatPassword: "",
+		};
 
 		// Check if email is empty
 		if (!email) {
-			setInputError({
-				...inputError,
-				email: "O email não pode estar vazio.",
-			});
-			valid = false;
+			errors.email = "O email não pode estar vazio.";
 		}
 		// Check if email is valid
 		else if (!emailRegex.test(email)) {
-			setInputError({ ...inputError, email: "Email inválido." });
-			valid = false;
+			errors.email = "Email inválido.";
 		}
 
 		if (!repeatPassword) {
-			setInputError({
-				...inputError,
-				repeatPassword: "A senha não pode estar vazia.",
-			});
-			valid = false;
+			errors.repeatPassword = "A senha não pode estar vazia.";
 		}
 
 		if (repeatPassword !== password) {
-			setInputError({
-				...inputError,
-				repeatPassword: "As senhas não coincidem.",
-			});
+			errors.repeatPassword = "As senhas não coincidem.";
 		}
 
 		// Check if password is empty
 		if (!password) {
-			setInputError({
-				...inputError,
-				password: "A senha não pode estar vazia.",
-			});
-			valid = false;
+			errors.password = "A senha não pode estar vazia.";
 		}
 		// Check if password length is less than 8
 		else if (password.length < 8) {
-			setInputError({
-				...inputError,
-				password: "A senha deve ter no mínimo 8 caracteres.",
-			});
-			valid = false;
+			errors.password = "A senha deve ter no mínimo 8 caracteres.";
 		}
 
-		return valid;
+		// Update the state with the errors
+		setInputError(errors);
+
+		// Check if there are any errors
+		const isValid = !Object.values(errors).some((error) => error !== "");
+
+		return isValid;
 	}
 
 	async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
@@ -86,58 +78,33 @@ export default function SignUp() {
 		const password = formData.get("password") as string;
 		const email = formData.get("email") as string;
 		const repeatPassword = formData.get("repeat-password") as string;
+		const numberval = formData.get("numberval") as string;
 
 		if (!validateInputs(email, password, repeatPassword)) {
 			setLoading(false);
 			return false;
 		}
 
-		signUpHandler(
-			formData.get("password") as string,
-			formData.get("email") as string
-		);
-	}
+		const data = await createUser(email, password, numberval);
 
-	async function signUpHandler(password: string, email: string) {
-		try {
-			const response = await fetch("/api/user", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					email,
-					password,
-				}),
-			});
-
-			if (response.ok) {
-				await signIn("credentials", {
-					email: email,
-					password: password,
-					redirect: false,
-				});
-				router.push("/finish");
-			} else {
-				const data = await response.json();
-
-				if (data.message === "email-in-use") {
-					setInputError({
-						...inputError,
-						email: "Este email já está em uso.",
-					});
-				}
-			}
-		} catch (e: unknown) {
-			console.error("Error:", (e as Error).message);
-		} finally {
+		if (data === "error") {
+			setInputError({ ...inputError, email: "Erro ao criar conta." });
 			setLoading(false);
+			return false;
+		}
+		if (data === "ok") {
+			setSucess(true);
+			await signIn("credentials", {
+				email,
+				password,
+				redirect: false,
+			});
 		}
 	}
 
 	return (
 		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="flex flex-col gap-y-6 w-full max-w-[400px] px-4">
+			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
 				<LogoTitle />
 				<h2>Criar Conta</h2>
 				<form className="gap-y-6 flex flex-col" onSubmit={handleSignUp}>
@@ -189,20 +156,31 @@ export default function SignUp() {
 							});
 						}}
 					/>
+					<Input
+						name="numberval"
+						type="text"
+						placeholder="Número de Telefone"
+						className="absolute left-0 -top-40"
+					/>
 
 					<div className="flex justify-between items-center">
 						<div>
 							<p className="text-center">
-								<Link href="/signin">Já tem uma Conta?</Link>
+								<Link size="sm" href="/signin">
+									Tem uma Conta?
+								</Link>
 							</p>
 						</div>
 						<Button
 							type="submit"
-							color="primary"
+							color={success ? "success" : "primary"}
 							isLoading={loading}
+							isDisabled={loading || success}
 							startContent={
 								loading ? (
 									""
+								) : success ? (
+									<CheckIcon className="h-6" />
 								) : (
 									<PencilSquareIcon className="h-6" />
 								)

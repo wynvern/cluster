@@ -172,7 +172,7 @@ export default function CustomizeGroup({
 						>
 							<PhotoIcon className="h-6" />
 						</Button>
-						<div className="absolute -bottom-10 left-10 flex items-center justify-center">
+						<div className="absolute -bottom-10 left-4 flex items-center justify-center">
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"

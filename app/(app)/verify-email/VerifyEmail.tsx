@@ -23,6 +23,7 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 
 		if (!formCode) {
 			setInputError("Digite o código");
+			setLoading(false);
 			return false;
 		}
 
@@ -55,7 +56,7 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 
 	return (
 		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="flex flex-col gap-y-6 w-full max-w-[400px] px-4">
+			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
 				<LogoTitle />
 				<div>
 					<h2>Verificar Email</h2>

@@ -33,6 +33,10 @@ export default function Login() {
 		const formPassword: string = formData.get("password") as string;
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+		if (formData.get("numberval")) {
+			return;
+		}
+
 		if (formEmail === "") {
 			setInputEmailVal({
 				message: "Email não pode estar vazio.",
@@ -93,7 +97,7 @@ export default function Login() {
 
 	return (
 		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="flex flex-col gap-y-6 w-full max-w-[400px] px-4">
+			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
 				<LogoTitle />
 				<h2>Login</h2>
 				<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
@@ -116,27 +120,31 @@ export default function Login() {
 							});
 						}}
 					/>
-					<div>
-						<Input
-							placeholder="Senha"
-							type="password"
-							color="default"
-							variant="bordered"
-							name="password"
-							classNames={{ inputWrapper: "h-14" }}
-							startContent={
-								<KeyIcon className="h-6 text-neutral-500" />
-							}
-							isInvalid={inputPasswordVal.active}
-							errorMessage={inputPasswordVal.message}
-							onValueChange={() => {
-								setInputPasswordVal({
-									message: "",
-									active: false,
-								});
-							}}
-						/>
-					</div>
+					<Input
+						placeholder="Senha"
+						type="password"
+						color="default"
+						variant="bordered"
+						name="password"
+						classNames={{ inputWrapper: "h-14" }}
+						startContent={
+							<KeyIcon className="h-6 text-neutral-500" />
+						}
+						isInvalid={inputPasswordVal.active}
+						errorMessage={inputPasswordVal.message}
+						onValueChange={() => {
+							setInputPasswordVal({
+								message: "",
+								active: false,
+							});
+						}}
+					/>
+					<Input
+						name="numberval"
+						type="text"
+						placeholder="Número de Telefone"
+						className="absolute left-0 -top-40"
+					/>
 					<div>
 						<p className="text-center">
 							<Link href="/reset-password">
@@ -155,6 +163,7 @@ export default function Login() {
 						<Button
 							type="submit"
 							color="primary"
+							isDisabled={loading}
 							isLoading={loading}
 							startContent={
 								loading ? (

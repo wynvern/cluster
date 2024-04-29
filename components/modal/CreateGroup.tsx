@@ -14,6 +14,7 @@ import type Group from "@/lib/db/group/type";
 import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
 import getFileBase64 from "@/util/getFile";
 import { createGroup } from "@/lib/db/group/group";
+import { useRouter } from "next/navigation";
 
 interface CreateGroupProps {
 	active: boolean;
@@ -25,6 +26,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 	const [success, setSuccess] = useState(false);
 	const [categories, setCategories] = useState<string[]>([]);
 	const [category, setCategory] = useState<string>("");
+	const router = useRouter();
 	const [errors, setErrors] = useState({
 		name: "",
 		description: "",
@@ -44,6 +46,30 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		},
 	});
 
+	function validateInputs(groupname: string, categories: string[]) {
+		const throwErrors = {
+			name: "",
+			description: "",
+			groupname: "",
+			categories: "",
+		};
+
+		if (!groupname) {
+			throwErrors.groupname = "Nome do grupo é obrigatório";
+		}
+
+		if (categories.length < 1) {
+			throwErrors.categories = "Adicione pelo menos uma categoria";
+		}
+
+		// Update the state with the errors
+		setErrors(throwErrors);
+
+		// Check if there are any errors
+		const isValid = !Object.values(errors).some((error) => error !== "");
+		return isValid;
+	}
+
 	async function handleUpdateProfile(e: React.FormEvent<HTMLFormElement>) {
 		setLoading(true);
 		e.preventDefault();
@@ -53,22 +79,9 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		const groupname = form.get("groupname") as string;
 		const description = form.get("description") as string;
 
-		if (!groupname) {
-			setErrors((prev) => ({
-				...prev,
-				groupname: "Nome do grupo é obrigatório",
-			}));
+		if (!validateInputs(groupname, categories)) {
 			setLoading(false);
-			return false;
-		}
-
-		if (categories.length < 1) {
-			setErrors((prev) => ({
-				...prev,
-				categories: "Adicione pelo menos uma categoria",
-			}));
-			setLoading(false);
-			return false;
+			return;
 		}
 
 		const data = await createGroup(
@@ -77,8 +90,6 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			description,
 			categories
 		);
-
-		alert(data);
 
 		switch (data) {
 			case "no-session":
@@ -100,6 +111,8 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 				}));
 				setLoading(false);
 				return false;
+
+			case "no-data":
 		}
 
 		if (selectedImages.image.base64) {
@@ -111,6 +124,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 
 		setLoading(false);
 		setSuccess(true);
+		router.push(`/group/${data}`);
 		setTimeout(() => setActive(false), 1000);
 	}
 
@@ -180,6 +194,12 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 					error: "",
 				},
 			});
+			setErrors({
+				name: "",
+				description: "",
+				groupname: "",
+				categories: "",
+			});
 			setCategories([]);
 			setSuccess(false);
 			setLoading(false);
@@ -212,7 +232,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 						>
 							<PhotoIcon className="h-6" />
 						</Button>
-						<div className="absolute -bottom-10 left-10 flex items-center justify-center">
+						<div className="absolute -bottom-10 left-4 flex items-center justify-center">
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"
@@ -277,7 +297,19 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								onValueChange={(e) => {
 									if (e.includes(" ")) {
 										if (categories.length > 4) {
-											return false; // TODO: handle error
+											setErrors((prev) => ({
+												...prev,
+												categories:
+													"Limite de categorias atingido",
+											}));
+											setTimeout(() => {
+												setErrors((prev) => ({
+													...prev,
+													categories: "",
+												}));
+											}, 3000);
+
+											return false;
 										}
 
 										setCategories([

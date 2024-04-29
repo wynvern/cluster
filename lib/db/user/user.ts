@@ -4,9 +4,32 @@ import { db } from "@/lib/db";
 import type User from "./type";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { hash } from "bcrypt";
 
 type UserId = { id: string; username?: string };
 type UserName = { id?: string; username: string };
+
+export async function createUser(
+	email: string,
+	password: string,
+	numberval: string
+) {
+	if (numberval) return "error"; // Honeypot
+
+	try {
+		const hashedPassword = await hash(password, 10);
+		const user = await db.user.create({
+			data: {
+				email: email,
+				password: hashedPassword,
+			},
+		});
+	} catch (e) {
+		return "error";
+	}
+
+	return "ok";
+}
 
 export default async function fetchUser(
 	params: UserId | UserName

@@ -17,12 +17,14 @@ interface CustomizeProfileProps {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
 	defaultUser: User;
+	onUpdate: () => void;
 }
 
 export default function CustomizeProfile({
 	active,
 	setActive,
 	defaultUser,
+	onUpdate,
 }: CustomizeProfileProps) {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
@@ -61,10 +63,9 @@ export default function CustomizeProfile({
 			// handle error
 		}
 
-		console.log(data);
-
 		setLoading(false);
 		setSuccess(true);
+		onUpdate();
 		setTimeout(() => setActive(false), 1000);
 	}
 
@@ -156,8 +157,9 @@ export default function CustomizeProfile({
 						<Image
 							removeWrapper={true}
 							src={
+								selectedImages.banner.preview ||
 								defaultUser.banner ||
-								selectedImages.banner.preview
+								""
 							}
 							className="absolute w-full h-full object-cover z-1"
 						/>
@@ -168,7 +170,7 @@ export default function CustomizeProfile({
 						>
 							<PhotoIcon className="h-6" />
 						</Button>
-						<div className="absolute -bottom-10 left-10 flex items-center justify-center">
+						<div className="absolute -bottom-10 left-4 flex items-center justify-center">
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"
@@ -179,8 +181,8 @@ export default function CustomizeProfile({
 							<Image
 								className="h-[140px] w-[140px] object-cover z-1"
 								src={
-									defaultUser.image ||
 									selectedImages.avatar.preview ||
+									defaultUser.image ||
 									"/brand/default-avatar.svg"
 								}
 								removeWrapper={true}

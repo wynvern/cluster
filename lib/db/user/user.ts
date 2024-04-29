@@ -44,11 +44,13 @@ export async function updateUser(name?: string, bio?: string) {
 
 	if (!session) return "no-session";
 
-	return db.user.update({
+	await db.user.update({
 		where: { id: session.user.id },
 		data: {
 			name: name,
 			bio: bio,
 		},
 	});
+
+	return "ok";
 }

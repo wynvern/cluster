@@ -1,34 +1,38 @@
 import {
+	AtSymbolIcon,
 	CheckIcon,
+	CubeIcon,
 	PencilIcon,
 	PencilSquareIcon,
 	PhotoIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Image, Input, Textarea } from "@nextui-org/react";
+import { Button, Chip, Image, Input, Textarea } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
-import { updateUser } from "@/lib/db/user/user";
-import { uploadUserAvatar, uploadUserBanner } from "@/lib/blob/userBlob";
-import type User from "@/lib/db/user/type";
+import type Group from "@/lib/db/group/type";
+import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
 import getFileBase64 from "@/util/getFile";
+import { createGroup } from "@/lib/db/group/group";
 
-interface CustomizeProfileProps {
+interface CreateGroupProps {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
-	defaultUser: User;
 }
 
-export default function CustomizeProfile({
-	active,
-	setActive,
-	defaultUser,
-}: CustomizeProfileProps) {
+export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
-
+	const [categories, setCategories] = useState<string[]>([]);
+	const [category, setCategory] = useState<string>("");
+	const [errors, setErrors] = useState({
+		name: "",
+		description: "",
+		groupname: "",
+		categories: "",
+	});
 	const [selectedImages, setSelectedImages] = useState({
-		avatar: {
+		image: {
 			base64: "",
 			preview: "",
 			error: "",
@@ -46,22 +50,64 @@ export default function CustomizeProfile({
 
 		const form = new FormData(e.currentTarget);
 		const name = form.get("name") as string;
-		const bio = form.get("bio") as string;
+		const groupname = form.get("groupname") as string;
+		const description = form.get("description") as string;
 
-		if (selectedImages.avatar.base64) {
-			await uploadUserAvatar(selectedImages.avatar.base64);
+		if (!groupname) {
+			setErrors((prev) => ({
+				...prev,
+				groupname: "Nome do grupo é obrigatório",
+			}));
+			setLoading(false);
+			return false;
+		}
+
+		if (categories.length < 1) {
+			setErrors((prev) => ({
+				...prev,
+				categories: "Adicione pelo menos uma categoria",
+			}));
+			setLoading(false);
+			return false;
+		}
+
+		const data = await createGroup(
+			name,
+			groupname,
+			description,
+			categories
+		);
+
+		alert(data);
+
+		switch (data) {
+			case "no-session":
+				setLoading(false);
+				return false;
+
+			case "groupname-in-use":
+				setErrors((prev) => ({
+					...prev,
+					groupname: "Nome do grupo já está em uso",
+				}));
+				setLoading(false);
+				return false;
+
+			case "invalid-groupname":
+				setErrors((prev) => ({
+					...prev,
+					groupname: "Nome do grupo inválido",
+				}));
+				setLoading(false);
+				return false;
+		}
+
+		if (selectedImages.image.base64) {
+			await uploadGroupImage(data, selectedImages.image.base64);
 		}
 		if (selectedImages.banner.base64) {
-			await uploadUserBanner(selectedImages.banner.base64);
+			await uploadGroupBanner(data, selectedImages.banner.base64);
 		}
-
-		const data = await updateUser(name, bio);
-
-		if (!data) {
-			// handle error
-		}
-
-		console.log(data);
 
 		setLoading(false);
 		setSuccess(true);
@@ -82,19 +128,19 @@ export default function CustomizeProfile({
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
 					banner: { base64: "", preview: "", error: "image-too-big" },
-					avatar: prev.avatar,
+					image: prev.image,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
 						banner: { base64: "", preview: "", error: "" },
-						avatar: prev.avatar,
+						image: prev.image,
 					}));
 				}, 3000);
 			}
 		}
 	}
 
-	async function handleSelectAvatar() {
+	async function handleSelectimage() {
 		try {
 			const data = await getFileBase64(["jpg", "jpeg", "png", "webp"]);
 
@@ -102,17 +148,17 @@ export default function CustomizeProfile({
 
 			setSelectedImages((prev) => ({
 				...prev,
-				avatar: { ...data, error: "" },
+				image: { ...data, error: "" },
 			}));
 		} catch (e) {
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
-					avatar: { base64: "", preview: "", error: "image-too-big" },
+					image: { base64: "", preview: "", error: "image-too-big" },
 					banner: prev.banner,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
-						avatar: { base64: "", preview: "", error: "" },
+						image: { base64: "", preview: "", error: "" },
 						banner: prev.banner,
 					}));
 				}, 3000);
@@ -123,7 +169,7 @@ export default function CustomizeProfile({
 	useEffect(() => {
 		if (!active) {
 			setSelectedImages({
-				avatar: {
+				image: {
 					base64: "",
 					preview: "",
 					error: "",
@@ -134,6 +180,7 @@ export default function CustomizeProfile({
 					error: "",
 				},
 			});
+			setCategories([]);
 			setSuccess(false);
 			setLoading(false);
 		}
@@ -141,7 +188,7 @@ export default function CustomizeProfile({
 
 	return (
 		<BaseModal
-			title="Customizar Perfil"
+			title="Criar Grupo"
 			size="xl"
 			active={active}
 			setActive={setActive}
@@ -155,10 +202,7 @@ export default function CustomizeProfile({
 					>
 						<Image
 							removeWrapper={true}
-							src={
-								defaultUser.banner ||
-								selectedImages.banner.preview
-							}
+							src={selectedImages.banner.preview}
 							className="absolute w-full h-full object-cover z-1"
 						/>
 						<Button
@@ -172,16 +216,15 @@ export default function CustomizeProfile({
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"
-								onClick={handleSelectAvatar}
+								onClick={handleSelectimage}
 							>
 								<PhotoIcon className="h-6" />
 							</Button>
 							<Image
 								className="h-[140px] w-[140px] object-cover z-1"
 								src={
-									defaultUser.image ||
-									selectedImages.avatar.preview ||
-									"/brand/default-avatar.svg"
+									selectedImages.image.preview ||
+									"/brand/default-group.svg"
 								}
 								removeWrapper={true}
 							/>
@@ -193,15 +236,84 @@ export default function CustomizeProfile({
 							id="update-profile-form"
 							onSubmit={handleUpdateProfile}
 						>
-							{selectedImages.avatar.error ||
+							{selectedImages.image.error ||
 								(selectedImages.banner.error && (
 									<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
 										<p className="text-danger">
 											Imagem selecionada muito grande,
-											máximo 4.5 Mb
+											máximo 4.5 MB
 										</p>
 									</div>
 								))}
+							<Input
+								name="groupname"
+								placeholder="Nome do Grupo"
+								variant="bordered"
+								classNames={{ inputWrapper: "h-14" }}
+								startContent={
+									<AtSymbolIcon className="h-6 text-neutral-500" />
+								}
+								max={20}
+								errorMessage={errors.groupname}
+								isInvalid={errors.groupname !== ""}
+								onValueChange={() => {
+									setErrors((prev) => ({
+										...prev,
+										groupname: "",
+									}));
+								}}
+							/>
+							<Input
+								placeholder="Categorias"
+								variant="bordered"
+								classNames={{ inputWrapper: "h-14" }}
+								startContent={
+									<CubeIcon className="h-6 text-neutral-500" />
+								}
+								errorMessage={errors.categories}
+								isInvalid={errors.categories !== ""}
+								max={20}
+								value={category}
+								onValueChange={(e) => {
+									if (e.includes(" ")) {
+										if (categories.length > 4) {
+											return false; // TODO: handle error
+										}
+
+										setCategories([
+											...categories,
+											e.trim(),
+										]);
+
+										setErrors((prev) => ({
+											...prev,
+											categories: "",
+										}));
+
+										setCategory("");
+									} else setCategory(e);
+								}}
+							/>
+							{categories.length >= 1 ? (
+								<div className="flex gap-y-2 gap-x-2 overflow-x-auto">
+									{categories.map((category, index) => (
+										<Chip
+											key={category}
+											onClose={() => {
+												setCategories(
+													categories.filter(
+														(_, i) => i !== index
+													)
+												);
+											}}
+										>
+											{category}
+										</Chip>
+									))}
+								</div>
+							) : (
+								""
+							)}
 							<Input
 								name="name"
 								placeholder="Nome"
@@ -211,18 +323,16 @@ export default function CustomizeProfile({
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
 								max={50}
-								defaultValue={defaultUser.name || ""}
 							/>
 							<Textarea
-								name="bio"
-								placeholder="Biografia"
+								name="description"
+								placeholder="descriptiongrafia"
 								variant="bordered"
 								classNames={{
 									innerWrapper: "py-[9px]",
 									input: "mt-[2px]",
 								}}
 								max={200}
-								defaultValue={defaultUser.bio || ""}
 								startContent={
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
@@ -234,7 +344,7 @@ export default function CustomizeProfile({
 			footer={
 				<>
 					<Button
-						aria-label="cancelar-perfil"
+						aria-label="cancelar-grupo"
 						isDisabled={loading || success}
 						startContent={<XMarkIcon className="h-6" />}
 						variant="bordered"
@@ -248,7 +358,7 @@ export default function CustomizeProfile({
 						form="update-profile-form"
 						isLoading={loading}
 						isDisabled={loading || success}
-						aria-label="salvar-perfil"
+						aria-label="salvar-grupo"
 						startContent={
 							loading ? (
 								""

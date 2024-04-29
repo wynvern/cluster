@@ -6,7 +6,7 @@ import { put } from "@vercel/blob";
 import { compressImage, squareImage } from "../image";
 import { db } from "../db";
 
-export async function uploadUserAvatar(file: string) {
+export async function uploadGroupImage(id: string, file: string) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
@@ -14,20 +14,20 @@ export async function uploadUserAvatar(file: string) {
 	const buffer = Buffer.from(file, "base64");
 	const processedImage = await squareImage(buffer);
 
-	const blob = await put(`user_images/${session.user.id}`, processedImage, {
+	const blob = await put(`group_images/${id}`, processedImage, {
 		access: "public",
 		contentType: "image/png",
 	});
 
-	await db.user.update({
-		where: { id: session.user.id },
+	await db.group.update({
+		where: { id, ownerId: session.user.id },
 		data: { image: blob.url },
 	});
 
 	return "ok";
 }
 
-export async function uploadUserBanner(file: string) {
+export async function uploadGroupBanner(id: string, file: string) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
@@ -35,13 +35,13 @@ export async function uploadUserBanner(file: string) {
 	const buffer = Buffer.from(file, "base64");
 	const processedImage = await compressImage(buffer);
 
-	const blob = await put(`user_banners/${session.user.id}`, processedImage, {
+	const blob = await put(`group_banners/${id}`, processedImage, {
 		access: "public",
 		contentType: "image/png",
 	});
 
-	await db.user.update({
-		where: { id: session.user.id },
+	await db.group.update({
+		where: { id, ownerId: session.user.id },
 		data: { banner: blob.url },
 	});
 

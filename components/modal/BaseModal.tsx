@@ -19,10 +19,10 @@ export default function BaseModal({
 }: {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
-	title: string;
+	title: ReactNode;
 	body: ReactNode;
 	footer: ReactNode;
-	size?: "sm" | "md" | "lg" | "xl";
+	size?: "sm" | "md" | "lg" | "xl" | "2xl";
 }) {
 	return (
 		<Modal

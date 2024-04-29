@@ -8,26 +8,25 @@ datasource db {
 }
 
 model User {
-   id                 String              @id @default(cuid())
-   name               String?
-   username           String?             @unique
-   bio                String?
-   email              String?             @unique
-   emailVerified      DateTime?           @map("email_verified")
-   password           String?
-   image              String?
-   banner             String?
-   posts              Post[]
-   comments           Comment[]
-   bookmarks          Bookmark[]
-   groups             InGroup[]
-   accounts           Account[]
-   sessions           Session[]
-   ownedGroups        Group[]             @relation("GroupOwner")
-   userProfilePicture UserProfilePicture?
-   groupViewed        GroupView[]
-   notifications      Notification[]
-   postViewed         PostView[]
+   id            String         @id @default(cuid())
+   name          String?
+   username      String?        @unique
+   bio           String?
+   email         String?        @unique
+   emailVerified DateTime?      @map("email_verified")
+   password      String?
+   image         String?
+   banner        String?
+   posts         Post[]
+   comments      Comment[]
+   bookmarks     Bookmark[]
+   groups        InGroup[]
+   accounts      Account[]
+   sessions      Session[]
+   ownedGroups   Group[]        @relation("GroupOwner")
+   groupViewed   GroupView[]
+   notifications Notification[]
+   postViewed    PostView[]
 
    createdReports  Report[] @relation("ReportCreator")
    receivedReports Report[] @relation("ReportedUser")
@@ -60,10 +59,10 @@ model Notification {
    image       String?
    link        String?
    viewed      Boolean  @default(false)
-   createdAt   DateTime @default(now())
+   createdAt   DateTime @default(now()) @map("created_at")
 
    user   User   @relation(fields: [userId], references: [id])
-   userId String
+   userId String @map("user_id")
 
    @@map("notifications")
 }
@@ -72,101 +71,70 @@ model Report {
    id             Int      @id @default(autoincrement())
    title          String
    content        String?
-   creatorId      String
-   reportedUserId String
+   creatorId      String   @map("creator_id")
+   reportedUserId String   @map("reported_user_id")
    creator        User     @relation("ReportCreator", fields: [creatorId], references: [id])
    reportedUser   User     @relation("ReportedUser", fields: [reportedUserId], references: [id])
-   createdAt      DateTime @default(now())
+   createdAt      DateTime @default(now()) @map("created_at")
    updatedAt      DateTime @updatedAt
 
    @@map("report")
 }
 
-model UserProfilePicture {
-   id     String  @id @default(cuid())
-   userId String  @unique
-   user   User    @relation(fields: [userId], references: [id])
-   avatar String?
-   banner String?
-
-   @@map("user_profile_pic")
-}
-
 model Post {
-   id        String      @id @default(cuid())
+   id        String     @id @default(cuid())
    title     String
    content   String
-   author    User        @relation(fields: [authorId], references: [id])
-   authorId  String
-   media     String[]    @default([])
+   author    User       @relation(fields: [authorId], references: [id])
+   authorId  String     @map("author_id")
+   media     String[]   @default([])
+   document  String[]   @default([])
    comments  Comment[]
    bookmarks Bookmark[]
-   postMedia PostMedia[]
    postView  PostView[]
-   group     Group       @relation(fields: [groupId], references: [id])
-   groupId   String
-   createdAt DateTime    @default(now())
+   group     Group      @relation(fields: [groupId], references: [id])
+   groupId   String     @map("group_id")
+   createdAt DateTime   @default(now())
 
    @@map("posts")
 }
 
 model PostView {
    id       String   @id @default(cuid())
-   viewedAt DateTime @default(now())
+   viewedAt DateTime @default(now()) @map("viewed_at")
 
    post     Post   @relation(fields: [postId], references: [id])
-   postId   String
+   postId   String @map("post_id")
    viewer   User   @relation(fields: [viewerId], references: [id])
-   viewerId String
+   viewerId String @map("viewer_id")
 
    @@unique([postId, viewerId])
    @@map("post_view")
 }
 
-model PostMedia {
-   id     String @id @default(cuid())
-   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-   postId String
-   image  String
-   index  Int
-
-   @@map("post_media")
-}
-
 model Comment {
-   id        String         @id @default(cuid())
+   id        String    @id @default(cuid())
    text      String
-   author    User           @relation(fields: [authorId], references: [id])
-   authorId  String
-   post      Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
-   postId    String?
-   createdAt DateTime       @default(now())
-   children  Comment[]      @relation("CommentToComment")
-   parent    Comment?       @relation("CommentToComment", fields: [parentId], references: [id])
-   parentId  String?
-   media     CommentMedia[]
-   medias    String[]       @default([])
+   author    User      @relation(fields: [authorId], references: [id])
+   authorId  String    @map("author_id")
+   post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+   postId    String?   @map("post_id")
+   createdAt DateTime  @default(now())
+   children  Comment[] @relation("CommentToComment")
+   parent    Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+   parentId  String?   @map("parent_id")
+   media     String[]  @default([])
+   document  String[]  @default([])
 
    @@map("comments")
-}
-
-model CommentMedia {
-   id String @id @default(cuid())
-
-   image     String
-   index     Int
-   commentId String
-   Comment   Comment @relation(fields: [commentId], references: [id])
-
-   @@map("comment_media")
 }
 
 model Bookmark {
    id        String   @id @default(cuid())
    user      User     @relation(fields: [userId], references: [id])
-   userId    String
+   userId    String   @map("user_id")
    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-   postId    String
+   postId    String   @map("post_id")
    createdAt DateTime @default(now())
 
    @@unique([postId, userId])
@@ -176,28 +144,27 @@ model Bookmark {
 model InGroup {
    id      String @id @default(cuid())
    user    User   @relation(fields: [userId], references: [id])
-   userId  String
+   userId  String @map("user_id")
    group   Group  @relation(fields: [groupId], references: [id])
-   groupId String
+   groupId String @map("group_id")
 
    @@unique([groupId, userId])
    @@map("in_group")
 }
 
 model Group {
-   id               String            @id @default(cuid())
-   name             String            @unique
-   groupName        String?
-   description      String?
-   members          InGroup[]
-   posts            Post[]
-   owner            User              @relation("GroupOwner", fields: [ownerId], references: [id])
-   ownerId          String
-   categories       String[]          @default([])
-   banner           String?
-   logo             String?
-   groupProfilePics GroupProfilePics?
-   groupViews       GroupView[]
+   id          String      @id @default(cuid())
+   name        String?
+   groupname   String      @unique
+   description String?
+   members     InGroup[]
+   posts       Post[]
+   owner       User        @relation("GroupOwner", fields: [ownerId], references: [id])
+   ownerId     String      @map("owner_id")
+   categories  String[]    @default([])
+   image       String?
+   banner      String?
+   groupViews  GroupView[]
 
    @@map("group")
 }
@@ -207,22 +174,12 @@ model GroupView {
    viewedAt DateTime @default(now())
 
    group    Group  @relation(fields: [groupId], references: [id])
-   groupId  String
+   groupId  String @map("group_id")
    viewer   User   @relation(fields: [viewerId], references: [id])
-   viewerId String
+   viewerId String @map("viewer_id")
 
    @@unique([groupId, viewerId])
    @@map("group_view")
-}
-
-model GroupProfilePics {
-   id      String  @id @default(cuid())
-   groupId String  @unique
-   group   Group   @relation(fields: [groupId], references: [id])
-   logo    String?
-   banner  String?
-
-   @@map("group_profile_pics")
 }
 
 // Bullshit

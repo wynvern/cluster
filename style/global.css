@@ -22,7 +22,8 @@ body {
 .border-default,
 .border-medium {
 	border-width: 1px !important;
-	border-color: var(--border) !important;
+	border-color: var(--border);
+	transition: border-color 0.2s;
 }
 
 /* Heading Styles */

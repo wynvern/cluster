@@ -8,27 +8,27 @@ import {
 import { Button, Image, Input, Textarea } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
-import { updateUser } from "@/lib/db/user/user";
-import { uploadUserAvatar, uploadUserBanner } from "@/lib/blob/userBlob";
-import type User from "@/lib/db/user/type";
+import type Group from "@/lib/db/group/type";
+import { updateGroup } from "@/lib/db/group/group";
 import getFileBase64 from "@/util/getFile";
+import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
 
-interface CustomizeProfileProps {
+interface CustomizeGroupProps {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
-	defaultUser: User;
+	defaultGroup: Group;
 }
 
-export default function CustomizeProfile({
+export default function CustomizeGroup({
 	active,
 	setActive,
-	defaultUser,
-}: CustomizeProfileProps) {
+	defaultGroup,
+}: CustomizeGroupProps) {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 
 	const [selectedImages, setSelectedImages] = useState({
-		avatar: {
+		image: {
 			base64: "",
 			preview: "",
 			error: "",
@@ -46,22 +46,26 @@ export default function CustomizeProfile({
 
 		const form = new FormData(e.currentTarget);
 		const name = form.get("name") as string;
-		const bio = form.get("bio") as string;
+		const description = form.get("description") as string;
 
-		if (selectedImages.avatar.base64) {
-			await uploadUserAvatar(selectedImages.avatar.base64);
+		if (selectedImages.image.base64) {
+			await uploadGroupImage(
+				defaultGroup.id,
+				selectedImages.image.base64
+			);
 		}
 		if (selectedImages.banner.base64) {
-			await uploadUserBanner(selectedImages.banner.base64);
+			await uploadGroupBanner(
+				defaultGroup.id,
+				selectedImages.banner.base64
+			);
 		}
 
-		const data = await updateUser(name, bio);
+		const data = await updateGroup(defaultGroup.id, name, description);
 
 		if (!data) {
 			// handle error
 		}
-
-		console.log(data);
 
 		setLoading(false);
 		setSuccess(true);
@@ -82,19 +86,19 @@ export default function CustomizeProfile({
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
 					banner: { base64: "", preview: "", error: "image-too-big" },
-					avatar: prev.avatar,
+					image: prev.image,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
 						banner: { base64: "", preview: "", error: "" },
-						avatar: prev.avatar,
+						image: prev.image,
 					}));
 				}, 3000);
 			}
 		}
 	}
 
-	async function handleSelectAvatar() {
+	async function handleSelectimage() {
 		try {
 			const data = await getFileBase64(["jpg", "jpeg", "png", "webp"]);
 
@@ -102,17 +106,17 @@ export default function CustomizeProfile({
 
 			setSelectedImages((prev) => ({
 				...prev,
-				avatar: { ...data, error: "" },
+				image: { ...data, error: "" },
 			}));
 		} catch (e) {
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
-					avatar: { base64: "", preview: "", error: "image-too-big" },
+					image: { base64: "", preview: "", error: "image-too-big" },
 					banner: prev.banner,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
-						avatar: { base64: "", preview: "", error: "" },
+						image: { base64: "", preview: "", error: "" },
 						banner: prev.banner,
 					}));
 				}, 3000);
@@ -123,7 +127,7 @@ export default function CustomizeProfile({
 	useEffect(() => {
 		if (!active) {
 			setSelectedImages({
-				avatar: {
+				image: {
 					base64: "",
 					preview: "",
 					error: "",
@@ -141,7 +145,7 @@ export default function CustomizeProfile({
 
 	return (
 		<BaseModal
-			title="Customizar Perfil"
+			title="Customizar grupo"
 			size="xl"
 			active={active}
 			setActive={setActive}
@@ -156,7 +160,7 @@ export default function CustomizeProfile({
 						<Image
 							removeWrapper={true}
 							src={
-								defaultUser.banner ||
+								defaultGroup.banner ||
 								selectedImages.banner.preview
 							}
 							className="absolute w-full h-full object-cover z-1"
@@ -172,16 +176,16 @@ export default function CustomizeProfile({
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"
-								onClick={handleSelectAvatar}
+								onClick={handleSelectimage}
 							>
 								<PhotoIcon className="h-6" />
 							</Button>
 							<Image
 								className="h-[140px] w-[140px] object-cover z-1"
 								src={
-									defaultUser.image ||
-									selectedImages.avatar.preview ||
-									"/brand/default-avatar.svg"
+									defaultGroup.image ||
+									selectedImages.image.preview ||
+									"/brand/default-group.svg"
 								}
 								removeWrapper={true}
 							/>
@@ -193,12 +197,12 @@ export default function CustomizeProfile({
 							id="update-profile-form"
 							onSubmit={handleUpdateProfile}
 						>
-							{selectedImages.avatar.error ||
+							{selectedImages.image.error ||
 								(selectedImages.banner.error && (
 									<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
 										<p className="text-danger">
 											Imagem selecionada muito grande,
-											máximo 4.5 Mb
+											máximo 4.5 MB
 										</p>
 									</div>
 								))}
@@ -211,18 +215,18 @@ export default function CustomizeProfile({
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
 								max={50}
-								defaultValue={defaultUser.name || ""}
+								defaultValue={defaultGroup.name || ""}
 							/>
 							<Textarea
-								name="bio"
-								placeholder="Biografia"
+								name="description"
+								placeholder="descriptiongrafia"
 								variant="bordered"
 								classNames={{
 									innerWrapper: "py-[9px]",
 									input: "mt-[2px]",
 								}}
 								max={200}
-								defaultValue={defaultUser.bio || ""}
+								defaultValue={defaultGroup.description || ""}
 								startContent={
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
@@ -234,7 +238,7 @@ export default function CustomizeProfile({
 			footer={
 				<>
 					<Button
-						aria-label="cancelar-perfil"
+						aria-label="cancelar-grupo"
 						isDisabled={loading || success}
 						startContent={<XMarkIcon className="h-6" />}
 						variant="bordered"
@@ -248,7 +252,7 @@ export default function CustomizeProfile({
 						form="update-profile-form"
 						isLoading={loading}
 						isDisabled={loading || success}
-						aria-label="salvar-perfil"
+						aria-label="salvar-grupo"
 						startContent={
 							loading ? (
 								""

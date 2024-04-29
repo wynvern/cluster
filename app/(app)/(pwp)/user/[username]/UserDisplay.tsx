@@ -1,24 +1,32 @@
 import type User from "@/lib/db/user/type";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { Button, Image } from "@nextui-org/react";
+import { Button, Image, Skeleton } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import UserDropdown from "./UserDropdown";
+import { useEffect, useState } from "react";
 
-export default function UserDisplay({ user }: { user: User }) {
+export default function UserDisplay({ user }: { user: User | null }) {
 	const router = useRouter();
+	const [loaded, setLoaded] = useState(false);
 	console.log(user);
+
+	useEffect(() => {
+		if (user !== null) setLoaded(true);
+	}, [user]);
 
 	return (
 		<div className="w-full">
 			<div
-				className="w-full bg-neutral-500 relative"
+				className="w-full relative"
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<Image
-					className="absolute w-full h-full rounded-none object-cover z-1"
-					src={user.banner as string}
-					removeWrapper={true}
-				/>
+				<Skeleton isLoaded={loaded} className="absolute w-full h-full">
+					<Image
+						className="absolute w-full h-full rounded-none object-cover z-1"
+						src={user ? (user.banner as string) : ""}
+						removeWrapper={true}
+					/>
+				</Skeleton>
 				<div>
 					<Button
 						isIconOnly={true}
@@ -30,23 +38,37 @@ export default function UserDisplay({ user }: { user: User }) {
 					</Button>
 				</div>
 				<div className="absolute -bottom-20 left-4 sm:left-10">
-					<Image
-						src={user.image || "/brand/default-avatar.svg"}
-						removeWrapper={true}
-						className="h-[150px] sm:h-60 w-auto object-cover"
-					/>
+					<Skeleton isLoaded={loaded} className="rounded-lg">
+						<Image
+							src={
+								user?.image
+									? user.image
+									: "/brand/default-avatar.svg"
+							}
+							removeWrapper={true}
+							className="h-[150px] sm:h-60 w-auto object-cover"
+						/>
+					</Skeleton>
 				</div>
 			</div>
 			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
 				<div className="w-full h-20 flex items-center justify-end">
-					<UserDropdown defaultUser={user} />
+					<Skeleton isLoaded={loaded} className="rounded-lg">
+						{user ? <UserDropdown defaultUser={user} /> : ""}
+					</Skeleton>
 				</div>
 				<div>
-					<h1>{user.name}</h1>
-					<p>@{user.username}</p>
+					<Skeleton isLoaded={loaded} className="rounded-lg">
+						<h1>{user?.name || "loading"}</h1>
+					</Skeleton>
+					<Skeleton isLoaded={loaded} className="rounded-lg">
+						<p>@{user?.username || "loading"}</p>
+					</Skeleton>
 				</div>
 				<div>
-					<p>{user.bio}</p>
+					<Skeleton isLoaded={loaded} className="rounded-lg">
+						<p>{user?.bio || "loading"}</p>
+					</Skeleton>
 				</div>
 			</div>
 		</div>

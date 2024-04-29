@@ -30,7 +30,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[1000px] h-full">
 				{notFound ? <>User was not found</> : ""}
-				{user ? <UserDisplay user={user} /> : ""}
+				<UserDisplay user={user} />
 				<TabContent />
 			</div>
 		</div>

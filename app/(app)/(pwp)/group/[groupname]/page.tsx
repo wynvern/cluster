@@ -7,6 +7,9 @@ import type Group from "@/lib/db/group/type";
 import GroupDisplay from "./GroupDisplay";
 import { Button } from "@nextui-org/react";
 import CreatePost from "@/components/modal/CreatePost";
+import type Post from "@/lib/db/post/type";
+import { fetchGroupPosts } from "@/lib/db/post/post";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
 export default function GroupPage({
 	params,
@@ -16,6 +19,7 @@ export default function GroupPage({
 	const [notFound, setNotFound] = useState(false);
 	const [group, setGroup] = useState<Group | null>(null);
 	const [createPostActive, setCreatePostActive] = useState(false);
+	const [posts, setPosts] = useState<Post[]>([]);
 
 	async function handleFetchGroup() {
 		const data = await fetchGroup({ groupname: params.groupname });
@@ -28,23 +32,38 @@ export default function GroupPage({
 		setGroup(data);
 	}
 
+	async function handleFetchPosts() {
+		if (!group) return;
+
+		const data = await fetchGroupPosts(group.id);
+
+		setPosts(data as Post[]);
+	}
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		handleFetchGroup();
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		handleFetchPosts();
+	}, [group]);
+
 	return (
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[1000px] h-full">
 				{notFound ? <>group was not found</> : ""}
-				{group ? <GroupDisplay group={group} /> : ""}
-				<TabContent />
-				<div className="absolute bottom-0 right-0">
+				<GroupDisplay group={group} />
+				<TabContent posts={posts} />
+				<div className="fixed bottom-20 sm:bottom-10 right-6 sm:bottom-10 z-50">
 					<Button
-						className="bg-blue-500 text-white p-2 rounded-md"
+						isIconOnly={true}
+						size="lg"
+						color="secondary"
 						onClick={() => setCreatePostActive(true)}
 					>
-						Create Post
+						<PlusIcon className="h-8" />
 					</Button>
 				</div>
 			</div>

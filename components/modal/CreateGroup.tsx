@@ -124,7 +124,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 
 		setLoading(false);
 		setSuccess(true);
-		router.push(`/group/${data}`);
+		router.push(`/group/${groupname}`);
 		setTimeout(() => setActive(false), 1000);
 	}
 

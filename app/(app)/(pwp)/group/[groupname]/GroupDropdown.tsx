@@ -3,7 +3,9 @@
 import CustomizeGroup from "@/components/modal/CustomizeGroup";
 import type Group from "@/lib/db/group/type";
 import {
+	Cog6ToothIcon,
 	EllipsisHorizontalIcon,
+	FlagIcon,
 	PencilIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -35,14 +37,38 @@ export default function GroupDropdown({
 				</DropdownTrigger>
 				<DropdownMenu aria-label="Static Actions">
 					<DropdownItem
-						description="Customize o seu grupo"
+						description="Customize este grupo."
 						startContent={
 							<PencilIcon className="h-8" aria-label="Sign Out" />
 						}
-						aria-label="customize profile"
+						aria-label="customize group"
 						onClick={() => setCustomizeGroupActive(true)}
 					>
 						Customizar Grupo
+					</DropdownItem>
+					<DropdownItem
+						description="Geerencie este grupo."
+						startContent={
+							<Cog6ToothIcon
+								className="h-8"
+								aria-label="Sign Out"
+							/>
+						}
+						aria-label="configure group"
+						href={`${defaultGroup.groupname}/manage`}
+					>
+						Gerenciar
+					</DropdownItem>
+					<DropdownItem
+						description="Reporte este grupo."
+						className="text-danger"
+						startContent={
+							<FlagIcon className="h-8" aria-label="Sign Out" />
+						}
+						aria-label="report-group"
+						onClick={() => setCustomizeGroupActive(true)}
+					>
+						Reportar Grupo
 					</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>

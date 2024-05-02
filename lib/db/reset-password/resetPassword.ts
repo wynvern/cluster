@@ -70,7 +70,7 @@ export async function sendResetRequest(email: string) {
 	return "code-sent";
 }
 
-export async function resetPassword(code: string, newPassword: string) {
+export async function updatePassword(code: string, newPassword: string) {
 	const existingCode = await db.codeReset.findFirst({
 		where: { code },
 	});

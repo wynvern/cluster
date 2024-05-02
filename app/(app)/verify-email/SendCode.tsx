@@ -1,9 +1,12 @@
 "use client";
 
+import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
+import ErrorBox from "@/components/general/ErrorBox";
 import LogoTitle from "@/components/sign/LogoTitle";
 import { sendCode } from "@/lib/db/verifyEmail/verifyEmail";
 import { CheckIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Button, Link } from "@nextui-org/react";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
 
 export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
@@ -36,50 +39,45 @@ export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
 	}
 
 	return (
-		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
-				<LogoTitle />
-				<div>
-					<h2>Verificar Email</h2>
-					<p>Clique no botão para receber um código por email.</p>
+		<AuthModalWrapper
+			title="Enviar código"
+			subtitle="Clique no botão para receber um código por email."
+		>
+			<form
+				className="gap-y-6 flex flex-col"
+				onSubmit={handleSendRequest}
+			>
+				<ErrorBox error={inputError} isVisible={Boolean(inputError)} />
+				<div className="flex items-center justify-between">
+					<p>
+						<Link onClick={() => onCodeSent()}>
+							Possuí um código?
+						</Link>
+					</p>
+					<Button
+						type="submit"
+						color={success ? "success" : "primary"}
+						isLoading={loading}
+						isDisabled={loading || success}
+						startContent={
+							loading ? (
+								""
+							) : success ? (
+								<CheckIcon className="h-6" />
+							) : (
+								<PaperAirplaneIcon className="h-6" />
+							)
+						}
+					>
+						{success ? "Enviado" : "Enviar"}
+					</Button>
 				</div>
-				<form
-					className="gap-y-6 flex flex-col"
-					onSubmit={handleSendRequest}
-				>
-					<div className="flex items-center justify-between">
-						<p>
-							<Link onClick={() => onCodeSent()}>
-								Possuí um código?
-							</Link>
-						</p>
-						<Button
-							type="submit"
-							color={success ? "success" : "primary"}
-							isLoading={loading}
-							isDisabled={loading || success}
-							startContent={
-								loading ? (
-									""
-								) : success ? (
-									<CheckIcon className="h-6" />
-								) : (
-									<PaperAirplaneIcon className="h-6" />
-								)
-							}
-						>
-							{success ? "Enviado" : "Enviar"}
-						</Button>
-					</div>
-					{inputError ? (
-						<p className="text-danger w-full text-center">
-							{inputError}
-						</p>
-					) : (
-						""
-					)}
-				</form>
+			</form>
+			<div className="w-full flex items-center">
+				<Link onClick={() => signOut()} className="w-full">
+					Sair
+				</Link>
 			</div>
-		</div>
+		</AuthModalWrapper>
 	);
 }

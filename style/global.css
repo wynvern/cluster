@@ -26,9 +26,13 @@ body {
 	transition: border-color 0.2s;
 }
 
+.default-background {
+	background-color: var(--background);
+}
+
 /* Heading Styles */
 h1 {
-	font-size: 2.7em;
+	font-size: 2.6em;
 	font-weight: 600;
 	line-height: 40px;
 	font-family: "ClashDisplay-Semibold";
@@ -43,7 +47,7 @@ h2 {
 
 h3 {
 	font-size: 1.2em;
-	font-weight: 700;
+	font-weight: 500;
 	line-height: 30px;
 }
 
@@ -62,6 +66,10 @@ header {
 .side-borders {
 	border-left: 1px solid var(--border);
 	border-right: 1px solid var(--border);
+}
+
+.sidebar-border-mobile {
+	border-top: 1px solid var(--border);
 }
 
 .bottom-border {

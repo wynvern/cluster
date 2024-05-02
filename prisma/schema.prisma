@@ -8,25 +8,26 @@ datasource db {
 }
 
 model User {
-   id            String         @id @default(cuid())
-   name          String?
-   username      String?        @unique
-   bio           String?
-   email         String?        @unique
-   emailVerified DateTime?      @map("email_verified")
-   password      String?
-   image         String?
-   banner        String?
-   posts         Post[]
-   comments      Comment[]
-   bookmarks     Bookmark[]
-   groups        InGroup[]
-   accounts      Account[]
-   sessions      Session[]
-   ownedGroups   Group[]        @relation("GroupOwner")
-   groupViewed   GroupView[]
-   notifications Notification[]
-   postViewed    PostView[]
+   id              String           @id @default(cuid())
+   name            String?
+   username        String?          @unique
+   bio             String?
+   email           String?          @unique
+   emailVerified   DateTime?        @map("email_verified")
+   password        String?
+   image           String?
+   banner          String?
+   posts           Post[]
+   comments        Comment[]
+   bookmarks       Bookmark[]
+   moderatedGroups GroupModerator[]
+   groups          InGroup[]
+   accounts        Account[]
+   sessions        Session[]
+   ownedGroups     Group[]          @relation("GroupOwner")
+   groupViewed     GroupView[]
+   notifications   Notification[]
+   postViewed      PostView[]
 
    createdReports  Report[] @relation("ReportCreator")
    receivedReports Report[] @relation("ReportedUser")
@@ -153,20 +154,34 @@ model InGroup {
 }
 
 model Group {
-   id          String      @id @default(cuid())
+   id          String           @id @default(cuid())
    name        String?
-   groupname   String      @unique
+   groupname   String           @unique
    description String?
    members     InGroup[]
    posts       Post[]
-   owner       User        @relation("GroupOwner", fields: [ownerId], references: [id])
-   ownerId     String      @map("owner_id")
-   categories  String[]    @default([])
+   owner       User             @relation("GroupOwner", fields: [ownerId], references: [id])
+   ownerId     String           @map("owner_id")
+   categories  String[]         @default([])
    image       String?
    banner      String?
    groupViews  GroupView[]
+   moderators  GroupModerator[]
 
    @@map("group")
+}
+
+model GroupModerator {
+   id             String   @id @default(cuid())
+   groupId        String   @map("group_id")
+   userId         String   @map("user_id")
+   moderatorSince DateTime @default(now()) @map("moderator_since")
+
+   group Group @relation(fields: [groupId], references: [id])
+   user  User  @relation(fields: [userId], references: [id])
+
+   @@unique([groupId, userId])
+   @@map("group_moderator")
 }
 
 model GroupView {

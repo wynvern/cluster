@@ -11,6 +11,7 @@ import { type SignInResponse, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import LogoTitle from "@/components/sign/LogoTitle";
+import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);
@@ -24,6 +25,40 @@ export default function Login() {
 		active: false,
 	});
 
+	function validateForm(email: string, password: string, numberval: string) {
+		const errors = {
+			email: "",
+			password: "",
+		};
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+		if (numberval) {
+			return false;
+		}
+
+		if (email === "") {
+			errors.email = "Email não pode estar vazio.";
+		} else if (!emailRegex.test(email)) {
+			errors.email = "Email digitado é inválido.";
+		}
+
+		if (password === "") {
+			errors.password = "Senha não pode estar vazia.";
+		}
+
+		setInputEmailVal({
+			message: errors.email,
+			active: errors.email !== "",
+		});
+
+		setInputPasswordVal({
+			message: errors.password,
+			active: errors.password !== "",
+		});
+
+		return errors.email !== "" || errors.password !== "";
+	}
+
 	async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		setLoading(true);
@@ -31,44 +66,23 @@ export default function Login() {
 
 		const formEmail: string = formData.get("email") as string;
 		const formPassword: string = formData.get("password") as string;
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-		if (formData.get("numberval")) {
+		if (
+			validateForm(
+				formEmail,
+				formPassword,
+				formData.get("numberval") as string
+			)
+		) {
+			setLoading(false);
 			return;
-		}
-
-		if (formEmail === "") {
-			setInputEmailVal({
-				message: "Email não pode estar vazio.",
-				active: true,
-			});
-			setLoading(false);
-			return false;
-		}
-
-		if (formPassword === "") {
-			setInputPasswordVal({
-				message: "Senha não pode estar vazia.",
-				active: true,
-			});
-			setLoading(false);
-			return false;
-		}
-
-		if (!emailRegex.test(formEmail)) {
-			setInputEmailVal({
-				message: "Email digitado é inválido.",
-				active: true,
-			});
-			setLoading(false);
-			return false;
 		}
 
 		const signInResult: SignInResponse | undefined = await signIn(
 			"credentials",
 			{
-				email: formData.get("email"),
-				password: formData.get("password"),
+				email: formEmail,
+				password: formPassword,
 				redirect: false,
 			}
 		);
@@ -92,96 +106,88 @@ export default function Login() {
 		}
 
 		setLoading(false);
-		router.push("/finish");
+		router.push("/");
 	}
 
 	return (
-		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
-				<LogoTitle />
-				<h2>Login</h2>
-				<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
-					<Input
-						placeholder="Email"
-						type="text"
-						name="email"
-						color="default"
-						variant="bordered"
-						classNames={{ inputWrapper: "h-14" }}
-						startContent={
-							<EnvelopeIcon className="h-6 text-neutral-500" />
-						}
-						isInvalid={inputEmailVal.active}
-						errorMessage={inputEmailVal.message}
-						onValueChange={() => {
-							setInputEmailVal({
-								message: "",
-								active: false,
-							});
-						}}
-					/>
-					<Input
-						placeholder="Senha"
-						type="password"
-						color="default"
-						variant="bordered"
-						name="password"
-						classNames={{ inputWrapper: "h-14" }}
-						startContent={
-							<KeyIcon className="h-6 text-neutral-500" />
-						}
-						isInvalid={inputPasswordVal.active}
-						errorMessage={inputPasswordVal.message}
-						onValueChange={() => {
-							setInputPasswordVal({
-								message: "",
-								active: false,
-							});
-						}}
-					/>
-					<Input
-						name="numberval"
-						type="text"
-						placeholder="Número de Telefone"
-						className="absolute left-0 -top-40"
-					/>
+		<AuthModalWrapper title="Entrar">
+			<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
+				<Input
+					placeholder="Email"
+					type="text"
+					name="email"
+					color="default"
+					variant="bordered"
+					classNames={{ inputWrapper: "h-14" }}
+					startContent={
+						<EnvelopeIcon className="h-6 text-neutral-500" />
+					}
+					isInvalid={inputEmailVal.active}
+					errorMessage={inputEmailVal.message}
+					onValueChange={() => {
+						setInputEmailVal({
+							message: "",
+							active: false,
+						});
+					}}
+				/>
+				<Input
+					placeholder="Senha"
+					type="password"
+					color="default"
+					variant="bordered"
+					name="password"
+					classNames={{ inputWrapper: "h-14" }}
+					startContent={<KeyIcon className="h-6 text-neutral-500" />}
+					isInvalid={inputPasswordVal.active}
+					errorMessage={inputPasswordVal.message}
+					onValueChange={() => {
+						setInputPasswordVal({
+							message: "",
+							active: false,
+						});
+					}}
+				/>
+				<Input
+					name="numberval"
+					type="text"
+					placeholder="Número de Telefone"
+					className="absolute left-0 -top-40"
+				/>
+				<div>
+					<p className="text-center">
+						<Link href="/reset-password">Esqueceu sua senha?</Link>
+					</p>
+				</div>
+
+				<div className="flex justify-between items-center">
 					<div>
 						<p className="text-center">
-							<Link href="/reset-password">
-								Esqueceu sua senha?
-							</Link>
+							<Link href="/signup">Crie uma conta</Link>
 						</p>
 					</div>
 
-					<div className="flex justify-between items-center">
-						<div>
-							<p className="text-center">
-								<Link href="/signup">Crie uma conta</Link>
-							</p>
-						</div>
-
-						<Button
-							type="submit"
-							color="primary"
-							isDisabled={loading}
-							isLoading={loading}
-							startContent={
-								loading ? (
-									""
-								) : (
-									<ArrowLeftEndOnRectangleIcon className="h-6" />
-								)
-							}
-						>
-							Entrar
-						</Button>
-					</div>
-				</form>
-				<div className="flex flex-col gap-y-6 items-center">
-					<p className="text-center">Ou</p>
-					<GoogleLoginButton />
+					<Button
+						type="submit"
+						color="primary"
+						isDisabled={loading}
+						isLoading={loading}
+						startContent={
+							loading ? (
+								""
+							) : (
+								<ArrowLeftEndOnRectangleIcon className="h-6" />
+							)
+						}
+					>
+						Entrar
+					</Button>
 				</div>
+			</form>
+			<div className="flex flex-col gap-y-6 items-center">
+				<p className="text-center">Ou</p>
+				<GoogleLoginButton />
 			</div>
-		</div>
+		</AuthModalWrapper>
 	);
 }

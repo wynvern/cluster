@@ -19,8 +19,11 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
-import getFileBase64 from "@/util/getFile";
 import type Group from "@/lib/db/group/type";
+import ErrorBox from "../general/ErrorBox";
+import supportedFormats from "@/public/supportedFormats.json";
+import getFileBase64 from "@/util/getFile";
+import { createPost } from "@/lib/db/post/post";
 
 function fileToBase64(
 	file: File
@@ -37,9 +40,28 @@ function fileToBase64(
 	});
 }
 
+function documentFileBase64(
+	file: File
+): Promise<{ base64: string; file: File }> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			const base64 = reader.result as string;
+			resolve({ base64, file });
+		};
+		reader.onerror = reject;
+		reader.readAsDataURL(file);
+	});
+}
+
 interface FileBase64Info {
 	base64: string;
 	preview: string;
+}
+
+interface DocumentFileBase64 {
+	base64: string;
+	file: File | undefined;
 }
 
 interface CreatePostProps {
@@ -58,32 +80,68 @@ export default function CreatePost({
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [selectedImages, setSelectedImages] = useState<FileBase64Info[]>([]);
+	const [selectedDocuments, setSelectedDocuments] = useState<
+		DocumentFileBase64[]
+	>([]);
 	const [errors, setErrors] = useState({
 		title: "",
 		content: "",
 		media: "",
+		document: "",
 	});
 
-	async function handleCreatePost(e: React.FormEvent<HTMLFormElement>) {
+	function validateInputs() {
+		let hasError = false;
+		let newErrors = { ...errors };
+
+		if (title.length < 1) {
+			newErrors = {
+				...newErrors,
+				title: "Título é obrigatório.",
+			};
+			hasError = true;
+		}
+
+		if (content.length < 1) {
+			newErrors = {
+				...newErrors,
+				content: "Conteúdo é obrigatório.",
+			};
+			hasError = true;
+		}
+
+		setErrors(newErrors);
+		return hasError;
+	}
+
+	async function handleCreatePost() {
 		setLoading(true);
-		e.preventDefault();
+
+		if (validateInputs()) {
+			setLoading(false);
+			return false;
+		}
+
+		const data = await createPost(
+			title,
+			content,
+			selectedImages.map((i) => i.base64),
+			selectedDocuments.map((d) => d.base64),
+			group.id
+		);
+
+		switch (data) {
+			case "no-session":
+				setErrors({
+					...errors,
+					content: "Você precisa estar logado para criar um post.",
+				});
+				break;
+		}
 
 		setLoading(false);
 		setSuccess(true);
-		setTimeout(() => setActive(false), 1000);
-	}
-
-	async function handleAddImage() {
-		try {
-			const data = await getFileBase64(["jpg", "jpeg", "png", "webp"]);
-
-			if (!data) return false;
-
-			setSelectedImages((prev) => [...prev, data]);
-		} catch (e) {
-			if ((e as { message: string }).message === "image-too-big") {
-			}
-		}
+		setTimeout(() => setActive(false), 3000);
 	}
 
 	useEffect(() => {
@@ -91,6 +149,9 @@ export default function CreatePost({
 			setSelectedImages([]);
 			setSuccess(false);
 			setLoading(false);
+			setTitle("");
+			setContent("");
+			setSelectedDocuments([]);
 		}
 	}, [active]);
 
@@ -131,14 +192,105 @@ export default function CreatePost({
 				files[0].type.split("/")[1]
 			)
 		) {
-			console.error("tipo não suportado"); // TODO: Better drag notifications
+			setErrors({
+				...errors,
+				media: "Tipo de arquivo inválido.",
+			});
+			setTimeout(() => {
+				setErrors({
+					...errors,
+					media: "",
+				});
+			}, 3000);
+			return false;
 		}
-		if (selectedImages.length >= 5) return false;
+		if (selectedImages.length >= 5) {
+			setErrors({
+				...errors,
+				media: "Número máximo de mídias atingido.",
+			});
+			setTimeout(() => {
+				setErrors({
+					...errors,
+					media: "",
+				});
+			}, 3000);
+			return false;
+		}
 
 		const newMediaFile = await fileToBase64(files[0]);
 		const newMedia = [...selectedImages, newMediaFile];
 		setSelectedImages(newMedia);
 	};
+
+	async function handleDropDocument(e: React.DragEvent) {
+		e.preventDefault();
+		setDragging(false);
+
+		const files = Array.from(e.dataTransfer.files);
+
+		if (!files[0]) {
+			return false;
+		}
+
+		if (!supportedFormats.document.includes(files[0].type.split("/")[1])) {
+			setErrors({
+				...errors,
+				document: "Tipo de arquivo inválido.",
+			});
+			return false;
+		}
+
+		if (selectedDocuments.length >= 5) {
+			setErrors({
+				...errors,
+				document: "Número máximo de documentos atingido.",
+			});
+			return false;
+		}
+
+		const newDocumentFile = await documentFileBase64(files[0]);
+		setSelectedDocuments([...selectedDocuments, newDocumentFile]);
+	}
+
+	async function handleSelectDocument() {
+		try {
+			const file = await getFileBase64(supportedFormats.document, 4.5, {
+				file: true,
+			});
+			if (!file.file) return false;
+			setSelectedDocuments((prev) => [
+				...prev,
+				{ ...file, file: file.file },
+			]);
+		} catch (error) {
+			if ((error as { message: string }).message === "image-too-big") {
+				setErrors({
+					...errors,
+					document: "Arquivo muito grande.",
+				});
+				setTimeout(() => {
+					setErrors({
+						...errors,
+						document: "",
+					});
+				}, 3000);
+			} else if (
+				(error as { message: string }).message === "Invalid file type"
+			) {
+				setErrors({
+					...errors,
+					document: "Tipo de arquivo inválido.",
+				});
+				setTimeout(() => {
+					setErrors({
+						...errors,
+						document: "",
+					});
+				}, 3000);
+			}
+		}
+	}
 
 	return (
 		<BaseModal
@@ -197,7 +349,7 @@ export default function CreatePost({
 								</div>
 							}
 						>
-							<div className="gap-y-3 flex flex-col">
+							<div className="gap-y-3 flex flex-col min-h-[370px]">
 								<Input
 									name="title"
 									variant="bordered"
@@ -219,14 +371,14 @@ export default function CreatePost({
 									}}
 									isDisabled={loading}
 									isInvalid={Boolean(errors.title)}
-									errorMessage={errors.title !== ""}
+									errorMessage={errors.title}
 								/>
 								<Textarea
 									name="content"
 									placeholder="Digite aqui"
 									variant="bordered"
 									classNames={{
-										innerWrapper: "py-2 min-h-60",
+										innerWrapper: "py-2 min-h-80",
 									}}
 									startContent={
 										<PencilIcon className="h-6 text-neutral-500" />
@@ -275,7 +427,11 @@ export default function CreatePost({
 														onClick={
 															handleSelectMedia
 														}
-														isDisabled={loading}
+														isDisabled={
+															loading ||
+															selectedImages.length >=
+																5
+														}
 														className="text-foreground"
 													>
 														<b>clique aqui</b>
@@ -285,6 +441,16 @@ export default function CreatePost({
 											</div>
 										</div>
 									</div>
+									<ErrorBox
+										className="mt-3"
+										error={errors.media}
+										isVisible={Boolean(errors.media)}
+									/>
+									{selectedImages.length < 1 && (
+										<p className="text-neutral-600 text-center mt-3">
+											Suas imagens aparecerão aqui.
+										</p>
+									)}
 									<div className="grid grid-cols-3 gap-3 mt-3">
 										{selectedImages.map((item, index) => (
 											<div
@@ -330,7 +496,89 @@ export default function CreatePost({
 								</div>
 							}
 						>
-							Aqui ficam documentos
+							<div className="flex h-80 w-full overflow-y-auto min-h-[370px]">
+								<ScrollShadow className="flex flex-col w-full relative">
+									{/* Upload image */}
+									<div
+										className={`w-full h-40 rounded-large drop-zone transition-colors default-border duration-200 ${
+											dragging ? "bg-primary" : ""
+										}`}
+										onDragOver={handleDragOver}
+										onDragLeave={handleDragLeave}
+										onDrop={handleDropDocument}
+									>
+										<div className="h-full w-full flex items-center justify-center">
+											<div className="flex items-center flex-col gap-y-2 my-10">
+												<CloudArrowUpIcon className="h-20 w-20" />
+												<p>
+													Arraste ou{" "}
+													<Link
+														onClick={
+															handleSelectDocument
+														}
+														isDisabled={
+															loading ||
+															selectedImages.length >=
+																5
+														}
+														className="text-foreground"
+													>
+														<b>clique aqui</b>
+													</Link>{" "}
+													para adicionar documentos.
+												</p>
+											</div>
+										</div>
+									</div>
+									<ErrorBox
+										className="mt-3"
+										error={errors.document}
+										isVisible={Boolean(errors.document)}
+									/>
+									<div className="flex flex-col gap-y-3 mt-3">
+										{selectedDocuments.length < 1 && (
+											<p className="text-neutral-600 text-center">
+												Seus documentos aparecerão aqui.
+											</p>
+										)}
+										{selectedDocuments.map(
+											(item, index) => (
+												<div
+													key={item.base64}
+													className="bg-neutral-800 relative rounded-large w-full flex p-3 justify-between flex items-center"
+												>
+													<div className="flex gap-x-4">
+														<DocumentIcon className="h-6 w-6" />
+														<p>{item.file?.name}</p>
+													</div>
+													<div>
+														<Button
+															color="secondary"
+															size="sm"
+															isIconOnly={true}
+															onClick={() => {
+																const newDocument =
+																	[
+																		...selectedDocuments,
+																	];
+																newDocument.splice(
+																	index,
+																	1
+																);
+																setSelectedDocuments(
+																	newDocument
+																);
+															}}
+														>
+															<XMarkIcon className="h-6" />
+														</Button>
+													</div>
+												</div>
+											)
+										)}
+									</div>
+								</ScrollShadow>
+							</div>
 						</Tab>
 					</Tabs>
 				</>
@@ -348,8 +596,7 @@ export default function CreatePost({
 					</Button>
 					<Button
 						color={success ? "success" : "primary"}
-						type="submit"
-						form="update-profile-form"
+						onClick={handleCreatePost}
 						isLoading={loading}
 						isDisabled={loading || success}
 						aria-label="salvar-grupo"

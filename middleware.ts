@@ -7,8 +7,6 @@ export default async function middleware(req: NextRequest) {
 	const url = new URL(req.url);
 	const session = await getToken({ req });
 
-	console.log(url.pathname);
-
 	// New exclude system to handle evey single page
 	if (
 		url.pathname.startsWith("/_next") || // exclude Next.js internals

@@ -91,7 +91,5 @@ export async function sendCode(): Promise<string> {
          `
 	);
 
-	console.log(`code sent to email ${email}`);
-
 	return "code-sent";
 }

@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import words from "../../../public/randomWords.json";
+import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 
 export default function Finish() {
 	const { update } = useSession();
@@ -112,66 +113,59 @@ export default function Finish() {
 	}, [session]);
 
 	return (
-		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
-				<LogoTitle />
-				<h2 className="w-[280px]">Complete seu perfil</h2>
-				<form
-					className="gap-y-6 flex flex-col"
-					onSubmit={handleComplete}
-				>
-					<Input
-						placeholder="Nome de usuário"
-						type="text"
-						name="username"
-						variant="bordered"
-						isInvalid={inputValidation.active}
-						errorMessage={inputValidation.message}
-						classNames={{ inputWrapper: "h-14" }}
+		<AuthModalWrapper title="Complete seu perfil">
+			<form className="gap-y-6 flex flex-col" onSubmit={handleComplete}>
+				<Input
+					placeholder="Nome de usuário"
+					type="text"
+					name="username"
+					variant="bordered"
+					isInvalid={inputValidation.active}
+					errorMessage={inputValidation.message}
+					classNames={{ inputWrapper: "h-14" }}
+					startContent={
+						<>
+							<UserIcon className="h-6 text-neutral-500" />
+						</>
+					}
+					onValueChange={() => {
+						setInputValidation({
+							active: false,
+							message: "",
+						});
+					}}
+				/>
+
+				<div className="flex items-center justify-between">
+					<div>
+						<Link
+							onClick={assignRandomUsername}
+							isDisabled={isLoading || success}
+						>
+							Nome aleatório
+						</Link>
+					</div>
+					<Button
+						type="submit"
+						color={success ? "success" : "primary"}
+						isLoading={isLoading}
+						isDisabled={isLoading || success}
 						startContent={
 							<>
-								<UserIcon className="h-6 text-neutral-500" />
+								{isLoading ? (
+									""
+								) : success ? (
+									<CheckIcon className="h-6" />
+								) : (
+									<CheckIcon className="h-6" />
+								)}
 							</>
 						}
-						onValueChange={() => {
-							setInputValidation({
-								active: false,
-								message: "",
-							});
-						}}
-					/>
-
-					<div className="flex items-center justify-between">
-						<div>
-							<Link
-								onClick={assignRandomUsername}
-								isDisabled={isLoading || success}
-							>
-								Nome aleatório
-							</Link>
-						</div>
-						<Button
-							type="submit"
-							color={success ? "success" : "primary"}
-							isLoading={isLoading}
-							isDisabled={isLoading || success}
-							startContent={
-								<>
-									{isLoading ? (
-										""
-									) : success ? (
-										<CheckIcon className="h-6" />
-									) : (
-										<CheckIcon className="h-6" />
-									)}
-								</>
-							}
-						>
-							Confirmar
-						</Button>
-					</div>
-				</form>
-			</div>
-		</div>
+					>
+						Confirmar
+					</Button>
+				</div>
+			</form>
+		</AuthModalWrapper>
 	);
 }

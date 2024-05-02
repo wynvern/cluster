@@ -21,7 +21,7 @@ export default function BaseModal({
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
 	title: ReactNode;
 	body: ReactNode;
-	footer: ReactNode;
+	footer?: ReactNode;
 	size?: "sm" | "md" | "lg" | "xl" | "2xl";
 }) {
 	return (
@@ -59,7 +59,7 @@ export default function BaseModal({
 							<h2>{title}</h2>
 						</ModalHeader>
 						<ModalBody>{body}</ModalBody>
-						<ModalFooter>{footer}</ModalFooter>
+						{footer && <ModalFooter>{footer}</ModalFooter>}
 					</>
 				)}
 			</ModalContent>

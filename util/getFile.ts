@@ -1,12 +1,18 @@
 interface FileBase64Info {
 	base64: string;
 	preview: string;
+	file?: File;
 }
 
-const getFileBase64 = (
+interface Options {
+	file?: boolean;
+}
+
+export default function getFileBase64(
 	acceptedTypes: string[],
-	maxSize = 4.5
-): Promise<FileBase64Info> => {
+	maxSize = 4.5,
+	options: Options = {}
+): Promise<FileBase64Info> {
 	return new Promise((resolve, reject) => {
 		const fileInput = document.createElement("input");
 		fileInput.type = "file";
@@ -25,7 +31,6 @@ const getFileBase64 = (
 			);
 
 			if (file.size > maxSize * 1024 * 1024) {
-				console.log(file.size);
 				reject(new Error("image-too-big"));
 				return;
 			}
@@ -47,17 +52,19 @@ const getFileBase64 = (
 					const [, base64] = reader.result.split(",");
 					// Use createObjectURL to generate the file's URL for preview
 					const preview = URL.createObjectURL(file);
-					resolve({ base64, preview });
+					resolve({
+						base64,
+						preview,
+						file: options.file ? file : undefined,
+					});
 				} else {
 					reject(new Error("Failed to read file as base64."));
 				}
 			};
-			reader.onerror = (error) => reject(error);
+
 			reader.readAsDataURL(file);
 		});
 
 		fileInput.click();
 	});
-};
-
-export default getFileBase64;
+}

@@ -55,6 +55,7 @@ export default function ProfileDropdown() {
 								aria-label="Sign Out"
 							/>
 						}
+						href="/settings"
 						aria-label="View profile"
 					>
 						Configurações

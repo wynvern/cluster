@@ -1,5 +1,6 @@
 "use client";
 
+import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import LogoTitle from "@/components/sign/LogoTitle";
 import { sendResetRequest } from "@/lib/db/reset-password/resetPassword";
 import {
@@ -53,52 +54,46 @@ export default function sendResetLink() {
 	}
 
 	return (
-		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
-				<LogoTitle />
-				<div>
-					<h2>Atualizar Senha</h2>
-					<p>
-						Digite seu email para receber um código de verificação.
-					</p>
-				</div>
-				<form
-					className="gap-y-6 flex flex-col"
-					onSubmit={handleSendRequest}
-				>
-					<Input
-						name="email"
-						variant="bordered"
-						placeholder="Email"
-						startContent={<AtSymbolIcon className="h-6" />}
-						errorMessage={inputError}
-						isInvalid={Boolean(inputError)}
-						classNames={{ inputWrapper: "h-14" }}
-						onChange={() => setInputError("")}
-					/>
+		<AuthModalWrapper
+			title="Recuperar senha"
+			subtitle="Informe seu email para receber um link de recuperação."
+		>
+			<form
+				className="gap-y-6 flex flex-col"
+				onSubmit={handleSendRequest}
+			>
+				<Input
+					name="email"
+					variant="bordered"
+					placeholder="Email"
+					startContent={<AtSymbolIcon className="h-6" />}
+					errorMessage={inputError}
+					isInvalid={Boolean(inputError)}
+					classNames={{ inputWrapper: "h-14" }}
+					onChange={() => setInputError("")}
+				/>
 
-					<div className="flex items-center justify-between">
-						<Link href="/signin">Voltar</Link>
-						<Button
-							type="submit"
-							color={success ? "success" : "primary"}
-							isLoading={loading}
-							isDisabled={loading || success}
-							startContent={
-								loading ? (
-									""
-								) : success ? (
-									<CheckIcon className="h-6" />
-								) : (
-									<PaperAirplaneIcon className="h-6" />
-								)
-							}
-						>
-							{success ? "Enviado" : "Enviar"}
-						</Button>
-					</div>
-				</form>
-			</div>
-		</div>
+				<div className="flex items-center justify-between">
+					<Link href="/signin">Voltar</Link>
+					<Button
+						type="submit"
+						color={success ? "success" : "primary"}
+						isLoading={loading}
+						isDisabled={loading || success}
+						startContent={
+							loading ? (
+								""
+							) : success ? (
+								<CheckIcon className="h-6" />
+							) : (
+								<PaperAirplaneIcon className="h-6" />
+							)
+						}
+					>
+						{success ? "Enviado" : "Enviar"}
+					</Button>
+				</div>
+			</form>
+		</AuthModalWrapper>
 	);
 }

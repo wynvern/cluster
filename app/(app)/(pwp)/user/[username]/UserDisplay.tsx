@@ -1,14 +1,15 @@
 import type User from "@/lib/db/user/type";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, BellIcon } from "@heroicons/react/24/outline";
 import { Button, Image, Skeleton } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import UserDropdown from "./UserDropdown";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function UserDisplay({ user }: { user: User | null }) {
 	const router = useRouter();
 	const [loaded, setLoaded] = useState(false);
-	console.log(user);
+	const session = useSession();
 
 	useEffect(() => {
 		if (user !== null) setLoaded(true);
@@ -17,7 +18,7 @@ export default function UserDisplay({ user }: { user: User | null }) {
 	return (
 		<div className="w-full">
 			<div
-				className="w-full relative"
+				className={`w-full relative ${user ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
 				<Skeleton isLoaded={loaded} className="absolute w-full h-full">
@@ -52,17 +53,33 @@ export default function UserDisplay({ user }: { user: User | null }) {
 				</div>
 			</div>
 			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
-				<div className="w-full h-20 flex items-center justify-end">
+				<div className="w-full h-20 flex items-center justify-end gap-x-4">
+					<Skeleton isLoaded={loaded}>
+						{user && user.id === session.data?.user.id ? (
+							<Button isIconOnly={true} variant="bordered">
+								<BellIcon className="h-6" />
+							</Button>
+						) : (
+							""
+						)}
+					</Skeleton>
 					<Skeleton isLoaded={loaded} className="rounded-lg">
-						{user ? <UserDropdown defaultUser={user} /> : ""}
+						{user ? (
+							<>
+								<UserDropdown defaultUser={user} />
+							</>
+						) : (
+							""
+						)}
 					</Skeleton>
 				</div>
 				<div>
 					<Skeleton isLoaded={loaded} className="rounded-lg">
 						<h1>{user?.name || "loading"}</h1>
-					</Skeleton>
-					<Skeleton isLoaded={loaded} className="rounded-lg">
-						<p>@{user?.username || "loading"}</p>
+						<p>
+							<b>u/</b>
+							{user?.username || "loading"}
+						</p>
 					</Skeleton>
 				</div>
 				<div>

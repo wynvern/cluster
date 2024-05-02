@@ -1,7 +1,7 @@
 "use client";
 
+import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import GoogleLoginButton from "@/components/sign/GLoginButton";
-import LogoTitle from "@/components/sign/LogoTitle";
 import { createUser } from "@/lib/db/user/user";
 import {
 	CheckIcon,
@@ -9,9 +9,8 @@ import {
 	KeyIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Input, Link, Image } from "@nextui-org/react";
-import { SignInResponse, signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { Button, Input, Link } from "@nextui-org/react";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export default function SignUp() {
@@ -103,98 +102,90 @@ export default function SignUp() {
 	}
 
 	return (
-		<div className="flex w-full h-dvh items-center justify-center">
-			<div className="default-border m-4 flex flex-col gap-y-6 w-full max-w-[500px] px-8 py-8 sm:p-16  rounded-large">
-				<LogoTitle />
-				<h2>Criar Conta</h2>
-				<form className="gap-y-6 flex flex-col" onSubmit={handleSignUp}>
-					<Input
-						placeholder="Email"
-						type="text"
-						name="email"
-						isInvalid={Boolean(inputError.email)}
-						errorMessage={inputError.email}
-						classNames={{ inputWrapper: "h-14" }}
-						startContent={
-							<EnvelopeIcon className="h-6 text-neutral-500" />
-						}
-						onValueChange={() => {
-							setInputError({ ...inputError, email: "" });
-						}}
-						variant="bordered"
-					/>
-					<Input
-						placeholder="Senha"
-						type="password"
-						name="password"
-						isInvalid={Boolean(inputError.password)}
-						errorMessage={inputError.password}
-						classNames={{ inputWrapper: "h-14" }}
-						startContent={
-							<KeyIcon className="h-6 text-neutral-500" />
-						}
-						variant="bordered"
-						onValueChange={() => {
-							setInputError({ ...inputError, password: "" });
-						}}
-					/>
-					<Input
-						placeholder="Digite a senha novamente"
-						name="repeat-password"
-						type="password"
-						classNames={{ inputWrapper: "h-14" }}
-						variant="bordered"
-						startContent={
-							<KeyIcon className="h-6 text-neutral-500" />
-						}
-						isInvalid={Boolean(inputError.repeatPassword)}
-						errorMessage={inputError.repeatPassword}
-						onValueChange={() => {
-							setInputError({
-								...inputError,
-								repeatPassword: "",
-							});
-						}}
-					/>
-					<Input
-						name="numberval"
-						type="text"
-						placeholder="Número de Telefone"
-						className="absolute left-0 -top-40"
-					/>
+		<AuthModalWrapper title="Criar conta">
+			<form className="gap-y-6 flex flex-col" onSubmit={handleSignUp}>
+				<Input
+					placeholder="Email"
+					type="text"
+					name="email"
+					isInvalid={Boolean(inputError.email)}
+					errorMessage={inputError.email}
+					classNames={{ inputWrapper: "h-14" }}
+					startContent={
+						<EnvelopeIcon className="h-6 text-neutral-500" />
+					}
+					onValueChange={() => {
+						setInputError({ ...inputError, email: "" });
+					}}
+					variant="bordered"
+				/>
+				<Input
+					placeholder="Senha"
+					type="password"
+					name="password"
+					isInvalid={Boolean(inputError.password)}
+					errorMessage={inputError.password}
+					classNames={{ inputWrapper: "h-14" }}
+					startContent={<KeyIcon className="h-6 text-neutral-500" />}
+					variant="bordered"
+					onValueChange={() => {
+						setInputError({ ...inputError, password: "" });
+					}}
+				/>
+				<Input
+					placeholder="Digite a senha novamente"
+					name="repeat-password"
+					type="password"
+					classNames={{ inputWrapper: "h-14" }}
+					variant="bordered"
+					startContent={<KeyIcon className="h-6 text-neutral-500" />}
+					isInvalid={Boolean(inputError.repeatPassword)}
+					errorMessage={inputError.repeatPassword}
+					onValueChange={() => {
+						setInputError({
+							...inputError,
+							repeatPassword: "",
+						});
+					}}
+				/>
+				<Input
+					name="numberval"
+					type="text"
+					placeholder="Número de Telefone"
+					className="absolute left-0 -top-40"
+				/>
 
-					<div className="flex justify-between items-center">
-						<div>
-							<p className="text-center">
-								<Link size="sm" href="/signin">
-									Tem uma Conta?
-								</Link>
-							</p>
-						</div>
-						<Button
-							type="submit"
-							color={success ? "success" : "primary"}
-							isLoading={loading}
-							isDisabled={loading || success}
-							startContent={
-								loading ? (
-									""
-								) : success ? (
-									<CheckIcon className="h-6" />
-								) : (
-									<PencilSquareIcon className="h-6" />
-								)
-							}
-						>
-							Criar Conta
-						</Button>
+				<div className="flex justify-between items-center">
+					<div>
+						<p className="text-center">
+							<Link size="sm" href="/signin">
+								Tem uma Conta?
+							</Link>
+						</p>
 					</div>
-				</form>
-				<div className="flex flex-col gap-y-6 items-center">
-					<p className="text-center">Ou</p>
-					<GoogleLoginButton />
+					<Button
+						type="submit"
+						color={success ? "success" : "primary"}
+						isLoading={loading}
+						isDisabled={loading || success}
+						startContent={
+							loading ? (
+								""
+							) : success ? (
+								<CheckIcon className="h-6" />
+							) : (
+								<PencilSquareIcon className="h-6" />
+							)
+						}
+					>
+						Criar Conta
+					</Button>
 				</div>
+			</form>
+			<div className="flex flex-col gap-y-6 items-center">
+				<p className="text-center">Ou</p>
+				<GoogleLoginButton />
 			</div>
-		</div>
+		</AuthModalWrapper>
 	);
 }

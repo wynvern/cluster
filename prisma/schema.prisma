@@ -8,48 +8,44 @@ datasource db {
 }
 
 model User {
-   id            String         @id @default(cuid())
-   name          String?
-   username      String?        @unique
-   bio           String?
-   email         String?        @unique
-   emailVerified DateTime?      @map("email_verified")
-   password      String?
-   image         String?
-   banner        String?
-   posts         Post[]
-   comments      Comment[]
-   bookmarks     Bookmark[]
-   groups        GroupMember[]
-   accounts      Account[]
-   sessions      Session[]
-   groupViewed   GroupView[]
-   notifications Notification[]
-   postViewed    PostView[]
-
+   id             String            @id @default(cuid())
+   name           String?
+   username       String?           @unique
+   bio            String?
+   email          String?           @unique
+   emailVerified  DateTime?         @map("email_verified")
+   password       String?
+   image          String?
+   banner         String?
+   posts          Post[]
+   comments       Comment[]
+   bookmarks      Bookmark[]
+   groups         GroupMember[]
+   accounts       Account[]
+   sessions       Session[]
+   groupViewed    GroupView[]
+   notifications  Notification[]
+   postViewed     PostView[]
    createdReports UserReport[]      @relation("ReportCreator")
    reports        UserReport[]      @relation("ReportedUser")
    bannedGroups   BannedGroupUser[]
    GroupReport    GroupReport[]
-
-   createdAt         DateTime           @default(now()) @map("created_at")
-   blockedUsers      BlockedUser[]      @relation("BlockedUserRelation")
-   blockedBy         BlockedUser[]      @relation("BlockedByRelation")
-   pushSubscriptions PushSubscription[]
+   createdAt      DateTime          @default(now()) @map("created_at")
+   blockedUsers   BlockedUser[]     @relation("BlockedUserRelation")
+   blockedBy      BlockedUser[]     @relation("BlockedByRelation")
+   Subscriptions  Subscription[]
 
    @@map("user")
 }
 
-model PushSubscription {
-   id        String @id @default(cuid())
-   sessionId String
-   endpoint  String
-   p256dh    String
-   auth      String
-   user      User   @relation(fields: [userId], references: [id])
-   userId    String
+model Subscription {
+   id           String @id @default(cuid())
+   subscription Json
+   user         User   @relation(fields: [userId], references: [id])
+   userId       String
 
    @@index([userId], name: "userId")
+   @@map("subscription")
 }
 
 model BlockedUser {
@@ -83,13 +79,13 @@ model CodeVerifyAccount {
 }
 
 model Notification {
-   id          String   @id @default(cuid())
-   title       String
-   description String?
-   image       String?
-   link        String?
-   viewed      Boolean  @default(false)
-   createdAt   DateTime @default(now()) @map("created_at")
+   id        String   @id @default(cuid())
+   title     String
+   body      String?
+   image     String?
+   link      String?
+   viewed    Boolean  @default(false)
+   createdAt DateTime @default(now()) @map("created_at")
 
    user   User   @relation(fields: [userId], references: [id])
    userId String @map("user_id")
@@ -157,7 +153,7 @@ model Comment {
    media     String[]  @default([])
    document  String[]  @default([])
 
-   @@map("comments")
+   @@map("comment")
 }
 
 model Bookmark {

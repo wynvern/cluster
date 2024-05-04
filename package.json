@@ -16,6 +16,7 @@
     "@nextui-org/react": "^2.3.6",
     "@prisma/client": "^5.13.0",
     "@types/bcrypt": "^5.0.2",
+    "@types/web-push": "^3.6.3",
     "@vercel/blob": "^0.23.2",
     "add": "^2.0.6",
     "bcrypt": "^5.1.1",
@@ -30,6 +31,7 @@
     "react": "^18",
     "react-dom": "^18",
     "sharp": "^0.33.3",
+    "web-push": "^3.6.7",
     "yarn": "^1.22.22"
   },
   "devDependencies": {

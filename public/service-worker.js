@@ -1,13 +1,42 @@
 const installEvent = () => {
+	console.log("service worker exists");
 	self.addEventListener("install", () => {
 		console.warn("service worker installed");
 	});
 };
 installEvent();
 
+const urlBase64ToUint8Array = (base64String) => {
+	const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding)
+		.replace(/-/g, "+")
+		.replace(/_/g, "/");
+	const rawData = atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
+	for (let i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
+	}
+	return outputArray;
+};
+
 const activateEvent = () => {
-	self.addEventListener("activate", () => {
-		console.warn("service worker activated");
+	self.addEventListener("activate", async (event) => {
+		event.waitUntil(clients.claim());
+
+		const subscription = await self.registration.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: urlBase64ToUint8Array(
+				"BFjRmLs2pxASc4SWPiDH7JUhd7VpkgLfdjSpUsRCxi9rOZ-C6BsdOEYC54F7AMlic5Pk9pqHWhV60mce_aCS9Z4"
+			),
+		});
+
+		self.clients.matchAll().then((clients) => {
+			for (const client of clients) {
+				client.postMessage({
+					subscription: JSON.stringify(subscription),
+				});
+			}
+		});
 	});
 };
 activateEvent();
@@ -42,40 +71,19 @@ fetchEvent();
 
 // For notifications
 self.addEventListener("push", (event) => {
+	console.log("Push received");
 	const data = event.data.json();
 	const title = data.title;
-	const body = data.message;
+	const body = data.body;
 	const icon = "/brand/logo.svg";
 	const notificationOptions = {
 		body: body,
 		tag: "simple-push-notification-example",
 		icon: icon,
+		image: "https://d.furaffinity.net/art/malfaren/1542336557/1542336557.malfaren_fevemalflineless.png",
 	};
 
-	return self.Notification.requestPermission().then((permission) => {
-		if (permission === "granted") {
-			return new self.Notification(title, notificationOptions);
-		}
-	});
+	event.waitUntil(
+		self.registration.showNotification(title, notificationOptions)
+	);
 });
-
-self.addEventListener("activate", async () => {
-	try {
-		const applicationServerKey = "789tb8t798yb97yb8";
-		const options = { applicationServerKey, userVisibleOnly: true };
-		const subscription = await self.registration.pushManager.subscribe(
-			options
-		);
-		postMessageToClient(subscription);
-	} catch (err) {
-		console.log("Failed to subscribe the user: ", err);
-	}
-});
-
-function postMessageToClient(data) {
-	clients.matchAll().then((clients) => {
-		if (clients?.length) {
-			clients[0].postMessage(data);
-		}
-	});
-}

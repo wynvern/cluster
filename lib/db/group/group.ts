@@ -76,10 +76,44 @@ export async function createGroup(
 					role: "owner",
 				},
 			},
+			groupSettings: {
+				create: {
+					memberApproval: true,
+					memberJoining: true,
+					memberPosting: true,
+				},
+			},
 		},
 	});
 
 	return data.id;
+}
+
+export async function pinPost({ postId }: { postId: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: {
+			group: {
+				select: { members: { where: { userId: session.user.id } } },
+			},
+		},
+	});
+
+	if (!post) return "post-not-found";
+
+	if (!["owner", "moderator"].includes(post.group.members[0].role))
+		return "no-permission";
+
+	await db.post.update({
+		where: { id: postId },
+		data: { pinned: true },
+	});
+
+	return "ok";
 }
 
 export async function updateGroup(

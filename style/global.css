@@ -19,6 +19,10 @@ body {
 	margin: 0 !important;
 }
 
+div[role="tabpanel"] {
+	width: 100%;
+}
+
 .border-default,
 .border-medium {
 	border-width: 1px !important;

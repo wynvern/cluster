@@ -16,4 +16,5 @@ export default interface Post {
 	};
 	media?: string[];
 	document?: string[];
+	pinned: boolean;
 }

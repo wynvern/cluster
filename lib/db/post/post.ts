@@ -51,7 +51,7 @@ export async function createPost(
 export async function fetchGroupPosts(groupId: string) {
 	const posts = await db.post.findMany({
 		where: { groupId },
-		orderBy: { createdAt: "desc" },
+		orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
 		include: {
 			author: {
 				select: {

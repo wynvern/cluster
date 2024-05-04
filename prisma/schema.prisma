@@ -32,11 +32,24 @@ model User {
    bannedGroups   BannedGroupUser[]
    GroupReport    GroupReport[]
 
-   createdAt    DateTime      @default(now()) @map("created_at")
-   blockedUsers BlockedUser[] @relation("BlockedUserRelation")
-   blockedBy    BlockedUser[] @relation("BlockedByRelation")
+   createdAt         DateTime           @default(now()) @map("created_at")
+   blockedUsers      BlockedUser[]      @relation("BlockedUserRelation")
+   blockedBy         BlockedUser[]      @relation("BlockedByRelation")
+   pushSubscriptions PushSubscription[]
 
    @@map("user")
+}
+
+model PushSubscription {
+   id        String @id @default(cuid())
+   sessionId String
+   endpoint  String
+   p256dh    String
+   auth      String
+   user      User   @relation(fields: [userId], references: [id])
+   userId    String
+
+   @@index([userId], name: "userId")
 }
 
 model BlockedUser {
@@ -112,6 +125,7 @@ model Post {
    group     Group      @relation(fields: [groupId], references: [id])
    groupId   String     @map("group_id")
    createdAt DateTime   @default(now())
+   pinned    Boolean    @default(false)
 
    @@map("post")
 }
@@ -190,22 +204,36 @@ model BannedGroupUser {
 }
 
 model Group {
-   id          String            @id @default(cuid())
-   name        String?
-   groupname   String            @unique
-   description String?
-   members     GroupMember[]
-   posts       Post[]
-   categories  String[]          @default([])
-   image       String?
-   banner      String?
-   groupViews  GroupView[]
-   createdAt   DateTime          @default(now()) @map("created_at")
-   bannedUsers BannedGroupUser[]
-   reports     GroupReport[]
-   guidelines  String?
+   id            String            @id @default(cuid())
+   name          String?
+   groupname     String            @unique
+   description   String?
+   members       GroupMember[]
+   posts         Post[]
+   categories    String[]          @default([])
+   image         String?
+   banner        String?
+   groupViews    GroupView[]
+   createdAt     DateTime          @default(now()) @map("created_at")
+   bannedUsers   BannedGroupUser[]
+   reports       GroupReport[]
+   groupSettings GroupSetting?
+   guidelines    String?
 
    @@map("group")
+}
+
+model GroupSetting {
+   id            String   @id @default(cuid())
+   groupId       String   @map("group_id")
+   memberPosting Boolean  @default(false) @map("member_posting")
+   memberJoining Boolean  @default(false) @map("member_joining")
+   createdAt     DateTime @default(now()) @map("created_at")
+
+   group Group @relation(fields: [groupId], references: [id])
+
+   @@unique([groupId])
+   @@map("group_setting")
 }
 
 model GroupReport {

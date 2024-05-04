@@ -36,7 +36,7 @@ export default function GroupPage({
 		if (!group) return;
 
 		const data = await fetchGroupPosts(group.id);
-
+		console.log(data);
 		setPosts(data as Post[]);
 	}
 

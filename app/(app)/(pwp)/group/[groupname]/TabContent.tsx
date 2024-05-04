@@ -16,7 +16,7 @@ export default function TabContent({ posts }: { posts: Post[] }) {
 				<Tab title={<h3 className="p-2">Posts</h3>} className="px-0">
 					<div
 						className={`px-4 sm:px-10 mt-10 ${
-							posts.length > 1 ? "hidden" : ""
+							posts.length >= 1 ? "hidden" : ""
 						}`}
 					>
 						<NoPosts message="Nenhum post encontrado" />

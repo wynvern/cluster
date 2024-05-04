@@ -4,6 +4,7 @@ import type Group from "@/lib/db/group/type";
 import GroupDropdown from "./GroupDropdown";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import FollowUnfollowGroup from "@/components/general/FollowUnfollowGroup";
 
 export default function GroupDisplay({ group }: { group: Group | null }) {
 	const router = useRouter();
@@ -47,7 +48,10 @@ export default function GroupDisplay({ group }: { group: Group | null }) {
 				</div>
 			</div>
 			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
-				<div className="w-full h-20 flex items-center justify-end">
+				<div className="w-full h-20 flex items-center justify-end gap-x-4">
+					{group && (
+						<FollowUnfollowGroup groupname={group.groupname} />
+					)}
 					{group && <GroupDropdown defaultGroup={group} />}
 				</div>
 				<div>

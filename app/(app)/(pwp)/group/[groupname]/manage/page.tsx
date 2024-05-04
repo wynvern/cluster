@@ -1,44 +1,78 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SettingCategory from "./SettingCategory";
 import SettingsTabs from "./SettingsTabs";
+import { useRouter } from "next/navigation";
+import { getRole } from "@/lib/db/group/group";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@nextui-org/react";
 
-export default function Settings() {
+export default function Settings({
+	params,
+}: {
+	params: { groupname: string };
+}) {
 	const [activeTab, setActiveTab] = useState("");
+	const router = useRouter();
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		async function handleGetRole() {
+			const role = await getRole({ groupname: params.groupname });
+			if (!["owner", "moderator"].includes(String(role))) {
+				router.back();
+			}
+		}
+
+		handleGetRole();
+	}, []);
 
 	return (
 		<>
-			<div className="flex flex-col lg:flex-row w-full h-full">
-				<div className="w-full lg:w-1/4 h-full sidebar-border pt-10 hidden lg:block">
-					<SettingsTabs
-						activeTab={activeTab}
-						setActiveTab={setActiveTab}
-					/>
-				</div>
-				{activeTab === "" && (
-					<div className="w-full lg:w-1/4 h-full sidebar-border pt-6">
+			<div className="flex w-full h-full">
+				<div className="hidden lg:flex w-full h-full">
+					<div className="w-full w-1/4 sidebar-border pt-10">
 						<SettingsTabs
 							activeTab={activeTab}
 							setActiveTab={setActiveTab}
 						/>
 					</div>
-				)}
-				{activeTab !== "" && (
-					<div className="w-full md:hidden lg:block lg:w-3/4 h-full p-10">
-						<div className="mb-10 block md:hidden">
-							<Button isIconOnly={true} variant="bordered">
-								<ChevronLeftIcon
-									className="h-6"
-									onClick={() => setActiveTab("")}
-								/>
-							</Button>
-						</div>
-						<SettingCategory activeTab={activeTab} />
+					<div className="w-full w-3/4 px-10 pt-10">
+						<SettingCategory
+							activeTab={activeTab}
+							groupname={params.groupname}
+							className="h-full"
+						/>
 					</div>
-				)}
+				</div>
+				<div className="flex lg:hidden w-full h-full flex-col">
+					<div className="w-full p-10">
+						<Button
+							isIconOnly={true}
+							color="secondary"
+							className="default-border"
+						>
+							<ChevronLeftIcon className="h-6" />
+						</Button>
+					</div>
+					{activeTab === "" ? (
+						<div className="w-full sidebar-border pt-10">
+							<SettingsTabs
+								activeTab={activeTab}
+								setActiveTab={setActiveTab}
+							/>
+						</div>
+					) : (
+						<div className="w-full px-10 pt-10">
+							<SettingCategory
+								activeTab={activeTab}
+								groupname={params.groupname}
+								className="h-full"
+							/>
+						</div>
+					)}
+				</div>
 			</div>
 		</>
 	);

@@ -1,3 +1,4 @@
+import NoPosts from "@/components/card/NoPosts";
 import PostCard from "@/components/card/PostCard";
 import SkeletonPostCard from "@/components/card/SkeletonPostCard";
 import type Post from "@/lib/db/post/type";
@@ -18,7 +19,7 @@ export default function TabContent({ posts }: { posts: Post[] }) {
 							posts.length > 1 ? "hidden" : ""
 						}`}
 					>
-						<SkeletonPostCard />
+						<NoPosts message="Nenhum post encontrado" />
 					</div>
 					<div className="mt-6 flex flex-col gap-y-10">
 						{posts.map((post) => (

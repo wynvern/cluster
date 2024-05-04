@@ -61,6 +61,7 @@ export default function GroupPage({
 						isIconOnly={true}
 						size="lg"
 						color="secondary"
+						className="default-border"
 						onClick={() => setCreatePostActive(true)}
 					>
 						<PlusIcon className="h-8" />

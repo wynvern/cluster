@@ -10,11 +10,11 @@ function isValidGroupname(str: string) {
 	return regex.test(str);
 }
 
-type GroupId = { id: string; groupname?: string };
+type groupname = { id: string; groupname?: string };
 type GroupName = { id?: string; groupname: string };
 
 export default async function fetchGroup(
-	params: GroupId | GroupName
+	params: groupname | GroupName
 ): Promise<Group | null> {
 	const searchBy = params.id
 		? { id: params.id }
@@ -28,7 +28,6 @@ export default async function fetchGroup(
 			image: true,
 			banner: true,
 			groupname: true,
-			ownerId: true,
 			description: true,
 			_count: {
 				select: {
@@ -70,8 +69,13 @@ export async function createGroup(
 			name,
 			groupname,
 			description,
-			ownerId: session.user.id,
 			categories,
+			members: {
+				create: {
+					userId: session.user.id,
+					role: "owner",
+				},
+			},
 		},
 	});
 
@@ -89,11 +93,245 @@ export async function updateGroup(
 	if (!name && !description) return "no-data";
 
 	await db.group.update({
-		where: { id, ownerId: session.user.id },
+		where: {
+			id,
+			members: { some: { userId: session.user.id, role: "owner" } },
+		},
 		data: {
 			name: name,
 			description: description,
 		},
+	});
+
+	return "ok";
+}
+
+export async function getMembers({ groupname }: { groupname: string }) {
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return;
+
+	const members = await db.groupMember.findMany({
+		where: { groupId: group.id },
+		select: {
+			user: {
+				select: {
+					name: true,
+					image: true,
+					username: true,
+					id: true,
+				},
+			},
+			role: true,
+			joinedAt: true,
+		},
+	});
+
+	return [...members];
+}
+
+// TODO: See if node-cache is valid for this use case
+
+const roleCache: { [userId: string]: { [groupId: string]: string | null } } =
+	{};
+
+export async function getRole({ groupname }: { groupname: string }) {
+	const session = await getServerSession(authOptions);
+	const userId = session?.user.id;
+
+	if (!userId || !groupname) {
+		return undefined;
+	}
+
+	// Step 2: Check if the result is in the cache
+	if (roleCache[userId]?.[groupname]) {
+		return roleCache[userId][groupname];
+	}
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return undefined;
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId: userId },
+		select: { role: true },
+	});
+
+	// Step 4: Store the result in the cache
+	if (!roleCache[userId]) {
+		roleCache[userId] = {};
+	}
+	roleCache[userId][groupname] = String(member?.role);
+
+	return member?.role;
+}
+
+export async function enterGroup({ groupname }: { groupname: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId: session.user.id },
+	});
+
+	if (member) return "already-member";
+
+	await db.groupMember.create({
+		data: {
+			groupId: group.id,
+			userId: session.user.id,
+			role: "member",
+		},
+	});
+
+	return "ok";
+}
+
+export async function exitGroup({ groupname }: { groupname: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId: session.user.id },
+	});
+
+	if (!member) return "not-member";
+
+	await db.groupMember.delete({
+		where: {
+			groupId_userId: { groupId: group.id, userId: session.user.id },
+		},
+	});
+
+	return "ok";
+}
+
+async function isOwner({ groupname }: { groupname: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return false;
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+		select: { members: { where: { userId: session.user.id } } },
+	});
+
+	if (!group) return false;
+
+	return group.members[0].role === "owner";
+}
+
+export async function removeMember({
+	groupname,
+	userId,
+}: {
+	groupname: string;
+	userId: string;
+}) {
+	if (!(await isOwner({ groupname }))) return "not-owner";
+
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId: userId },
+	});
+
+	if (!member) return "not-member";
+
+	await db.groupMember.delete({
+		where: { groupId_userId: { groupId: group.id, userId } },
+	});
+
+	return "ok";
+}
+
+export async function promoteMember({
+	groupname,
+	userId,
+}: {
+	groupname: string;
+	userId: string;
+}) {
+	if (!(await isOwner({ groupname }))) return "not-owner";
+
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId: userId },
+	});
+
+	if (!member) return "not-member";
+
+	await db.groupMember.update({
+		where: { groupId_userId: { groupId: group.id, userId } },
+		data: { role: "moderator" },
+	});
+
+	return "ok";
+}
+
+export async function unpromoteMember({
+	groupname,
+	userId,
+}: {
+	groupname: string;
+	userId: string;
+}) {
+	if (!(await isOwner({ groupname }))) return "not-owner";
+
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId: userId },
+	});
+
+	if (!member) return "not-member";
+
+	await db.groupMember.update({
+		where: { groupId_userId: { groupId: group.id, userId } },
+		data: { role: "member" },
 	});
 
 	return "ok";

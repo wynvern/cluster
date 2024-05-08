@@ -21,7 +21,7 @@ export default function AuthModalWrapper({
 				</div>
 				{children}
 			</div>
-			<p className="text-default-200 mt-2">
+			<p className="text-neutral-500 mt-2">
 				Cluster sobre licença Apache 2.0
 			</p>
 		</div>

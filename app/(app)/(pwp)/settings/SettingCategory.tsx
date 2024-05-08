@@ -1,3 +1,4 @@
+import Appearance from "./_categories/Appearance";
 import GeneralSetting from "./_categories/GeneralSetting";
 
 interface SettingCategoryProps {
@@ -12,6 +13,7 @@ export default function SettingCategory({
 	return (
 		<div className={className}>
 			{activeTab === "Geral" ? <GeneralSetting /> : null}
+			{activeTab === "Aparência" ? <Appearance /> : null}
 		</div>
 	);
 }

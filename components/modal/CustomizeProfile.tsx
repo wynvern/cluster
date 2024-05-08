@@ -12,6 +12,7 @@ import { updateUser } from "@/lib/db/user/user";
 import { uploadUserAvatar, uploadUserBanner } from "@/lib/blob/userBlob";
 import type User from "@/lib/db/user/type";
 import getFileBase64 from "@/util/getFile";
+import Draggable from "../general/Draggable";
 
 interface CustomizeProfileProps {
 	active: boolean;
@@ -148,11 +149,27 @@ export default function CustomizeProfile({
 			setActive={setActive}
 			body={
 				<>
-					<div
+					<Draggable
 						className="w-full bg-default-500 flex items-center justify-center rounded-large relative"
 						style={{
 							aspectRatio: "1000 / 400",
 						}}
+						onFileDrag={(files) => {
+							const file = files[0];
+							const reader = new FileReader();
+							reader.readAsDataURL(file);
+							reader.onload = () => {
+								setSelectedImages((prev) => ({
+									avatar: prev.avatar,
+									banner: {
+										base64: reader.result as string,
+										preview: URL.createObjectURL(file),
+										error: "",
+									},
+								}));
+							};
+						}}
+						acceptedTypes={["jpg", "png", "gif", "webp", "jpeg"]}
 					>
 						<Image
 							removeWrapper={true}
@@ -170,7 +187,31 @@ export default function CustomizeProfile({
 						>
 							<PhotoIcon className="h-6" />
 						</Button>
-						<div className="absolute -bottom-10 left-4 flex items-center justify-center">
+						<Draggable
+							className="absolute -bottom-10 left-4 flex items-center justify-center"
+							onFileDrag={(files) => {
+								const file = files[0];
+								const reader = new FileReader();
+								reader.readAsDataURL(file);
+								reader.onload = () => {
+									setSelectedImages((prev) => ({
+										banner: prev.banner,
+										avatar: {
+											base64: reader.result as string,
+											preview: URL.createObjectURL(file),
+											error: "",
+										},
+									}));
+								};
+							}}
+							acceptedTypes={[
+								"jpg",
+								"png",
+								"gif",
+								"webp",
+								"jpeg",
+							]}
+						>
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"
@@ -187,8 +228,8 @@ export default function CustomizeProfile({
 								}
 								removeWrapper={true}
 							/>
-						</div>
-					</div>
+						</Draggable>
+					</Draggable>
 					<div className="mt-11">
 						<form
 							className="flex gap-y-3 flex-col"

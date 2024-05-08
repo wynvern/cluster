@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="pt-BR">
-			<body className={`${inter.className} dark`}>
+			<body className={`${inter.className}`}>
 				<Cluster>{children}</Cluster>
 			</body>
 		</html>

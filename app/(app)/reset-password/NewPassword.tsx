@@ -1,4 +1,5 @@
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
+import PasswordInput from "@/components/auth/PasswordInput";
 import ErrorBox from "@/components/general/ErrorBox";
 import LogoTitle from "@/components/sign/LogoTitle";
 import { updatePassword } from "@/lib/db/reset-password/resetPassword";
@@ -92,11 +93,10 @@ export default function NewPassword() {
 				className="gap-y-6 flex flex-col"
 				onSubmit={handleUpdatePassword}
 			>
-				<Input
+				<PasswordInput
 					name="password"
 					variant="bordered"
 					placeholder="Nova senha"
-					type="password"
 					startContent={<KeyIcon className="h-6" />}
 					errorMessage={inputErrors.password}
 					isInvalid={Boolean(inputErrors.password)}
@@ -105,11 +105,10 @@ export default function NewPassword() {
 						setInputErrors({ ...inputErrors, password: "" })
 					}
 				/>
-				<Input
+				<PasswordInput
 					name="repeatPassword"
 					variant="bordered"
 					placeholder="Repita a senha"
-					type="password"
 					startContent={<KeyIcon className="h-6" />}
 					errorMessage={inputErrors.repeatPassword}
 					isInvalid={Boolean(inputErrors.repeatPassword)}

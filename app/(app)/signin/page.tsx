@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import LogoTitle from "@/components/sign/LogoTitle";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
+import PasswordInput from "@/components/auth/PasswordInput";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);
@@ -131,9 +132,8 @@ export default function Login() {
 						});
 					}}
 				/>
-				<Input
+				<PasswordInput
 					placeholder="Senha"
-					type="password"
 					color="default"
 					variant="bordered"
 					name="password"

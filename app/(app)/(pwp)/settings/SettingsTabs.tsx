@@ -1,6 +1,10 @@
 "use client";
 
-import { ChevronRightIcon, CubeIcon } from "@heroicons/react/24/outline";
+import {
+	ChevronRightIcon,
+	CubeIcon,
+	PaintBrushIcon,
+} from "@heroicons/react/24/outline";
 import { Link, Tab, Tabs } from "@nextui-org/react";
 
 interface SettingsTabsProps {
@@ -11,8 +15,7 @@ interface SettingsTabsProps {
 
 const categories = [
 	{ title: "Geral", icon: <CubeIcon className="h-6" /> },
-	{ title: "Notificações", icon: <CubeIcon className="h-6" /> },
-	{ title: "Segurança", icon: <CubeIcon className="h-6" /> },
+	{ title: "Aparência", icon: <PaintBrushIcon className="h-6" /> },
 ];
 
 export default function SettingsTabs({

@@ -19,7 +19,7 @@ export default function GroupPage({
 	const [notFound, setNotFound] = useState(false);
 	const [group, setGroup] = useState<Group | null>(null);
 	const [createPostActive, setCreatePostActive] = useState(false);
-	const [posts, setPosts] = useState<Post[]>([]);
+	const [posts, setPosts] = useState<Post[] | null>(null);
 
 	async function handleFetchGroup() {
 		const data = await fetchGroup({ groupname: params.groupname });

@@ -6,12 +6,21 @@ import { useEffect, useState } from "react";
 import UserDisplay from "./UserDisplay";
 import TabContent from "./TabContent";
 import type Post from "@/lib/db/post/type";
-import { fetchUserPosts } from "@/lib/db/post/post";
+import { fetchUserBookmarkPosts, fetchUserPosts } from "@/lib/db/post/post";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [notFound, setNotFound] = useState(false);
 	const [user, setUser] = useState<User | null>(null);
-	const [posts, setPosts] = useState<Post[]>([]);
+	const [posts, setPosts] = useState<Post[] | null>(null);
+	const [bookmarkPosts, setBookmarkPosts] = useState<Post[] | null>(null);
+
+	async function handleFetchBookmarkPosts() {
+		if (!user) return;
+
+		const data = await fetchUserBookmarkPosts(user.id);
+
+		setBookmarkPosts(data as Post[]);
+	}
 
 	async function handleFetchUser() {
 		const data = await fetchUser({ username: params.username });
@@ -40,6 +49,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		handleFetchPosts();
+		handleFetchBookmarkPosts();
 	}, [user]);
 
 	return (
@@ -47,7 +57,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			<div className="side-borders w-full max-w-[1000px] h-full">
 				{notFound ? <>User was not found</> : ""}
 				<UserDisplay user={user} />
-				<TabContent posts={posts} />
+				<TabContent posts={posts} bookmarkPosts={bookmarkPosts} />
 			</div>
 		</div>
 	);

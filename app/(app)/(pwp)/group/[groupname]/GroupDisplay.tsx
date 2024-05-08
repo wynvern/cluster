@@ -5,6 +5,7 @@ import GroupDropdown from "./GroupDropdown";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import FollowUnfollowGroup from "@/components/general/FollowUnfollowGroup";
+import { ChatBubbleBottomCenterTextIcon } from "@heroicons/react/24/outline";
 
 export default function GroupDisplay({ group }: { group: Group | null }) {
 	const router = useRouter();
@@ -49,6 +50,9 @@ export default function GroupDisplay({ group }: { group: Group | null }) {
 			</div>
 			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
 				<div className="w-full h-20 flex items-center justify-end gap-x-4">
+					<Button isIconOnly={true} color="primary">
+						<ChatBubbleBottomCenterTextIcon className="h-6" />
+					</Button>
 					{group && (
 						<FollowUnfollowGroup groupname={group.groupname} />
 					)}

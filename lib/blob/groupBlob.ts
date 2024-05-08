@@ -19,8 +19,10 @@ export async function uploadGroupImage(id: string, file: string) {
 		contentType: "image/png",
 	});
 
+	// TODO: VAlidade if user has permission
+
 	await db.group.update({
-		where: { id, ownerId: session.user.id },
+		where: { id },
 		data: { image: blob.url },
 	});
 
@@ -40,8 +42,10 @@ export async function uploadGroupBanner(id: string, file: string) {
 		contentType: "image/png",
 	});
 
+	// TODO: validate if user has permission
+
 	await db.group.update({
-		where: { id, ownerId: session.user.id },
+		where: { id },
 		data: { banner: blob.url },
 	});
 

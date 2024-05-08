@@ -38,6 +38,7 @@ export async function sendNotification({
 	message: {
 		title: string;
 		body: string;
+		image?: string;
 	};
 }) {
 	const subscriptions = await db.subscription.findMany({
@@ -46,12 +47,14 @@ export async function sendNotification({
 		},
 	});
 
-   await db.notification.create({
-      data: {
-         title: message.title,
-         body: message.body,
-         userId: receiverUserId,
-      },
+	await db.notification.create({
+		data: {
+			title: message.title,
+			body: message.body,
+			userId: receiverUserId,
+			image: message.image,
+		},
+	});
 
 	for (const sub of subscriptions) {
 		console.log(sub.subscription);

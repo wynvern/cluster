@@ -76,11 +76,12 @@ self.addEventListener("push", (event) => {
 	const title = data.title;
 	const body = data.body;
 	const icon = "/brand/logo.svg";
+	const image = data.image;
 	const notificationOptions = {
 		body: body,
 		tag: "simple-push-notification-example",
 		icon: icon,
-		image: "https://d.furaffinity.net/art/malfaren/1542336557/1542336557.malfaren_fevemalflineless.png",
+		image: image,
 	};
 
 	event.waitUntil(

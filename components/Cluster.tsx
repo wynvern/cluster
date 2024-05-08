@@ -23,6 +23,7 @@ export default function Cluster({ children }: { children: React.ReactNode }) {
 			);
 		}
 	}, []);
+
 	return (
 		<>
 			<NextUIProvider className="min-h-dvh">

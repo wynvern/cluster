@@ -77,3 +77,38 @@ export async function updateUser(name?: string, bio?: string) {
 
 	return "ok";
 }
+
+export async function getNotifications() {
+	const session = await getServerSession(authOptions);
+	if (!session) return [];
+
+	const notifications = await db.notification.findMany({
+		where: { userId: session.user.id },
+	});
+
+	return notifications;
+}
+
+export async function fetchUserGroups(options: { groupChatId?: boolean }) {
+	const session = await getServerSession(authOptions);
+	if (!session) return [];
+
+	const queryOptions = {
+		where: { members: { some: { userId: session.user.id } } },
+		include: {},
+	};
+
+	if (options.groupChatId) {
+		queryOptions.include = {
+			GroupChat: {
+				select: {
+					id: true,
+				},
+			},
+		};
+	}
+
+	const groups = await db.group.findMany(queryOptions);
+
+	return groups;
+}

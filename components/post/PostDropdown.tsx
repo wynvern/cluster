@@ -26,7 +26,13 @@ interface DropdownItemProps {
 	onClick?: () => void;
 }
 
-export default function PostDropdown({ post }: { post: Post }) {
+export default function PostDropdown({
+	post,
+	isUserPage = false,
+}: {
+	post: Post;
+	isUserPage?: boolean;
+}) {
 	const session = useSession();
 	const [userRole, setUserRole] = useState<string | null | undefined>("");
 
@@ -41,42 +47,55 @@ export default function PostDropdown({ post }: { post: Post }) {
 	}, []);
 
 	async function handlePinPost() {
-		const response = await pinPost({ postId: post.id });
+		await pinPost({ postId: post.id });
 	}
 
 	const dropdownItems = [
-		userRole === "owner" && {
-			description: "Pinar post",
-			className: "text-success",
-			icon: (
-				<ArrowUpOnSquareStackIcon
-					className="h-8"
-					aria-label="Pin Post"
-				/>
-			),
-			ariaLabel: "pin-post",
-			text: "Pin Post",
-			onClick: handlePinPost,
-		},
-		session &&
-			session.data?.user.id === post.authorId && {
-				description: "Deletar este post.",
-				className: ["moderator", "owner"].includes(String(userRole))
-					? "text-success"
-					: "text-danger",
-				icon: <TrashIcon className="h-8" aria-label="Delete Post" />,
-				ariaLabel: "delete-post",
-				text: "Deletar Post",
-			},
+		// Pin Post action
+		["owner", "moderator"].includes(String(userRole)) && !isUserPage
+			? {
+					description: "Pinar post",
+					className: "text-success",
+					icon: (
+						<ArrowUpOnSquareStackIcon
+							className="h-8"
+							aria-label="Pin Post"
+						/>
+					),
+					ariaLabel: "pin-post",
+					text: "Pin Post",
+					onClick: handlePinPost,
+			  }
+			: null,
 
-		{
-			description: "Reporte este post.",
-			className: "text-danger",
-			icon: <FlagIcon className="h-8" aria-label="Sign Out" />,
-			ariaLabel: "report-group",
-			text: "Reportar Post",
-		},
-	].filter(Boolean) as DropdownItemProps[];
+		// Delete Post action
+		(session && session.data?.user.id === post.authorId) ||
+		(["owner", "moderator"].includes(String(userRole)) && !isUserPage)
+			? {
+					description: "Deletar este post.",
+					className:
+						["moderator", "owner"].includes(String(userRole)) &&
+						session.data?.user.id !== post.authorId
+							? "text-success"
+							: "text-danger",
+					icon: (
+						<TrashIcon className="h-8" aria-label="Delete Post" />
+					),
+					ariaLabel: "delete-post",
+					text: "Deletar Post",
+			  }
+			: null,
+
+		// Report Post action
+		session &&
+			session.data?.user.id !== post.authorId && {
+				description: "Reporte este post.",
+				className: "text-danger",
+				icon: <FlagIcon className="h-8" aria-label="Sign Out" />,
+				ariaLabel: "report-group",
+				text: "Reportar Post",
+			},
+	].filter(Boolean) as DropdownItemProps[]; // Filter out null values
 
 	return (
 		<Dropdown className="default-border shadow-none" placement="bottom-end">

@@ -34,6 +34,10 @@ model User {
    blockedUsers   BlockedUser[]     @relation("BlockedUserRelation")
    blockedBy      BlockedUser[]     @relation("BlockedByRelation")
    Subscriptions  Subscription[]
+   Message        Message[]
+   Reaction       Reaction[]
+   viewedMessages MessageView[]
+   PostReport     PostReport[]
 
    @@map("user")
 }
@@ -104,26 +108,41 @@ model UserReport {
    createdAt      DateTime @default(now()) @map("created_at")
    updatedAt      DateTime @updatedAt
 
-   @@map("report")
+   @@map("user_report")
 }
 
 model Post {
-   id        String     @id @default(cuid())
-   title     String
-   content   String
-   author    User       @relation(fields: [authorId], references: [id])
-   authorId  String     @map("author_id")
-   media     String[]   @default([])
-   document  String[]   @default([])
-   comments  Comment[]
-   bookmarks Bookmark[]
-   postView  PostView[]
-   group     Group      @relation(fields: [groupId], references: [id])
-   groupId   String     @map("group_id")
-   createdAt DateTime   @default(now())
-   pinned    Boolean    @default(false)
+   id         String       @id @default(cuid())
+   title      String
+   content    String
+   author     User         @relation(fields: [authorId], references: [id])
+   authorId   String       @map("author_id")
+   media      String[]     @default([])
+   document   String[]     @default([])
+   comments   Comment[]
+   bookmarks  Bookmark[]
+   postView   PostView[]
+   group      Group        @relation(fields: [groupId], references: [id])
+   groupId    String       @map("group_id")
+   createdAt  DateTime     @default(now())
+   pinned     Boolean      @default(false)
+   PostReport PostReport[]
 
    @@map("post")
+}
+
+model PostReport {
+   id        String   @id @default(cuid())
+   title     String
+   content   String?
+   creatorId String   @map("creator_id")
+   postId    String   @map("post_id")
+   creator   User     @relation(fields: [creatorId], references: [id])
+   post      Post     @relation(fields: [postId], references: [id])
+   createdAt DateTime @default(now()) @map("created_at")
+   updatedAt DateTime @updatedAt
+
+   @@map("post_report")
 }
 
 model PostView {
@@ -215,6 +234,7 @@ model Group {
    reports       GroupReport[]
    groupSettings GroupSetting?
    guidelines    String?
+   GroupChat     GroupChat?
 
    @@map("group")
 }
@@ -233,7 +253,7 @@ model GroupSetting {
 }
 
 model GroupReport {
-   id        Int      @id @default(autoincrement())
+   id        String   @id @default(cuid())
    title     String
    content   String?
    creatorId String   @map("creator_id")
@@ -257,6 +277,54 @@ model GroupView {
 
    @@unique([groupId, viewerId])
    @@map("group_view")
+}
+
+// Chat system
+
+model GroupChat {
+   id       String    @id @default(cuid())
+   groupId  String
+   group    Group     @relation(fields: [groupId], references: [id])
+   messages Message[]
+
+   @@unique([groupId])
+}
+
+model Message {
+   id          String     @id @default(cuid())
+   content     String
+   userId      String
+   user        User       @relation(fields: [userId], references: [id])
+   chatId      String
+   chat        GroupChat  @relation(fields: [chatId], references: [id])
+   attachments String[]
+   reactions   Reaction[]
+   createdAt   DateTime   @default(now())
+
+   replyToId String?
+   replyTo   Message?  @relation("MessageToMessage", fields: [replyToId], references: [id])
+   replies   Message[] @relation("MessageToMessage")
+
+   views MessageView[]
+}
+
+model MessageView {
+   id        String  @id @default(cuid())
+   userId    String
+   user      User    @relation(fields: [userId], references: [id])
+   messageId String
+   message   Message @relation(fields: [messageId], references: [id])
+
+   @@unique([userId, messageId])
+}
+
+model Reaction {
+   id        String  @id @default(cuid())
+   emoji     String
+   userId    String
+   user      User    @relation(fields: [userId], references: [id])
+   messageId String
+   message   Message @relation(fields: [messageId], references: [id])
 }
 
 // Bullshit

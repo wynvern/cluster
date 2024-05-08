@@ -29,6 +29,11 @@ export default async function fetchGroup(
 			banner: true,
 			groupname: true,
 			description: true,
+			GroupChat: {
+				select: {
+					id: true,
+				},
+			},
 			_count: {
 				select: {
 					posts: { where: { group: { ...searchBy } } },
@@ -78,10 +83,12 @@ export async function createGroup(
 			},
 			groupSettings: {
 				create: {
-					memberApproval: true,
 					memberJoining: true,
 					memberPosting: true,
 				},
+			},
+			GroupChat: {
+				create: {},
 			},
 		},
 	});

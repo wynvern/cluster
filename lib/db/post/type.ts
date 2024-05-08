@@ -5,16 +5,23 @@ export default interface Post {
 	group: {
 		id: string;
 		groupname: string;
-		image: string;
+		image: string | null;
 	};
 	groupId: string;
 	authorId: string;
 	author: {
 		id: string;
-		username: string;
-		image: string;
+		username: string | null;
+		image: string | null;
 	};
-	media?: string[];
+	media: string[];
 	document?: string[];
 	pinned: boolean;
+	bookmarks: {
+		id: string;
+		userId: string;
+		postId: string;
+		createdAt: Date;
+	}[];
+	createdAt: Date;
 }

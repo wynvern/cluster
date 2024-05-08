@@ -79,3 +79,36 @@ header {
 .bottom-border {
 	border-bottom: 1px solid var(--border);
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--border);
+}
+
+/* Animation */
+
+@keyframes opacity {
+	from {
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+.message-animation {
+	animation: opacity 200ms ease-out;
+}

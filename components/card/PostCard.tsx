@@ -1,27 +1,41 @@
 import type Post from "@/lib/db/post/type";
 import {
 	ArrowUpOnSquareStackIcon,
-	BookmarkIcon,
 	DocumentIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Chip, Image, Link } from "@nextui-org/react";
+import { Chip, Image, Link } from "@nextui-org/react";
 import PostDropdown from "../post/PostDropdown";
+import BookmarkPost from "../post/BookmarkPost";
 
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({
+	post,
+	isUserPage = false,
+	disableLink = false,
+	disableImages = false,
+}: {
+	post: Post;
+	disableImages?: boolean;
+	isUserPage?: boolean;
+	disableLink?: boolean;
+}) {
+	console.log(post);
+
 	return (
 		<div className="w-full flex flex-col gap-y-4">
-			<div className="w-full justify-between flex items-center">
+			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-center">
 					<Image
-						src={post.author.image}
+						src={post.author.image || "/brand/default-avatar.svg"}
 						removeWrapper={true}
-						className="h-10 sm:h-12 rounded-full"
+						className="h-10 sm:h-12"
 					/>
-					<div>
+					<div className="flex flex-col gap-y-2">
 						<div className="flex items-center">
-							<b>{post.author.username}</b>
-							{post.pinned && (
+							<Link href={`/user/${post.author.username}`}>
+								<b>{post.author.username}</b>
+							</Link>
+							{post.pinned && !isUserPage && (
 								<Chip
 									size="sm"
 									color="success"
@@ -34,26 +48,36 @@ export default function PostCard({ post }: { post: Post }) {
 								</Chip>
 							)}
 						</div>
-						<p>{post.group.groupname}</p>
+						<Link href={`/group/${post.group.groupname}`}>
+							<Chip variant="bordered">
+								{post.group.groupname}
+							</Chip>
+						</Link>
 					</div>
 				</div>
 				<div className="flex gap-x-4">
-					<Button
-						color="secondary"
-						className="default-border"
-						isIconOnly={true}
-					>
-						<BookmarkIcon className="h-6 w-6" />
-					</Button>
-					<PostDropdown post={post} />
+					<BookmarkPost
+						isBookmarked={post.bookmarks.length >= 1}
+						postId={post.id}
+					/>
+					<PostDropdown post={post} isUserPage={isUserPage} />
 				</div>
 			</div>
 			<div className="ml-16 flex flex-col gap-y-4 mb-10">
 				{/* Content */}
-				<div>
-					<h2>{post.title}</h2>
-					<p>{post.content}</p>
-				</div>
+				{disableLink ? (
+					<div>
+						<h2>{post.title}</h2>
+						<p>{post.content}</p>
+					</div>
+				) : (
+					<Link href={`/post/${post.id}`}>
+						<div>
+							<h2>{post.title}</h2>
+							<p>{post.content}</p>
+						</div>
+					</Link>
+				)}
 				{/* Document */}
 				{post.document && post.document.length > 0 ? (
 					<div className="flex gap-x-2">
@@ -82,7 +106,7 @@ export default function PostCard({ post }: { post: Post }) {
 					""
 				)}
 				{/* Image */}
-				{post.media && post.media.length > 0 ? (
+				{post.media && !disableImages && post.media.length > 0 ? (
 					<div>
 						<Image src={post.media[0]} />
 					</div>

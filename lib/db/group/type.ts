@@ -11,4 +11,23 @@ export default interface Group {
 	groupname: string;
 	description: string | null;
 	_count: GroupCount;
+	GroupChat: {
+		id: string;
+	} | null;
 }
+
+export interface UserGroupInfo {
+	id: string;
+	name: string | null;
+	groupname: string;
+	description: string | null;
+	categories: string[];
+	image: string | null;
+	banner: string | null;
+	createdAt: Date;
+	guidelines: string | null;
+	GroupChat?: {
+		id: string;
+	};
+}
+[];

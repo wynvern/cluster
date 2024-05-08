@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import UserDropdown from "./UserDropdown";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Notifications from "@/components/modal/Notifications";
 
 export default function UserDisplay({ user }: { user: User | null }) {
 	const router = useRouter();
 	const [loaded, setLoaded] = useState(false);
 	const session = useSession();
+	const [notificationModal, setNotificationModal] = useState(false);
 
 	useEffect(() => {
 		if (user !== null) setLoaded(true);
@@ -56,7 +58,11 @@ export default function UserDisplay({ user }: { user: User | null }) {
 				<div className="w-full h-20 flex items-center justify-end gap-x-4">
 					<Skeleton isLoaded={loaded}>
 						{user && user.id === session.data?.user.id ? (
-							<Button isIconOnly={true} variant="bordered">
+							<Button
+								isIconOnly={true}
+								variant="bordered"
+								onClick={() => setNotificationModal(true)}
+							>
 								<BellIcon className="h-6" />
 							</Button>
 						) : (
@@ -88,6 +94,11 @@ export default function UserDisplay({ user }: { user: User | null }) {
 					</Skeleton>
 				</div>
 			</div>
+
+			<Notifications
+				isActive={notificationModal}
+				setIsActive={setNotificationModal}
+			/>
 		</div>
 	);
 }

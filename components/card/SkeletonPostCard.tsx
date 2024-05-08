@@ -24,7 +24,7 @@ export default function SkeletonPostCard() {
 							</p>
 						</Skeleton>
 						<Skeleton className="rounded-large">
-							<p>testetestetesteteste</p>
+							<p>testetestet</p>
 						</Skeleton>
 					</div>
 				</div>

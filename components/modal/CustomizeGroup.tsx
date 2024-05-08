@@ -12,6 +12,7 @@ import type Group from "@/lib/db/group/type";
 import { updateGroup } from "@/lib/db/group/group";
 import getFileBase64 from "@/util/getFile";
 import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
+import Draggable from "../general/Draggable";
 
 interface CustomizeGroupProps {
 	active: boolean;
@@ -151,11 +152,27 @@ export default function CustomizeGroup({
 			setActive={setActive}
 			body={
 				<>
-					<div
+					<Draggable
 						className="w-full bg-default-500 flex items-center justify-center rounded-large relative"
 						style={{
 							aspectRatio: "1000 / 400",
 						}}
+						onFileDrag={(files) => {
+							const file = files[0];
+							const reader = new FileReader();
+							reader.readAsDataURL(file);
+							reader.onload = () => {
+								setSelectedImages((prev) => ({
+									...prev,
+									banner: {
+										base64: reader.result as string,
+										preview: URL.createObjectURL(file),
+										error: "",
+									},
+								}));
+							};
+						}}
+						acceptedTypes={["jpg", "png", "gif", "webp", "jpeg"]}
 					>
 						<Image
 							removeWrapper={true}
@@ -172,7 +189,31 @@ export default function CustomizeGroup({
 						>
 							<PhotoIcon className="h-6" />
 						</Button>
-						<div className="absolute -bottom-10 left-4 flex items-center justify-center">
+						<Draggable
+							className="absolute -bottom-10 left-4 flex items-center justify-center"
+							onFileDrag={(files) => {
+								const file = files[0];
+								const reader = new FileReader();
+								reader.readAsDataURL(file);
+								reader.onload = () => {
+									setSelectedImages((prev) => ({
+										...prev,
+										image: {
+											base64: reader.result as string,
+											preview: URL.createObjectURL(file),
+											error: "",
+										},
+									}));
+								};
+							}}
+							acceptedTypes={[
+								"jpg",
+								"png",
+								"gif",
+								"webp",
+								"jpeg",
+							]}
+						>
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"
@@ -189,8 +230,8 @@ export default function CustomizeGroup({
 								}
 								removeWrapper={true}
 							/>
-						</div>
-					</div>
+						</Draggable>
+					</Draggable>
 					<div className="mt-11">
 						<form
 							className="flex gap-y-3 flex-col"

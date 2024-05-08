@@ -4,23 +4,35 @@
 
 @import url("./clash-display.css");
 
-* {
+.dark {
 	--border: #292929;
-	--background: #131313;
-	--color: #fff;
+}
+
+.light {
+	--border: #cacaca !important;
+}
+
+.light .invert-image {
+	filter: invert(1);
+}
+
+html {
+	transition: background-color 200ms ease-in-out, color 200ms ease-in-out;
 }
 
 /* Body Styles */
 html,
 body {
-	background-color: var(--background);
-	color: var(--color);
 	padding: 0 !important;
 	margin: 0 !important;
 }
 
 div[role="tabpanel"] {
 	width: 100%;
+}
+
+img {
+	user-select: none;
 }
 
 .border-default,

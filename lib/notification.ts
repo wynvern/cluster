@@ -46,12 +46,13 @@ export async function sendNotification({
 		},
 	});
 
-   await db.notification.create({
-      data: {
-         title: message.title,
-         body: message.body,
-         userId: receiverUserId,
-      },
+	await db.notification.create({
+		data: {
+			title: message.title,
+			body: message.body,
+			userId: receiverUserId,
+		},
+	});
 
 	for (const sub of subscriptions) {
 		console.log(sub.subscription);

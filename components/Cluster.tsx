@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { ConfirmationModalProvider } from "./provider/ConfirmationModal";
 import { useEffect } from "react";
 import registerSubscription from "@/lib/notification";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export default function Cluster({ children }: { children: React.ReactNode }) {
 	// TODO: Will be here, but for now, it's just a placeholder and will need validation
@@ -28,7 +29,12 @@ export default function Cluster({ children }: { children: React.ReactNode }) {
 			<NextUIProvider className="min-h-dvh">
 				<SessionProvider>
 					<ConfirmationModalProvider>
-						{children}
+						<NextThemesProvider
+							attribute="class"
+							defaultTheme="dark"
+						>
+							{children}
+						</NextThemesProvider>
 					</ConfirmationModalProvider>
 				</SessionProvider>
 			</NextUIProvider>

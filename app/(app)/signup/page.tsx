@@ -1,6 +1,7 @@
 "use client";
 
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
+import PasswordInput from "@/components/auth/PasswordInput";
 import GoogleLoginButton from "@/components/sign/GLoginButton";
 import { createUser } from "@/lib/db/user/user";
 import {
@@ -119,9 +120,8 @@ export default function SignUp() {
 					}}
 					variant="bordered"
 				/>
-				<Input
+				<PasswordInput
 					placeholder="Senha"
-					type="password"
 					name="password"
 					isInvalid={Boolean(inputError.password)}
 					errorMessage={inputError.password}
@@ -132,10 +132,9 @@ export default function SignUp() {
 						setInputError({ ...inputError, password: "" });
 					}}
 				/>
-				<Input
+				<PasswordInput
 					placeholder="Digite a senha novamente"
 					name="repeat-password"
-					type="password"
 					classNames={{ inputWrapper: "h-14" }}
 					variant="bordered"
 					startContent={<KeyIcon className="h-6 text-neutral-500" />}
@@ -159,7 +158,7 @@ export default function SignUp() {
 					<div>
 						<p className="text-center">
 							<Link size="sm" href="/signin">
-								Tem uma Conta?
+								Fazer Login
 							</Link>
 						</p>
 					</div>

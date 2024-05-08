@@ -18,14 +18,6 @@ export default function Settings() {
 						setActiveTab={setActiveTab}
 					/>
 				</div>
-				{activeTab === "" && (
-					<div className="w-full lg:w-1/4 h-full sidebar-border pt-6">
-						<SettingsTabs
-							activeTab={activeTab}
-							setActiveTab={setActiveTab}
-						/>
-					</div>
-				)}
 				{activeTab !== "" && (
 					<div className="w-full md:hidden lg:block lg:w-3/4 h-full p-10">
 						<div className="mb-10 block md:hidden">

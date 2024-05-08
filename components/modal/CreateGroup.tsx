@@ -10,11 +10,11 @@ import {
 import { Button, Chip, Image, Input, Textarea } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
-import type Group from "@/lib/db/group/type";
 import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
 import getFileBase64 from "@/util/getFile";
 import { createGroup } from "@/lib/db/group/group";
 import { useRouter } from "next/navigation";
+import Draggable from "../general/Draggable";
 
 interface CreateGroupProps {
 	active: boolean;
@@ -214,11 +214,27 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			setActive={setActive}
 			body={
 				<>
-					<div
+					<Draggable
 						className="w-full bg-default-500 flex items-center justify-center rounded-large relative"
 						style={{
 							aspectRatio: "1000 / 400",
 						}}
+						onFileDrag={(files) => {
+							const file = files[0];
+							const reader = new FileReader();
+							reader.readAsDataURL(file);
+							reader.onload = () => {
+								setSelectedImages((prev) => ({
+									...prev,
+									banner: {
+										base64: reader.result as string,
+										preview: URL.createObjectURL(file),
+										error: "",
+									},
+								}));
+							};
+						}}
+						acceptedTypes={["jpg", "png", "gif", "webp", "jpeg"]}
 					>
 						<Image
 							removeWrapper={true}
@@ -232,7 +248,32 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 						>
 							<PhotoIcon className="h-6" />
 						</Button>
-						<div className="absolute -bottom-10 left-4 flex items-center justify-center">
+						<Draggable
+							className="absolute -bottom-10 left-4 flex items-center justify-center"
+							onFileDrag={(files) => {
+								const file = files[0];
+								const reader = new FileReader();
+								reader.readAsDataURL(file);
+								reader.onload = () => {
+									setSelectedImages((prev) => ({
+										...prev,
+										image: {
+											base64: reader.result as string,
+											preview: URL.createObjectURL(file),
+											error: "",
+										},
+									}));
+								};
+							}}
+							acceptedTypes={[
+								"jpg",
+								"png",
+								"gif",
+								"webp",
+								"jpeg",
+							]}
+						>
+							{" "}
 							<Button
 								isIconOnly={true}
 								className="absolute opacity-80 z-50"
@@ -248,8 +289,8 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								}
 								removeWrapper={true}
 							/>
-						</div>
-					</div>
+						</Draggable>
+					</Draggable>
 					<div className="mt-11">
 						<form
 							className="flex gap-y-3 flex-col"

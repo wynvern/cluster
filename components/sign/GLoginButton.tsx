@@ -28,7 +28,7 @@ export default function GoogleLoginButton() {
 					<Image
 						width="20"
 						height="20"
-						className="inverted-image"
+						className="invert-image"
 						src="/external/google-logo.png"
 						alt="logo-google"
 					/>

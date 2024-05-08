@@ -14,11 +14,12 @@ export default function Sidebar() {
 			<div className="fixed h-dvh items-center sidebar-border flex-col justify-between py-6 w-20 hidden sm:flex">
 				<Image
 					alt="logo"
-					className="h-8 w-8"
+					className="h-8 w-8 invert-image"
 					src="/brand/logo.svg"
 					height={50}
 					width={50}
 					priority={true}
+					draggable={false}
 				/>
 				<div className="flex flex-col gap-y-8">
 					<Link href="/">

@@ -4,7 +4,18 @@ Este é um projeto [Next.js](https://nextjs.org/) inicializado com [`create-next
 
 ## 📝 Sobre o Projeto
 
-Este projeto é uma aplicação web desenvolvida com Next.js. Ele inclui várias funcionalidades, como renderização do lado do servidor, rotas dinâmicas, pré-renderização, suporte à PWA, banco de dados Postgres com Prisma ORM, utilização de service workers para notificações e caching, next-auth para entrada com serviços de terceiros, nodemailer para enviar emails e socket.io para a comunicação de websockets em tempo real.
+Este projeto é uma aplicação web desenvolvida com Next.js. Ele inclui várias funcionalidades:
+
+-   Renderização do lado do servidor
+-   Rotas dinâmicas
+-   Pré-renderização
+-   Suporte à PWA
+-   Banco de dados Postgres com Prisma ORM
+-   Utilização de service workers para notificações e caching
+-   Next-auth para entrada com serviços de terceiros
+-   Nodemailer para enviar emails
+-   Pacote sharp para otimizar as imagens e cortá-las (ocupando menos espaço)
+-   Socket.io para a comunicação de websockets em tempo real
 
 A aplicação utiliza Typescript como linguagem principal devido a tipagem, que faz o desenvolvimento ser mais seguro e direto ao ponto. Javascript também é utilizado para alguns serviços como conexão socket e encaminhamento de emails.
 
@@ -20,6 +31,14 @@ npm install
 yarn install
 ```
 
+Carrege as migrações do Prisma no seu banco de dados:
+
+```bash
+npx run prisma migrate dev
+# ou
+yarn prisma migrate dev
+```
+
 Em seguida, execute o servidor de desenvolvimento:
 
 ```bash
@@ -29,6 +48,8 @@ yarn dev
 ```
 
 **Nota:** Vale ressaltar que, como o projeto está rodando em um arquivo customizado `server.mjs`, não está pronto para rodar de forma serverless.
+
+**Nota:** Caso receba um erro do pacote sharp, rode o comando para instalar as dependências sem engine.
 
 ## Configuração do arquivo .env
 

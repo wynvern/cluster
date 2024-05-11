@@ -198,7 +198,7 @@ export async function getRole({ groupname }: { groupname: string }) {
 	const userId = session?.user.id;
 
 	if (!userId || !groupname) {
-		return undefined;
+		return null;
 	}
 
 	// Step 2: Check if the result is in the cache
@@ -210,12 +210,14 @@ export async function getRole({ groupname }: { groupname: string }) {
 		where: { groupname },
 	});
 
-	if (!group) return undefined;
+	if (!group) return null;
 
 	const member = await db.groupMember.findFirst({
 		where: { groupId: group.id, userId: userId },
 		select: { role: true },
 	});
+
+	if (!member) return null;
 
 	// Step 4: Store the result in the cache
 	if (!roleCache[userId]) {
@@ -223,7 +225,7 @@ export async function getRole({ groupname }: { groupname: string }) {
 	}
 	roleCache[userId][groupname] = String(member?.role);
 
-	return member?.role;
+	return member.role;
 }
 
 export async function enterGroup({ groupname }: { groupname: string }) {

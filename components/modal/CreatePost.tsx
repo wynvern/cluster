@@ -25,6 +25,7 @@ import supportedFormats from "@/public/supportedFormats.json";
 import getFileBase64 from "@/util/getFile";
 import { createPost } from "@/lib/db/post/post";
 import { useConfirmationModal } from "../provider/ConfirmationModal";
+import Draggable from "../general/Draggable";
 
 function fileToBase64(
 	file: File
@@ -346,36 +347,55 @@ export default function CreatePost({
 							}
 						>
 							<div className="flex h-80 w-full overflow-y-auto min-h-[370px]">
-								<ScrollShadow className="flex flex-col w-full relative">
+								<ScrollShadow className="flex flex-col w-full relative px-3 pt-3">
 									{/* Upload image */}
-									<div
-										className={
-											"w-full h-40 rounded-large drop-zone transition-colors default-border"
-										}
+									<Draggable
+										onFileDrag={(file) => {
+											if (selectedImages.length >= 6) {
+												setErrors({
+													...errors,
+													media: "Você atingiu o limite de 6 imagens.",
+												});
+											}
+
+											setSelectedImages((prev) => [
+												...prev,
+												{
+													base64: file.base64,
+													preview: file.preview,
+												},
+											]);
+										}}
 									>
-										<div className="h-full w-full flex items-center justify-center">
-											<div className="flex items-center flex-col gap-y-2 my-10">
-												<CloudArrowUpIcon className="h-20 w-20" />
-												<p>
-													Arraste ou{" "}
-													<Link
-														onClick={
-															handleSelectMedia
-														}
-														isDisabled={
-															loading ||
-															selectedImages.length >=
-																5
-														}
-														className="text-foreground"
-													>
-														<b>clique aqui</b>
-													</Link>{" "}
-													para adicionar mídia.
-												</p>
+										<div
+											className={
+												"w-full h-40 rounded-large drop-zone transition-colors default-border"
+											}
+										>
+											<div className="h-full w-full flex items-center justify-center">
+												<div className="flex items-center flex-col gap-y-2 my-10">
+													<CloudArrowUpIcon className="h-20 w-20" />
+													<p>
+														Arraste ou{" "}
+														<Link
+															onClick={
+																handleSelectMedia
+															}
+															isDisabled={
+																loading ||
+																selectedImages.length >=
+																	5
+															}
+															className="text-foreground"
+														>
+															<b>clique aqui</b>
+														</Link>{" "}
+														para adicionar mídia.
+													</p>
+												</div>
 											</div>
 										</div>
-									</div>
+									</Draggable>
 									<ErrorBox
 										className="mt-3"
 										error={errors.media}
@@ -389,7 +409,7 @@ export default function CreatePost({
 									<div className="grid grid-cols-3 gap-3 mt-3">
 										{selectedImages.map((item, index) => (
 											<div
-												key={item.base64}
+												key={item.preview}
 												className="bg-default-100 relative rounded-large aspect-square flex p-3 bg-cover bg-center"
 												style={{
 													backgroundImage: `url(${item.preview})`,
@@ -432,36 +452,60 @@ export default function CreatePost({
 							}
 						>
 							<div className="flex h-80 w-full overflow-y-auto min-h-[370px]">
-								<ScrollShadow className="flex flex-col w-full relative">
+								<ScrollShadow className="flex flex-col w-full relative px-3 pt-3">
 									{/* Upload image */}
-									<div
-										className={
-											"w-full h-40 rounded-large drop-zone transition-colors default-border"
+									<Draggable
+										onFileDrag={(file) => {
+											if (selectedDocuments.length >= 6) {
+												setErrors({
+													...errors,
+													document:
+														"Você atingiu o limite de 6 documentos.",
+												});
+											}
+
+											setSelectedDocuments((prev) => [
+												...prev,
+												{
+													base64: file.base64,
+													file: file.file,
+												},
+											]);
+										}}
+										acceptedTypes={
+											supportedFormats.document
 										}
 									>
-										<div className="h-full w-full flex items-center justify-center">
-											<div className="flex items-center flex-col gap-y-2 my-10">
-												<CloudArrowUpIcon className="h-20 w-20" />
-												<p>
-													Arraste ou{" "}
-													<Link
-														onClick={
-															handleSelectDocument
-														}
-														isDisabled={
-															loading ||
-															selectedImages.length >=
-																5
-														}
-														className="text-foreground"
-													>
-														<b>clique aqui</b>
-													</Link>{" "}
-													para adicionar documentos.
-												</p>
+										<div
+											className={
+												"w-full h-40 rounded-large drop-zone transition-colors default-border"
+											}
+										>
+											<div className="h-full w-full flex items-center justify-center">
+												<div className="flex items-center flex-col gap-y-2 my-10">
+													<CloudArrowUpIcon className="h-20 w-20" />
+													<p>
+														Arraste ou{" "}
+														<Link
+															onClick={
+																handleSelectDocument
+															}
+															isDisabled={
+																loading ||
+																selectedDocuments.length >=
+																	6
+															}
+															className="text-foreground"
+														>
+															<b>clique aqui</b>
+														</Link>{" "}
+														para adicionar
+														documentos.
+													</p>
+												</div>
 											</div>
 										</div>
-									</div>
+									</Draggable>
 									<ErrorBox
 										className="mt-3"
 										error={errors.document}
@@ -476,7 +520,7 @@ export default function CreatePost({
 										{selectedDocuments.map(
 											(item, index) => (
 												<div
-													key={item.base64}
+													key={item.file?.name}
 													className="bg-neutral-800 relative rounded-large w-full flex p-3 justify-between flex items-center"
 												>
 													<div className="flex gap-x-4">

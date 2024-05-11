@@ -8,7 +8,7 @@ import {
 
 interface DraggableProps {
 	children: React.ReactNode;
-	onFileDrag: (file: { base64: string; preview: string }) => void;
+	onFileDrag: (file: { base64: string; preview: string; file: File }) => void;
 	acceptedTypes?: string[];
 	maxSize?: number;
 }
@@ -67,7 +67,7 @@ export default function Draggable({
 
 	function toImagePreview(
 		files: File[]
-	): Promise<{ base64: string; preview: string }> {
+	): Promise<{ base64: string; preview: string; file: File }> {
 		return new Promise((resolve, reject) => {
 			const file = files[0];
 			const reader = new FileReader();
@@ -75,6 +75,7 @@ export default function Draggable({
 			reader.onload = () => {
 				resolve({
 					base64: reader.result as string,
+					file: file,
 					preview: URL.createObjectURL(file),
 				});
 			};

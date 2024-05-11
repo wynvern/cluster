@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import TabContent from "./TabContent";
-import fetchGroup from "@/lib/db/group/group";
+import fetchGroup, { getRole } from "@/lib/db/group/group";
 import type Group from "@/lib/db/group/type";
 import GroupDisplay from "./GroupDisplay";
 import { Button } from "@nextui-org/react";
@@ -20,6 +20,7 @@ export default function GroupPage({
 	const [group, setGroup] = useState<Group | null>(null);
 	const [createPostActive, setCreatePostActive] = useState(false);
 	const [posts, setPosts] = useState<Post[] | null>(null);
+	const [userRole, setUserRole] = useState<string | null>(null);
 
 	async function handleFetchGroup() {
 		const data = await fetchGroup({ groupname: params.groupname });
@@ -39,6 +40,12 @@ export default function GroupPage({
 		setPosts(data as Post[]);
 	}
 
+	async function handleGetRole() {
+		const role = await getRole({ groupname: group?.groupname || "" });
+		setUserRole(role);
+		console.log(role);
+	}
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		handleFetchGroup();
@@ -47,6 +54,7 @@ export default function GroupPage({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		handleFetchPosts();
+		handleGetRole();
 	}, [group]);
 
 	return (
@@ -55,17 +63,19 @@ export default function GroupPage({
 				{notFound ? <>group was not found</> : ""}
 				<GroupDisplay group={group} />
 				<TabContent posts={posts} />
-				<div className="fixed bottom-20 sm:bottom-10 right-6 sm:bottom-10 z-50">
-					<Button
-						isIconOnly={true}
-						size="lg"
-						color="secondary"
-						className="default-border"
-						onClick={() => setCreatePostActive(true)}
-					>
-						<PlusIcon className="h-8" />
-					</Button>
-				</div>
+				{userRole && (
+					<div className="fixed bottom-20 sm:bottom-10 right-6 sm:bottom-10 z-50">
+						<Button
+							isIconOnly={true}
+							size="lg"
+							color="secondary"
+							className="default-border"
+							onClick={() => setCreatePostActive(true)}
+						>
+							<PlusIcon className="h-8" />
+						</Button>
+					</div>
+				)}
 			</div>
 
 			{group ? (

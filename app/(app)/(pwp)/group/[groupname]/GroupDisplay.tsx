@@ -50,9 +50,15 @@ export default function GroupDisplay({ group }: { group: Group | null }) {
 			</div>
 			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
 				<div className="w-full h-20 flex items-center justify-end gap-x-4">
-					<Button isIconOnly={true} color="primary">
-						<ChatBubbleBottomCenterTextIcon className="h-6" />
-					</Button>
+					{group && (
+						<Button
+							isIconOnly={true}
+							color="primary"
+							href={`/chat/${group.groupname}`}
+						>
+							<ChatBubbleBottomCenterTextIcon className="h-6" />
+						</Button>
+					)}
 					{group && (
 						<FollowUnfollowGroup groupname={group.groupname} />
 					)}

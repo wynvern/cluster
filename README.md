@@ -1,8 +1,8 @@
-# Projeto Cluster
+# ✨ Projeto Cluster
 
 Este é um projeto [Next.js](https://nextjs.org/) inicializado com [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). O projeto consiste em uma aplicação similar a uma rede social que tem como objetivo juntar estudantes em grupos que poder ter diversas categorias.
 
-## Sobre o Projeto
+## 📝 Sobre o Projeto
 
 Este projeto é uma aplicação web desenvolvida com Next.js. Ele inclui várias funcionalidades, como renderização do lado do servidor, rotas dinâmicas, pré-renderização, suporte à PWA, banco de dados Postgres com Prisma ORM, utilização de service workers para notificações e caching, next-auth para entrada com serviços de terceiros, nodemailer para enviar emails e socket.io para a comunicação de websockets em tempo real.
 
@@ -10,7 +10,7 @@ A aplicação utiliza Typescript como linguagem principal devido a tipagem, que 
 
 Outras linguagens estrangeiras como Python também foram utilizadas para gerar conteúdos estáticos como as imagens para o PWA.
 
-## Como executar
+## ⚙️ Como executar
 
 Primeiro, instale as dependências do projeto:
 
@@ -34,25 +34,25 @@ yarn dev
 
 Crie um arquivo `.env` na raiz do projeto e preencha-o com suas variáveis de ambiente. O exemplo está no arquivo `.env.example`.
 
-## Estrutura do Projeto
+## 📁 Estrutura do Projeto
 
 -   `components/`: Esta pasta contém todos os componentes React usados na aplicação, separados em categorias e em formato _.tsx_.
 -   `styles/`: Aqui estão os arquivos de estilo globais e locais.
 -   `app/`: Esta pasta contém todas as rotas da aplicação. Cada arquivo corresponde a uma rota, a pasta `(pwp)/` guarda as rotas que contêm a navbar presente.
 -   `public/`: Esta pasta contém todos os arquivos estáticos como imagens e ícones.
 
-## Segurança
+## 🛡️ Segurança
 
 Todos os formulários têm um honeypot para prevenir a criação de contas por spammers e bots. Ele é chamado de "numberval". São validados somente no servidor, logo as requisições continuam, porém sem interferir no banco de dados.
 
-## To-Do
+## ☑️ To-Do
 
 -   [ ] Rotas do servidor dentro das pastas `lib/db` ainda precisam ser validadas por motivos de segurança;
 -   [ ] A autenticação do Socket.Io precisa ser melhorada;
 -   [ ] Blobs precisam ser removidos quando seus respectivos posts/usuários/grupos são deletados;
 -   [ ] Entre outros problemas menores de optimização e simplificação de código;
 
-## Autores
+## 👥 Autores
 
 Este projeto é mantido pelos seguinters indivíduos:
 

@@ -16,6 +16,8 @@ import {
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useConfirmationModal } from "../provider/ConfirmationModal";
+import { deletePost } from "@/lib/db/post/post";
 
 interface DropdownItemProps {
 	description: string;
@@ -35,6 +37,7 @@ export default function PostDropdown({
 }) {
 	const session = useSession();
 	const [userRole, setUserRole] = useState<string | null | undefined>("");
+	const { confirm } = useConfirmationModal();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -83,6 +86,7 @@ export default function PostDropdown({
 					),
 					ariaLabel: "delete-post",
 					text: "Deletar Post",
+					onClick: handleDeletePost,
 			  }
 			: null,
 
@@ -96,6 +100,21 @@ export default function PostDropdown({
 				text: "Reportar Post",
 			},
 	].filter(Boolean) as DropdownItemProps[]; // Filter out null values
+
+	async function handleDeletePost() {
+		await confirm({
+			title: "Excluír post",
+			description: "Tem certeza que deseja excluír o post?",
+			onConfirm: () => {
+				deletePost(post.id).then((data) => {
+					if (data === "ok") {
+						console.log("ok");
+					}
+				});
+			},
+			onCancel: () => {},
+		});
+	}
 
 	return (
 		<Dropdown className="default-border shadow-none" placement="bottom-end">

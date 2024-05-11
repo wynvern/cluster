@@ -273,3 +273,28 @@ export async function fetchPostById(postId: string) {
 
 	return post;
 }
+
+export async function deletePost(postId: string) {
+	// TODO: Validate if user has permission
+	// TODO: Delete images from blob
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: {
+			authorId: true,
+		},
+	});
+
+	if (!post) return "post-not-found";
+
+	if (post.authorId !== session.user.id) return "unauthorized";
+
+	await db.post.delete({
+		where: { id: postId },
+	});
+
+	return "ok";
+}

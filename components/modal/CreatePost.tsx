@@ -24,6 +24,7 @@ import ErrorBox from "../general/ErrorBox";
 import supportedFormats from "@/public/supportedFormats.json";
 import getFileBase64 from "@/util/getFile";
 import { createPost } from "@/lib/db/post/post";
+import { useConfirmationModal } from "../provider/ConfirmationModal";
 
 function fileToBase64(
 	file: File
@@ -79,6 +80,7 @@ export default function CreatePost({
 	const [success, setSuccess] = useState(false);
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [activeTab, setActiveTab] = useState("text");
 	const [selectedImages, setSelectedImages] = useState<FileBase64Info[]>([]);
 	const [selectedDocuments, setSelectedDocuments] = useState<
 		DocumentFileBase64[]
@@ -89,6 +91,7 @@ export default function CreatePost({
 		media: "",
 		document: "",
 	});
+	const { confirm } = useConfirmationModal();
 
 	function validateInputs() {
 		let hasError = false;
@@ -166,91 +169,24 @@ export default function CreatePost({
 		}
 	}
 
-	const [dragging, setDragging] = useState(false);
-
-	const handleDragOver = (e: React.DragEvent) => {
-		e.preventDefault();
-		setDragging(true);
-	};
-
-	const handleDragLeave = () => {
-		setDragging(false);
-	};
-
-	const handleDrop = async (e: React.DragEvent) => {
-		e.preventDefault();
-		setDragging(false);
-
-		const files = Array.from(e.dataTransfer.files);
-
-		if (!files[0]) {
-			return false;
-		}
-
+	function onClosing() {
 		if (
-			!["jpeg", "jpg", "png", "webp"].includes(
-				files[0].type.split("/")[1]
-			)
+			!title &&
+			!content &&
+			!selectedImages.length &&
+			!selectedDocuments.length
 		) {
-			setErrors({
-				...errors,
-				media: "Tipo de arquivo inválido.",
-			});
-			setTimeout(() => {
-				setErrors({
-					...errors,
-					media: "",
-				});
-			}, 3000);
-			return false;
-		}
-		if (selectedImages.length >= 5) {
-			setErrors({
-				...errors,
-				media: "Número máximo de mídias atingido.",
-			});
-			setTimeout(() => {
-				setErrors({
-					...errors,
-					media: "",
-				});
-			}, 3000);
-			return false;
+			setActive(false);
+			return;
 		}
 
-		const newMediaFile = await fileToBase64(files[0]);
-		const newMedia = [...selectedImages, newMediaFile];
-		setSelectedImages(newMedia);
-	};
-
-	async function handleDropDocument(e: React.DragEvent) {
-		e.preventDefault();
-		setDragging(false);
-
-		const files = Array.from(e.dataTransfer.files);
-
-		if (!files[0]) {
-			return false;
-		}
-
-		if (!supportedFormats.document.includes(files[0].type.split("/")[1])) {
-			setErrors({
-				...errors,
-				document: "Tipo de arquivo inválido.",
-			});
-			return false;
-		}
-
-		if (selectedDocuments.length >= 5) {
-			setErrors({
-				...errors,
-				document: "Número máximo de documentos atingido.",
-			});
-			return false;
-		}
-
-		const newDocumentFile = await documentFileBase64(files[0]);
-		setSelectedDocuments([...selectedDocuments, newDocumentFile]);
+		confirm({
+			description:
+				"Tem certeza que deseja sair? Seus dados não serão salvos.",
+			title: "Cancelar criação de post",
+			onCancel: () => {},
+			onConfirm: () => setActive(false),
+		});
 	}
 
 	async function handleSelectDocument() {
@@ -297,10 +233,12 @@ export default function CreatePost({
 			title={`Criar Post em g/${group.groupname}`}
 			size="2xl"
 			active={active}
-			setActive={setActive}
+			setActive={onClosing}
 			body={
 				<>
 					<Tabs
+						selectedKey={activeTab}
+						onSelectionChange={(key) => setActiveTab(key as string)}
 						aria-label="Options"
 						color="primary"
 						disableAnimation={false}
@@ -341,11 +279,11 @@ export default function CreatePost({
 						}}
 					>
 						<Tab
-							key="post"
+							key="text"
 							title={
 								<div className="flex items-center space-x-2">
 									<ChatBubbleBottomCenterTextIcon className="h-6 w-6" />
-									<span>Post</span>
+									<span>Texto</span>
 								</div>
 							}
 						>
@@ -411,12 +349,9 @@ export default function CreatePost({
 								<ScrollShadow className="flex flex-col w-full relative">
 									{/* Upload image */}
 									<div
-										className={`w-full h-40 rounded-large drop-zone transition-colors default-border duration-200 ${
-											dragging ? "bg-primary" : ""
-										}`}
-										onDragOver={handleDragOver}
-										onDragLeave={handleDragLeave}
-										onDrop={handleDrop}
+										className={
+											"w-full h-40 rounded-large drop-zone transition-colors default-border"
+										}
 									>
 										<div className="h-full w-full flex items-center justify-center">
 											<div className="flex items-center flex-col gap-y-2 my-10">
@@ -500,12 +435,9 @@ export default function CreatePost({
 								<ScrollShadow className="flex flex-col w-full relative">
 									{/* Upload image */}
 									<div
-										className={`w-full h-40 rounded-large drop-zone transition-colors default-border duration-200 ${
-											dragging ? "bg-primary" : ""
-										}`}
-										onDragOver={handleDragOver}
-										onDragLeave={handleDragLeave}
-										onDrop={handleDropDocument}
+										className={
+											"w-full h-40 rounded-large drop-zone transition-colors default-border"
+										}
 									>
 										<div className="h-full w-full flex items-center justify-center">
 											<div className="flex items-center flex-col gap-y-2 my-10">
@@ -590,7 +522,7 @@ export default function CreatePost({
 						isDisabled={loading || success}
 						startContent={<XMarkIcon className="h-6" />}
 						variant="bordered"
-						onClick={() => setActive(false)}
+						onClick={() => onClosing()}
 					>
 						Cancelar
 					</Button>

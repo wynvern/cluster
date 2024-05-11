@@ -26,7 +26,7 @@ export default function ProfileDropdown() {
 		<>
 			<Dropdown className="default-border shadow-none" placement="right">
 				<DropdownTrigger>
-					<Link className="p-4">
+					<Link className="p-4 transition-all duration-200">
 						<Image
 							removeWrapper={true}
 							src={

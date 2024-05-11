@@ -1,25 +1,34 @@
 import {
-	ArchiveBoxArrowDownIcon,
-	DocumentArrowDownIcon,
-} from "@heroicons/react/24/outline";
-import { useState } from "react";
+	type ReactElement,
+	cloneElement,
+	isValidElement,
+	useState,
+	useEffect,
+} from "react";
 
-interface DraggableProps extends React.HTMLAttributes<HTMLDivElement> {
+interface DraggableProps {
 	children: React.ReactNode;
-	onFileDrag: (files: File[]) => void;
-	acceptedTypes: string[];
+	onFileDrag: (file: { base64: string; preview: string }) => void;
+	acceptedTypes?: string[];
 	maxSize?: number;
+}
+
+interface DraggableElementProps {
+	onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+	onDragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
+	onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
+	className?: string;
+	style?: React.CSSProperties;
 }
 
 export default function Draggable({
 	children,
 	onFileDrag,
-	acceptedTypes,
+	acceptedTypes = ["jpg", "png", "gif", "webp", "jpeg"],
 	maxSize = 4.5,
-	className,
-	style,
 }: DraggableProps) {
 	const [dragging, setDragging] = useState(false);
+	const [error, setError] = useState(false);
 
 	const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
 		event.preventDefault();
@@ -31,7 +40,7 @@ export default function Draggable({
 		setDragging(false);
 	};
 
-	const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+	async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
 		event.preventDefault();
 		setDragging(false);
 		console.log(event.dataTransfer.files);
@@ -42,32 +51,57 @@ export default function Draggable({
 
 		if (files.some((file) => file.size > maxSize * 1024 * 1024)) {
 			console.log("File too large");
+			setError(true);
 			return;
 		}
 
 		if (files.length > 0) {
-			onFileDrag(files);
+			const imagePreview = await toImagePreview(files);
+			onFileDrag(imagePreview);
+		} else {
+			setError(true);
 		}
-	};
+	}
 
-	return (
-		<div
-			className={`${className} ${dragging ? "bg-success" : ""} ${
-				dragging ? "flex items-center justify-center flex-col" : ""
-			} `}
-			onDragOver={handleDragOver}
-			onDragLeave={handleDragLeave}
-			onDrop={handleDrop}
-			style={style}
-		>
-			{dragging ? (
-				<div className="h-full w-full">
-					<DocumentArrowDownIcon className="h-12 text-white" />
-					<p className="text-white font-bold">Arraste Imagens</p>
-				</div>
-			) : (
-				children
-			)}
-		</div>
-	);
+	useEffect(() => {
+		if (error) setTimeout(() => setError(false), 2000);
+	}, [error]);
+
+	function toImagePreview(
+		files: File[]
+	): Promise<{ base64: string; preview: string }> {
+		return new Promise((resolve, reject) => {
+			const file = files[0];
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => {
+				resolve({
+					base64: reader.result as string,
+					preview: URL.createObjectURL(file),
+				});
+			};
+			reader.onerror = (error) => {
+				setError(true);
+				reject(error);
+			};
+		});
+	}
+
+	if (isValidElement<DraggableElementProps>(children)) {
+		const childWithProps = cloneElement(children, {
+			onDragOver: handleDragOver,
+			onDragLeave: handleDragLeave,
+			onDrop: handleDrop,
+			className: `${children.props.className} rounded-large transition-all duration-200`,
+			style: dragging
+				? { outline: "4px solid #17C964", outlineOffset: "3px" }
+				: error
+				? { outline: "4px solid #FF0000", outlineOffset: "3px" }
+				: {},
+		});
+
+		return <>{childWithProps}</>;
+	}
+
+	return null;
 }

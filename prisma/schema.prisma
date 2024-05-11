@@ -138,7 +138,7 @@ model PostReport {
    creatorId String   @map("creator_id")
    postId    String   @map("post_id")
    creator   User     @relation(fields: [creatorId], references: [id])
-   post      Post     @relation(fields: [postId], references: [id])
+   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
    createdAt DateTime @default(now()) @map("created_at")
    updatedAt DateTime @updatedAt
 
@@ -149,7 +149,7 @@ model PostView {
    id       String   @id @default(cuid())
    viewedAt DateTime @default(now()) @map("viewed_at")
 
-   post     Post   @relation(fields: [postId], references: [id])
+   post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
    postId   String @map("post_id")
    viewer   User   @relation(fields: [viewerId], references: [id])
    viewerId String @map("viewer_id")
@@ -288,6 +288,7 @@ model GroupChat {
    messages Message[]
 
    @@unique([groupId])
+   @@map("group_chat")
 }
 
 model Message {
@@ -306,6 +307,8 @@ model Message {
    replies   Message[] @relation("MessageToMessage")
 
    views MessageView[]
+
+   @@map("message")
 }
 
 model MessageView {
@@ -316,6 +319,7 @@ model MessageView {
    message   Message @relation(fields: [messageId], references: [id])
 
    @@unique([userId, messageId])
+   @@map("message_view")
 }
 
 model Reaction {
@@ -325,6 +329,8 @@ model Reaction {
    user      User    @relation(fields: [userId], references: [id])
    messageId String
    message   Message @relation(fields: [messageId], references: [id])
+
+   @@map("reaction")
 }
 
 // Bullshit

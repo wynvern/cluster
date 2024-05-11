@@ -46,6 +46,17 @@ img {
 	background-color: var(--background);
 }
 
+li[role="menuitem"],
+a[role="menuitem"] {
+	transition: all 200ms ease-in-out !important;
+	border-radius: 10px;
+}
+
+li[role="menuitem"]:hover,
+a[role="menuitem"]:hover {
+	background-color: var(--border);
+}
+
 /* Heading Styles */
 h1 {
 	font-size: 2.6em;

@@ -214,83 +214,64 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			setActive={setActive}
 			body={
 				<>
-					<Draggable
-						className="w-full bg-default-500 flex items-center justify-center rounded-large relative"
+					<div
+						className="w-full flex items-center justify-center rounded-large relative"
 						style={{
 							aspectRatio: "1000 / 400",
 						}}
-						onFileDrag={(files) => {
-							const file = files[0];
-							const reader = new FileReader();
-							reader.readAsDataURL(file);
-							reader.onload = () => {
-								setSelectedImages((prev) => ({
-									...prev,
-									banner: {
-										base64: reader.result as string,
-										preview: URL.createObjectURL(file),
-										error: "",
-									},
-								}));
-							};
-						}}
-						acceptedTypes={["jpg", "png", "gif", "webp", "jpeg"]}
 					>
-						<Image
-							removeWrapper={true}
-							src={selectedImages.banner.preview}
-							className="absolute w-full h-full object-cover z-1"
-						/>
+						<Draggable
+							onFileDrag={(file) => {
+								setSelectedImages((prev) => ({
+									banner: { ...file, error: "" },
+									image: prev.image,
+								}));
+							}}
+						>
+							<div className="w-full h-full absolute bg-neutral-500 ">
+								<Image
+									removeWrapper={true}
+									src={selectedImages.banner.preview || ""}
+									className="absolute w-full h-full object-cover z-1"
+								/>
+							</div>
+						</Draggable>
 						<Button
 							isIconOnly={true}
 							className="opacity-80"
 							onClick={handleSelectBanner}
+							color="secondary"
 						>
 							<PhotoIcon className="h-6" />
 						</Button>
 						<Draggable
-							className="absolute -bottom-10 left-4 flex items-center justify-center"
-							onFileDrag={(files) => {
-								const file = files[0];
-								const reader = new FileReader();
-								reader.readAsDataURL(file);
-								reader.onload = () => {
-									setSelectedImages((prev) => ({
-										...prev,
-										image: {
-											base64: reader.result as string,
-											preview: URL.createObjectURL(file),
-											error: "",
-										},
-									}));
-								};
+							onFileDrag={(file) => {
+								setSelectedImages((prev) => ({
+									banner: prev.banner,
+									image: { ...file, error: "" },
+								}));
 							}}
-							acceptedTypes={[
-								"jpg",
-								"png",
-								"gif",
-								"webp",
-								"jpeg",
-							]}
 						>
-							{" "}
-							<Button
-								isIconOnly={true}
-								className="absolute opacity-80 z-50"
-								onClick={handleSelectimage}
-							>
-								<PhotoIcon className="h-6" />
-							</Button>
-							<Image
-								className="h-[140px] w-[140px] object-cover z-1"
-								src={
-									selectedImages.image.preview ||
-									"/brand/default-group.svg"
-								}
-								removeWrapper={true}
-							/>
+							<div className="absolute -bottom-10 left-4 flex items-center justify-center">
+								<Button
+									isIconOnly={true}
+									className="absolute opacity-80 z-50"
+									onClick={handleSelectimage}
+									color="secondary"
+								>
+									<PhotoIcon className="h-6" />
+								</Button>
+								<Image
+									className="h-[140px] w-[140px] object-cover z-1"
+									src={
+										selectedImages.image.preview ||
+										"/brand/default-group.svg"
+									}
+									removeWrapper={true}
+								/>
+							</div>
 						</Draggable>
-					</Draggable>
+					</div>
 					<div className="mt-11">
 						<form
 							className="flex gap-y-3 flex-col"

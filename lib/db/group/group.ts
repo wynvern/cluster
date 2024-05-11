@@ -16,6 +16,9 @@ type GroupName = { id?: string; groupname: string };
 export default async function fetchGroup(
 	params: groupname | GroupName
 ): Promise<Group | null> {
+	const session = await getServerSession(authOptions);
+	if (!session) return null;
+
 	const searchBy = params.id
 		? { id: params.id }
 		: { groupname: params.groupname };
@@ -44,6 +47,18 @@ export default async function fetchGroup(
 	});
 
 	if (!query) return null;
+
+	// Add view to group_views
+	await db.groupView.upsert({
+		where: {
+			groupId_viewerId: {
+				groupId: query.id,
+				viewerId: session.user.id || "",
+			},
+		},
+		create: { groupId: query.id, viewerId: session.user.id || "" },
+		update: { viewedAt: new Date() },
+	});
 
 	return query;
 }
@@ -376,4 +391,28 @@ export async function unpromoteMember({
 	});
 
 	return "ok";
+}
+
+export async function fetchRecentGroups() {
+	const session = await getServerSession(authOptions);
+	if (!session) return [];
+
+	const groups = await db.groupView.findMany({
+		where: {
+			viewerId: session.user.id,
+		},
+		select: {
+			group: {
+				select: {
+					id: true,
+					name: true,
+					groupname: true,
+					image: true,
+					banner: true,
+				},
+			},
+		},
+	});
+
+	return groups.map((group) => group.group);
 }

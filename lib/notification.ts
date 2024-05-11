@@ -26,7 +26,6 @@ export default async function registerSubscription({
 		},
 	});
 
-	console.log("subscription registered");
 	return "ok";
 }
 
@@ -57,9 +56,8 @@ export async function sendNotification({
 	});
 
 	for (const sub of subscriptions) {
-		console.log(sub.subscription);
 		const pushSubscription: webPush.PushSubscription =
-			sub.subscription as unknown as webPush.PushSubscription;
+			sub.subscription as unknown as webPush.PushSubscription; // Cast necessary due to not knowing the type
 
 		webPush.sendNotification(pushSubscription, JSON.stringify(message));
 	}

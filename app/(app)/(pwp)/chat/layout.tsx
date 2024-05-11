@@ -17,7 +17,6 @@ export default function LayoutChat({
 		async function handleUserGroups() {
 			const response = await fetchUserGroups({ groupChatId: true });
 			setUserGroups(response);
-			console.log(response);
 		}
 
 		handleUserGroups();

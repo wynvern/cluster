@@ -81,6 +81,10 @@ export async function sendCode(): Promise<string> {
 		data: { code: newCode, email, expiry: new Date(expiryTime) },
 	});
 
+	if (process.env.NODE_ENV === "development") {
+		console.log("[Dev] Code: ", newCode);
+	}
+
 	sendMail(
 		email,
 		"Confirmar seu email.",

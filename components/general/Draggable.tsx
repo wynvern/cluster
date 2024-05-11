@@ -43,14 +43,12 @@ export default function Draggable({
 	async function handleDrop(event: React.DragEvent<HTMLDivElement>) {
 		event.preventDefault();
 		setDragging(false);
-		console.log(event.dataTransfer.files);
 
 		const files = Array.from(event.dataTransfer.files).filter((file) =>
 			acceptedTypes.includes(file.type.split("/")[1])
 		);
 
 		if (files.some((file) => file.size > maxSize * 1024 * 1024)) {
-			console.log("File too large");
 			setError(true);
 			return;
 		}

@@ -16,7 +16,6 @@ export default function Cluster({ children }: { children: React.ReactNode }) {
 			navigator.serviceWorker.addEventListener(
 				"message",
 				async (event) => {
-					console.log("subscription received");
 					await registerSubscription({
 						subscription: JSON.parse(event.data.subscription),
 					});

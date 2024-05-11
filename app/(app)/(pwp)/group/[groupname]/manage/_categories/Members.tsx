@@ -1,6 +1,7 @@
 "use client";
 
 import { useConfirmationModal } from "@/components/provider/ConfirmationModal";
+import UserAvatar from "@/components/user/UserAvatar";
 import {
 	getMembers,
 	promoteMember,
@@ -145,13 +146,8 @@ export default function Members({ groupname }: { groupname: string }) {
 							<TableRow key={member.user.id}>
 								<TableCell>
 									<div className="flex flex-row gap-x-4 items-center">
-										<Image
-											src={
-												member.user.image ||
-												"/brand/default-avatar.svg"
-											}
-											removeWrapper={true}
-											className="w-12 h-12"
+										<UserAvatar
+											avatarURL={member.user.image}
 										/>
 										<p>{member.user.username}</p>
 									</div>

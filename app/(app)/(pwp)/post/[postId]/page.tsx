@@ -3,6 +3,7 @@
 import NoPosts from "@/components/card/NoPosts";
 import PostCard from "@/components/card/PostCard";
 import SkeletonPostCard from "@/components/card/SkeletonPostCard";
+import UserAvatar from "@/components/user/UserAvatar";
 import { fetchPostById } from "@/lib/db/post/post";
 import type Post from "@/lib/db/post/type";
 import {
@@ -52,13 +53,8 @@ export default function PostPage({ params }: { params: { postId: string } }) {
 								disableImages={true}
 							/>
 							<div className="ml-16 flex gap-x-4 items-start">
-								<Image
-									src={
-										session.data?.user.image ||
-										"/brand/default-avatar.svg"
-									}
-									className="h-12 w-12"
-									removeWrapper={true}
+								<UserAvatar
+									avatarURL={session.data?.user.image}
 								/>
 								<Textarea
 									placeholder="Escreva seu comentário..."

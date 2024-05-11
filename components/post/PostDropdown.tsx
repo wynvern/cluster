@@ -106,11 +106,7 @@ export default function PostDropdown({
 			title: "Excluír post",
 			description: "Tem certeza que deseja excluír o post?",
 			onConfirm: () => {
-				deletePost(post.id).then((data) => {
-					if (data === "ok") {
-						console.log("ok");
-					}
-				});
+				deletePost(post.id);
 			},
 			onCancel: () => {},
 		});

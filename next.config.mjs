@@ -7,6 +7,7 @@ const nextConfig = {
 	experimental: {
 		serverActions: {
 			bodySizeLimit: "10mb",
+			allowedOrigins: [process.env.NEXTAUTH_URL],
 		},
 	},
 };

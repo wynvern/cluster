@@ -28,14 +28,16 @@ Primeiro, instale as dependências do projeto:
 ```bash
 npm install
 # ou
-yarn install
+yarn
 ```
 
-Carrege as migrações do Prisma no seu banco de dados:
+Carrege as migrações do Prisma no banco de dados:
 
 ```bash
+npx run prisma generate
 npx run prisma migrate dev
 # ou
+yarn prisma generate
 yarn prisma migrate dev
 ```
 

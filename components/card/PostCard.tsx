@@ -6,6 +6,7 @@ import {
 import { Chip, Image, Link } from "@nextui-org/react";
 import PostDropdown from "../post/PostDropdown";
 import BookmarkPost from "../post/BookmarkPost";
+import UserAvatar from "../user/UserAvatar";
 
 export default function PostCard({
 	post,
@@ -18,18 +19,12 @@ export default function PostCard({
 	isUserPage?: boolean;
 	disableLink?: boolean;
 }) {
-	console.log(post);
-
 	return (
 		<div className="w-full flex flex-col gap-y-4">
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-center">
-					<Image
-						src={post.author.image || "/brand/default-avatar.svg"}
-						removeWrapper={true}
-						className="h-10 sm:h-12"
-					/>
+					<UserAvatar avatarURL={post.author.image} />
 					<div className="flex flex-col gap-y-2">
 						<div className="flex items-center">
 							<Link href={`/user/${post.author.username}`}>

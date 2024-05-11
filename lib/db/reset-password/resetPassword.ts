@@ -57,6 +57,10 @@ export async function sendResetRequest(email: string) {
 
 	// Send the link to the user's email...
 
+	if (process.env.NODE_ENV === "development") {
+		console.log("[Dev] Link: ", link);
+	}
+
 	sendMail(
 		email,
 		"Atualize sua senha.",

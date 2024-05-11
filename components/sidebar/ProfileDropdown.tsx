@@ -17,6 +17,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
+import UserAvatar from "../user/UserAvatar";
 
 export default function ProfileDropdown() {
 	const [signOutModal, setSignOutModal] = useState(false);
@@ -27,13 +28,7 @@ export default function ProfileDropdown() {
 			<Dropdown className="default-border shadow-none" placement="right">
 				<DropdownTrigger>
 					<Link className="p-4 transition-all duration-200">
-						<Image
-							removeWrapper={true}
-							src={
-								session.data?.user.image ||
-								"/brand/default-avatar.svg"
-							}
-						/>
+						<UserAvatar avatarURL={session.data?.user.image} />
 					</Link>
 				</DropdownTrigger>
 				<DropdownMenu aria-label="Static Actions">

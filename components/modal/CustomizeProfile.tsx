@@ -13,6 +13,7 @@ import { uploadUserAvatar, uploadUserBanner } from "@/lib/blob/userBlob";
 import type User from "@/lib/db/user/type";
 import getFileBase64 from "@/util/getFile";
 import Draggable from "../general/Draggable";
+import UserAvatar from "../user/UserAvatar";
 
 interface CustomizeProfileProps {
 	active: boolean;

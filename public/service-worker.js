@@ -1,5 +1,4 @@
 const installEvent = () => {
-	console.log("service worker exists");
 	self.addEventListener("install", () => {
 		console.warn("service worker installed");
 	});
@@ -71,7 +70,6 @@ fetchEvent();
 
 // For notifications
 self.addEventListener("push", (event) => {
-	console.log("Push received");
 	const data = event.data.json();
 	const title = data.title;
 	const body = data.body;

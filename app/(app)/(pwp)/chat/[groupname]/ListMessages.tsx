@@ -1,3 +1,4 @@
+import UserAvatar from "@/components/user/UserAvatar";
 import type { MessageProps } from "@/lib/db/groupChat/type";
 import { Link, Image, Chip } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
@@ -36,14 +37,8 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 							{i === 0 ||
 							message.user.id !== messages[i - 1].user.id ? (
 								<div>
-									<Image
-										src={
-											message.user.image ||
-											"/brand/default-avatar.svg"
-										}
-										removeWrapper={true}
-										alt={message.user.username || ""}
-										className="w-12 h-12"
+									<UserAvatar
+										avatarURL={message.user.image}
 									/>
 								</div>
 							) : (

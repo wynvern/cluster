@@ -7,7 +7,7 @@ const nextConfig = {
 	experimental: {
 		serverActions: {
 			bodySizeLimit: "10mb",
-			allowedOrigins: [process.env.HOSTNAME],
+			allowedOrigins: [process.env.SERVER_HOSTNAME, "localhost:3000"],
 		},
 	},
 };

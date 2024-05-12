@@ -4,8 +4,8 @@ import { Server } from "socket.io";
 import socketHandlers from "./lib/socketServerHandler.mjs";
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = process.env.HOSTNAME;
-const port = process.env.PORT;
+const hostname = process.env.SERVER_HOSTNAME;
+const port = process.env.SERVER_PORT;
 
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();

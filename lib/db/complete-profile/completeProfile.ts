@@ -36,5 +36,5 @@ export default async function completeProfile(username: string) {
 		data: { username: choosenUsername },
 	});
 
-	return "username-set";
+	return choosenUsername;
 }

@@ -335,6 +335,15 @@ export default function CreatePost({
 									}}
 									isDisabled={loading}
 								/>
+								<div>
+									{content.length > 1000 ? (
+										<p className="text-neutral-500">
+											{content.length} / 1500
+										</p>
+									) : (
+										""
+									)}
+								</div>
 							</div>
 						</Tab>
 						<Tab

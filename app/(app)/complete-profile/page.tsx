@@ -21,6 +21,7 @@ export default function Finish() {
 	const [isLoading, setIsLoading] = useState(false);
 	const session = useSession();
 	const [success, setSuccess] = useState(false);
+	const [username, setUsername] = useState("");
 
 	useEffect(() => {
 		// TODO: Chech if this is going to work
@@ -30,8 +31,6 @@ export default function Finish() {
 	}, [session, router]);
 
 	async function assignRandomUsername() {
-		setIsLoading(true);
-
 		const word1 =
 			words.adjectives[
 				Math.floor(Math.random() * words.adjectives.length)
@@ -40,44 +39,23 @@ export default function Finish() {
 			words.subjects[Math.floor(Math.random() * words.subjects.length)];
 		const generatedUsername = `${word1}.${word2}`;
 
-		const data = await completeProfile(generatedUsername);
-		setIsLoading(false);
-
-		switch (data) {
-			case "no-session":
-				setInputValidation({
-					active: true,
-					message: "Sessão inválida",
-				});
-				break;
-			case "invalid-username":
-				setInputValidation({
-					active: true,
-					message: "Nome de usuário inválido",
-				});
-				break;
-			case "username-in-use":
-				setInputValidation({
-					active: true,
-					message: "Nome de usuário em uso",
-				});
-				break;
-			case "username-set":
-				setSuccess(true);
-				update({ username: generatedUsername });
-				break;
-		}
+		setUsername(generatedUsername);
 	}
 
 	async function handleComplete(e: React.FormEvent<HTMLFormElement>) {
 		setIsLoading(true);
 		e.preventDefault();
 
-		const formData = new FormData(e.currentTarget);
-		const formUsername: string = formData.get("username") as string;
+		if (!username) {
+			setInputValidation({
+				active: true,
+				message: "Digite um nome de usuário",
+			});
+			setIsLoading(false);
+			return false;
+		}
 
-		setIsLoading(false);
-		const data = await completeProfile(formUsername);
+		const data = await completeProfile(username);
 
 		switch (data) {
 			case "no-session":
@@ -85,24 +63,29 @@ export default function Finish() {
 					active: true,
 					message: "Sessão inválida",
 				});
-				break;
+				setIsLoading(false);
+
+				return false;
 			case "invalid-username":
 				setInputValidation({
 					active: true,
 					message: "Nome de usuário inválido",
 				});
-				break;
+				setIsLoading(false);
+
+				return false;
 			case "username-in-use":
 				setInputValidation({
 					active: true,
 					message: "Nome de usuário em uso",
 				});
-				break;
-			case "username-set":
-				setSuccess(true);
-				update({ username: formUsername });
-				break;
+				setIsLoading(false);
+
+				return false;
 		}
+
+		setSuccess(true);
+		update({ username: data });
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -123,6 +106,19 @@ export default function Finish() {
 					isInvalid={inputValidation.active}
 					errorMessage={inputValidation.message}
 					classNames={{ inputWrapper: "h-14" }}
+					value={username}
+					isDisabled={isLoading || success}
+					onChange={(e) => {
+						if (e.target.value.length >= 20) {
+							setInputValidation({
+								active: true,
+								message:
+									"O nome de usuário pode ter somente até 20 caracteres.",
+							});
+							return false;
+						}
+						setUsername(e.target.value);
+					}}
 					startContent={
 						<>
 							<UserIcon className="h-6 text-neutral-500" />

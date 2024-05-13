@@ -3,6 +3,7 @@
 import GoogleLoginButton from "@/components/sign/GLoginButton";
 import {
 	ArrowLeftEndOnRectangleIcon,
+	CheckIcon,
 	EnvelopeIcon,
 	KeyIcon,
 } from "@heroicons/react/24/outline";
@@ -10,7 +11,6 @@ import { Button, Input, Link } from "@nextui-org/react";
 import { type SignInResponse, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import LogoTitle from "@/components/sign/LogoTitle";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import PasswordInput from "@/components/auth/PasswordInput";
 
@@ -20,6 +20,7 @@ export default function Login() {
 		message: "",
 		active: false,
 	});
+	const [success, setSuccess] = useState(false);
 	const router = useRouter();
 	const [inputPasswordVal, setInputPasswordVal] = useState({
 		message: "",
@@ -107,6 +108,7 @@ export default function Login() {
 		}
 
 		setLoading(false);
+		setSuccess(true);
 		router.push("/");
 	}
 
@@ -169,12 +171,14 @@ export default function Login() {
 
 					<Button
 						type="submit"
-						color="primary"
-						isDisabled={loading}
+						color={success ? "success" : "primary"}
+						isDisabled={loading || success}
 						isLoading={loading}
 						startContent={
 							loading ? (
 								""
+							) : success ? (
+								<CheckIcon className="h-6" />
 							) : (
 								<ArrowLeftEndOnRectangleIcon className="h-6" />
 							)

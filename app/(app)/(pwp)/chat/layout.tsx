@@ -22,11 +22,12 @@ export default function LayoutChat({
 				session?.data?.user.id || "",
 				{ groupChatId: true }
 			);
+			console.log(response);
 			setUserGroups(response);
 		}
 
 		handleUserGroups();
-	}, []);
+	}, [session]);
 
 	return (
 		<div className="w-full h-full flex">

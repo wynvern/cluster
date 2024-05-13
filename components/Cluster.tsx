@@ -31,7 +31,7 @@ export default function Cluster({ children }: { children: React.ReactNode }) {
 					<ConfirmationModalProvider>
 						<NextThemesProvider
 							attribute="class"
-							defaultTheme="dark"
+							defaultTheme="light"
 						>
 							{children}
 						</NextThemesProvider>

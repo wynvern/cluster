@@ -98,6 +98,8 @@ export async function fetchUserGroups(
 		include: {},
 	};
 
+	console.log(queryOptions.where.members.some);
+
 	if (options?.groupChatId) {
 		queryOptions.include = {
 			GroupChat: {
@@ -107,6 +109,8 @@ export async function fetchUserGroups(
 			},
 		};
 	}
+
+	console.log(queryOptions);
 
 	const groups = await db.group.findMany(queryOptions);
 

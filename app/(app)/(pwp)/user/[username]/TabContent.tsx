@@ -1,16 +1,17 @@
-import NoPosts from "@/components/card/NoPosts";
-import PostCard from "@/components/card/PostCard";
-import SkeletonPostCard from "@/components/card/SkeletonPostCard";
+import GroupList from "@/components/group/GroupList";
 import PostsList from "@/components/post/PostsList";
+import type { GroupCard } from "@/lib/db/group/type";
 import type Post from "@/lib/db/post/type";
 import { Tab, Tabs } from "@nextui-org/react";
 
 export default function TabContent({
 	posts,
 	bookmarkPosts,
+	groups,
 }: {
 	posts: Post[] | null;
 	bookmarkPosts: Post[] | null;
+	groups: GroupCard[] | null;
 }) {
 	return (
 		<div className="w-full flex items-center flex-col mt-10">
@@ -35,7 +36,7 @@ export default function TabContent({
 					title={<h3 className="p-2">Grupos</h3>}
 					className="px-0 w-full"
 				>
-					Tab 1
+					<GroupList groups={groups} />
 				</Tab>
 			</Tabs>
 		</div>

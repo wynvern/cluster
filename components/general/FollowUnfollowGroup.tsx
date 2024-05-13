@@ -1,6 +1,7 @@
 import { enterGroup, exitGroup, getRole } from "@/lib/db/group/group";
 import { Button } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 export default function ({ groupname }: { groupname: string }) {
 	const [userRole, setUserRole] = useState<string | null | undefined>("");
@@ -20,7 +21,9 @@ export default function ({ groupname }: { groupname: string }) {
 		checkFollowingStatus();
 	}, [groupname]);
 
-	const handleClick = async () => {
+	const handleClick = async (e: React.MouseEvent) => {
+		e.preventDefault();
+
 		if (isFollowing) {
 			await exitGroup({ groupname });
 			setUserRole(undefined);

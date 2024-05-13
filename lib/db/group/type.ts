@@ -31,3 +31,12 @@ export interface UserGroupInfo {
 	};
 }
 [];
+
+export interface GroupCard {
+	id: string;
+	name: string | null;
+	groupname: string;
+	image: string | null;
+	banner: string | null;
+}
+[];

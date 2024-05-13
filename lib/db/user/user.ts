@@ -89,16 +89,16 @@ export async function getNotifications() {
 	return notifications;
 }
 
-export async function fetchUserGroups(options: { groupChatId?: boolean }) {
-	const session = await getServerSession(authOptions);
-	if (!session) return [];
-
+export async function fetchUserGroups(
+	userId: string,
+	options?: { groupChatId?: boolean }
+) {
 	const queryOptions = {
-		where: { members: { some: { userId: session.user.id } } },
+		where: { members: { some: { userId: userId } } },
 		include: {},
 	};
 
-	if (options.groupChatId) {
+	if (options?.groupChatId) {
 		queryOptions.include = {
 			GroupChat: {
 				select: {
@@ -111,4 +111,19 @@ export async function fetchUserGroups(options: { groupChatId?: boolean }) {
 	const groups = await db.group.findMany(queryOptions);
 
 	return groups;
+}
+
+export async function blockUser(userId: string) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	await db.blockedUser.create({
+		data: {
+			userId: session.user.id,
+			blockedId: userId,
+		},
+	});
+
+	return "ok";
 }

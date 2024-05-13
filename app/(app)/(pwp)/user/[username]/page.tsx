@@ -1,18 +1,20 @@
 "use client";
 
 import type User from "@/lib/db/user/type";
-import fetchUser from "@/lib/db/user/user";
+import fetchUser, { fetchUserGroups } from "@/lib/db/user/user";
 import { useEffect, useState } from "react";
 import UserDisplay from "./UserDisplay";
 import TabContent from "./TabContent";
 import type Post from "@/lib/db/post/type";
 import { fetchUserBookmarkPosts, fetchUserPosts } from "@/lib/db/post/post";
+import type { GroupCard } from "@/lib/db/group/type";
 
 export default function UserPage({ params }: { params: { username: string } }) {
 	const [notFound, setNotFound] = useState(false);
 	const [user, setUser] = useState<User | null>(null);
 	const [posts, setPosts] = useState<Post[] | null>(null);
 	const [bookmarkPosts, setBookmarkPosts] = useState<Post[] | null>(null);
+	const [userGroups, setUserGroups] = useState<GroupCard[] | null>(null);
 
 	async function handleFetchBookmarkPosts() {
 		if (!user) return;
@@ -33,6 +35,13 @@ export default function UserPage({ params }: { params: { username: string } }) {
 		setUser(data);
 	}
 
+	async function handleUserGroups() {
+		if (!user) return;
+
+		const data = await fetchUserGroups(user.id);
+		setUserGroups(data as GroupCard[]);
+	}
+
 	async function handleFetchPosts() {
 		if (!user) return;
 
@@ -50,6 +59,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
 	useEffect(() => {
 		handleFetchPosts();
 		handleFetchBookmarkPosts();
+		handleUserGroups();
 	}, [user]);
 
 	return (
@@ -57,7 +67,11 @@ export default function UserPage({ params }: { params: { username: string } }) {
 			<div className="side-borders w-full max-w-[1000px] h-full">
 				{notFound ? <>User was not found</> : ""}
 				<UserDisplay user={user} />
-				<TabContent posts={posts} bookmarkPosts={bookmarkPosts} />
+				<TabContent
+					posts={posts}
+					bookmarkPosts={bookmarkPosts}
+					groups={userGroups}
+				/>
 			</div>
 		</div>
 	);

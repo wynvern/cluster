@@ -81,7 +81,7 @@ export default function UserDisplay({ user }: { user: User | null }) {
 				</div>
 				<div>
 					<Skeleton isLoaded={loaded} className="rounded-lg">
-						<h1>{user?.name || "loading"}</h1>
+						<h1>{user?.name || (!loaded && "Loading")}</h1>
 						<p>
 							<b>u/</b>
 							{user?.username || "loading"}
@@ -90,7 +90,7 @@ export default function UserDisplay({ user }: { user: User | null }) {
 				</div>
 				<div>
 					<Skeleton isLoaded={loaded} className="rounded-lg">
-						<p>{user?.bio || "loading"}</p>
+						<p>{user?.bio || (!loaded && "Loading")}</p>
 					</Skeleton>
 				</div>
 			</div>

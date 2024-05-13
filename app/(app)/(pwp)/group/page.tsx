@@ -3,22 +3,15 @@
 import FollowUnfollowGroup from "@/components/general/FollowUnfollowGroup";
 import CreateGroup from "@/components/modal/CreateGroup";
 import { fetchRecentGroups } from "@/lib/db/group/group";
-import { Button, Chip, Image, ScrollShadow } from "@nextui-org/react";
+import { Button, Chip, ScrollShadow } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import Categories from "../../../../public/categories.json";
-
-interface GroupRecent {
-	id: string;
-	name: string | null;
-	groupname: string;
-	image: string | null;
-	banner: string | null;
-}
-[];
+import type { GroupCard as GroupCardType } from "@/lib/db/group/type";
+import GroupCard from "@/components/group/GroupCard";
 
 export default function Groups() {
 	const [createGroupActive, setCreateGroupActive] = useState(false);
-	const [recentGroups, setRecentGroups] = useState<GroupRecent[] | null>(
+	const [recentGroups, setRecentGroups] = useState<GroupCardType[] | null>(
 		null
 	);
 
@@ -59,37 +52,7 @@ export default function Groups() {
 							className="overflow-x-scroll flex h-fit gap-x-4"
 						>
 							{recentGroups?.map((group) => (
-								<div
-									key={group.id}
-									className="rounded-large border-default w-full min-w-[400px] mb-4"
-								>
-									<div className="relative">
-										<Image
-											src={group.banner || ""}
-											removeWrapper={true}
-											className="w-full object-cover rounded-b-none"
-											style={{ aspectRatio: "400 / 160" }}
-										/>
-										<Image
-											removeWrapper={true}
-											src={
-												group.image ||
-												"/brand/default-group.svg"
-											}
-											className="w-[100px] h-[100px] absolute top-[90px] left-4"
-										/>
-									</div>
-									<div className="h-10 w-full px-4 py-4 flex justify-between">
-										<div />
-										<FollowUnfollowGroup
-											groupname={group.groupname}
-										/>
-									</div>
-									<div className="w-full h-20 px-4">
-										<h2>{group.name}</h2>
-										<p>g/{group.groupname}</p>
-									</div>
-								</div>
+								<GroupCard key={group.id} group={group} />
 							))}
 						</ScrollShadow>
 					</div>

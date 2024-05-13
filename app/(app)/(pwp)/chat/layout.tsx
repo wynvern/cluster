@@ -4,6 +4,7 @@ import NoPosts from "@/components/card/NoPosts";
 import type { UserGroupInfo } from "@/lib/db/group/type";
 import { fetchUserGroups } from "@/lib/db/user/user";
 import { Input, Link, Image } from "@nextui-org/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function LayoutChat({
@@ -12,10 +13,15 @@ export default function LayoutChat({
 	children: React.ReactNode;
 }) {
 	const [userGroups, setUserGroups] = useState<UserGroupInfo[]>([]);
+	const session = useSession();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function handleUserGroups() {
-			const response = await fetchUserGroups({ groupChatId: true });
+			const response = await fetchUserGroups(
+				session?.data?.user.id || "",
+				{ groupChatId: true }
+			);
 			setUserGroups(response);
 		}
 

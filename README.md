@@ -34,10 +34,8 @@ yarn
 Carrege as migrações do Prisma no banco de dados:
 
 ```bash
-npx run prisma generate
 npx run prisma migrate dev
 # ou
-yarn prisma generate
 yarn prisma migrate dev
 ```
 
@@ -51,11 +49,15 @@ yarn dev
 
 **Nota:** Vale ressaltar que, como o projeto está rodando em um arquivo customizado `server.mjs`, não está pronto para rodar de forma serverless.
 
-**Nota:** Caso receba um erro do pacote sharp, rode o comando para instalar as dependências sem engine.
+**Nota:** Caso receba um erro do pacote sharp, rode `yarn add sharp --ignore-engines` o comando para instalar as dependências sem engine.
+
+Para manter o código pradonizado, instale o _biome_, usando as configurações já encontradas no arquivo `biome.json`. Evite utilizar ESLint ou Prettier. Deixe claro suas modificações no código ao realizar alguma commit.
 
 ## Configuração do arquivo .env
 
-Crie um arquivo `.env` na raiz do projeto e preencha-o com suas variáveis de ambiente. O exemplo está no arquivo `.env.example`.
+Crie um arquivo `.env` na raiz do projeto e preencha-o com suas variáveis de ambiente. Um exemplo do arquivo está em `.env.example`, onde estão as variáveis necessárias.
+
+Caso precise rodar o projeto em um codespaces, é necessário definir o hostname para o mesmo exposto pelo vscode, devido a um erro de origem.
 
 ## 📁 Estrutura do Projeto
 

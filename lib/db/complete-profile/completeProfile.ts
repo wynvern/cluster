@@ -11,18 +11,19 @@ function isValidUsername(str: string) {
 
 export default async function completeProfile(username: string) {
 	const session = await getServerSession(authOptions);
+	const choosenUsername = username.toLowerCase();
 
 	if (!session || !session.user.email) {
 		return "no-session";
 	}
 
-	if (!isValidUsername(username)) {
+	if (!isValidUsername(choosenUsername)) {
 		return "invalid-username";
 	}
 
 	const existingUser = await db.user.findFirst({
 		where: {
-			username,
+			username: choosenUsername,
 		},
 	});
 
@@ -32,7 +33,7 @@ export default async function completeProfile(username: string) {
 
 	await db.user.update({
 		where: { email: session.user.email },
-		data: { username },
+		data: { username: choosenUsername },
 	});
 
 	return "username-set";

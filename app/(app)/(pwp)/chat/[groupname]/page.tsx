@@ -36,6 +36,7 @@ export default function ChatPage({
 	const [messages, setMessages] = useState<MessageProps[]>([]);
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
+	const formRef = useRef<HTMLFormElement>(null);
 
 	async function initChat() {
 		const retreivedGroup = await fetchGroup({
@@ -113,6 +114,7 @@ export default function ChatPage({
 				createdAt: new Date(),
 			} as MessageProps;
 			socket.emit("sendMessage", messageToSend);
+			e.currentTarget.reset();
 		}
 		setIsSending(false);
 	}
@@ -142,6 +144,7 @@ export default function ChatPage({
 				</ScrollShadow>
 			</div>
 			<form
+				ref={formRef}
 				onSubmit={handleSubmit}
 				className="w-full px-10 flex gap-x-4 transition-height duration-200 mb-6"
 			>
@@ -152,6 +155,14 @@ export default function ChatPage({
 						name="message"
 						isDisabled={isSending}
 						classNames={{ inputWrapper: "border-none" }}
+						onKeyDown={(event) => {
+							if (event.key === "Enter" && !event.shiftKey) {
+								event.preventDefault();
+								formRef.current?.dispatchEvent(
+									new Event("submit", { cancelable: true })
+								);
+							}
+						}}
 					/>
 					{selectedImage && (
 						<div className="relative">

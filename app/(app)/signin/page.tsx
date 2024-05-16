@@ -1,6 +1,5 @@
 "use client";
 
-import GoogleLoginButton from "@/components/sign/GLoginButton";
 import {
 	ArrowLeftEndOnRectangleIcon,
 	CheckIcon,
@@ -13,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import PasswordInput from "@/components/auth/PasswordInput";
+import GoogleLoginButton from "@/components/auth/GLoginButton";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);

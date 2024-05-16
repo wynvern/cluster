@@ -15,12 +15,14 @@ function ConfirmationModal({
 	onConfirm,
 	onCancel,
 	opened,
+	isDanger,
 }: {
 	title: string;
 	description: string;
 	onConfirm: () => void;
 	onCancel: () => void;
 	opened: boolean;
+	isDanger?: boolean;
 }) {
 	return (
 		<BaseModal
@@ -39,7 +41,7 @@ function ConfirmationModal({
 					</Button>
 					<Button
 						onClick={onConfirm}
-						color="primary"
+						color={!isDanger ? "primary" : "danger"}
 						startContent={<CheckIcon className="h-6" />}
 					>
 						Confirmar
@@ -53,6 +55,7 @@ function ConfirmationModal({
 interface ConfirmationModalProps {
 	title: string;
 	description: string;
+	isDanger?: boolean;
 	onConfirm: () => void;
 	onCancel: () => void;
 }

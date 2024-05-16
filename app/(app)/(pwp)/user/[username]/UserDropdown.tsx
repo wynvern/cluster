@@ -1,7 +1,9 @@
 "use client";
 
 import CustomizeProfile from "@/components/modal/CustomizeProfile";
+import { useConfirmationModal } from "@/components/provider/ConfirmationModal";
 import type User from "@/lib/db/user/type";
+import { blockUser } from "@/lib/db/user/user";
 import {
 	EllipsisHorizontalIcon,
 	FlagIcon,
@@ -20,6 +22,7 @@ import { useEffect, useState } from "react";
 
 export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 	const [customizeProfileActive, setCustomizeProfileActive] = useState(false);
+	const { confirm } = useConfirmationModal();
 	const [dropdownItems, setDropdownItems] = useState([
 		{
 			isUserPrivate: true,
@@ -34,7 +37,7 @@ export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 			description: "Bloquear usuário",
 			icon: <NoSymbolIcon className="h-8" aria-label="Sign Out" />,
 			ariaLabel: "block user",
-			onClick: () => alert("Bloquear usuário"),
+			onClick: handleBlockUser,
 			text: "Bloquear Perifl",
 			className: "text-danger",
 		},
@@ -50,15 +53,33 @@ export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 	]);
 	const session = useSession();
 
+	async function handleBlockUser() {
+		await confirm({
+			isDanger: true,
+			onConfirm: async () => {
+				const response = await blockUser(defaultUser.id);
+
+				if (response === "ok") {
+					alert("Usuário bloqueado com sucesso!");
+				} else {
+					alert("Erro ao bloquear usuário.");
+				}
+			},
+			description: `Tem certaza que deseja bloquear o usuário ${defaultUser.username}?`,
+			title: "Bloquear Usuário",
+			onCancel: () => {},
+		});
+	}
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (session.data?.user.id) {
+		if (session.data?.user.id === defaultUser.id) {
 			setDropdownItems((prev) =>
-				prev.filter(
-					(item) =>
-						!item.isUserPrivate ||
-						defaultUser.id === session.data?.user.id
-				)
+				prev.filter((item) => item.isUserPrivate === true)
+			);
+		} else {
+			setDropdownItems((prev) =>
+				prev.filter((item) => item.isUserPrivate === false)
 			);
 		}
 	}, [session]);

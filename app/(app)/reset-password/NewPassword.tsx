@@ -1,7 +1,6 @@
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import PasswordInput from "@/components/auth/PasswordInput";
 import ErrorBox from "@/components/general/ErrorBox";
-import LogoTitle from "@/components/sign/LogoTitle";
 import { updatePassword } from "@/lib/db/reset-password/resetPassword";
 import {
 	CheckIcon,

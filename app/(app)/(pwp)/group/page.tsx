@@ -41,15 +41,18 @@ export default function Groups() {
 				<div className="side-borders w-full max-w-[1000px] h-full px-10 pt-10 flex flex-col gap-y-10">
 					<div>
 						<h1>Grupos</h1>
-						<h2>Descrição</h2>
-						<p>Mais texto</p>
+						<h2>Conecte-se, Colabore e Cresça.</h2>
+						<p>
+							Descubra grupos que compartilham dos seus interesses
+							e participe de discussões enriquecedoras.
+						</p>
 					</div>
 
 					<div className="w-full">
 						<h2 className="mb-4">Recentes</h2>
 						<ScrollShadow
 							orientation="horizontal"
-							className="overflow-x-scroll flex h-fit gap-x-4"
+							className="overflow-x-scroll gap-x-4 flex"
 						>
 							{recentGroups?.map((group) => (
 								<GroupCard key={group.id} group={group} />

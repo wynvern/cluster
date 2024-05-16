@@ -1,5 +1,4 @@
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
-import LogoTitle from "@/components/sign/LogoTitle";
 import { verifyEmail } from "@/lib/db/verifyEmail/verifyEmail";
 import { AtSymbolIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Button, Input, Link } from "@nextui-org/react";

@@ -1,8 +1,8 @@
 "use client";
 
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
+import GoogleLoginButton from "@/components/auth/GLoginButton";
 import PasswordInput from "@/components/auth/PasswordInput";
-import GoogleLoginButton from "@/components/sign/GLoginButton";
 import { createUser } from "@/lib/db/user/user";
 import {
 	CheckIcon,

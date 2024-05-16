@@ -1,7 +1,6 @@
 "use client";
 
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
-import LogoTitle from "@/components/sign/LogoTitle";
 import { sendResetRequest } from "@/lib/db/reset-password/resetPassword";
 import {
 	AtSymbolIcon,

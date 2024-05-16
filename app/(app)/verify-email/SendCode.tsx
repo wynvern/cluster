@@ -2,7 +2,6 @@
 
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import ErrorBox from "@/components/general/ErrorBox";
-import LogoTitle from "@/components/sign/LogoTitle";
 import { sendCode } from "@/lib/db/verifyEmail/verifyEmail";
 import { CheckIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Button, Link } from "@nextui-org/react";

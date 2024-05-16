@@ -1,4 +1,4 @@
-import LogoTitle from "../sign/LogoTitle";
+import LogoTitle from "../general/LogoTitle";
 
 interface AuthModalWrapperProps {
 	title: string;

@@ -1,6 +1,5 @@
 "use client";
 
-import LogoTitle from "@/components/sign/LogoTitle";
 import completeProfile from "@/lib/db/complete-profile/completeProfile";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";

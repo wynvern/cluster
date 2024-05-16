@@ -50,7 +50,7 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (session.data?.user?.emailVerified) {
-			router.push("/login"); // auto redirects to correct page
+			router.push("/complete-profile"); // auto redirects to correct page
 		}
 	}, [session]);
 

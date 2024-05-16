@@ -62,10 +62,21 @@ export default async function middleware(req: NextRequest) {
 			location: "/",
 			redirection: {
 				condition:
+					Boolean(session) &&
+					!session?.emailVerified &&
+					!url.pathname.startsWith("/verify-email"),
+				to: "/verify-email",
+			},
+		},
+		{
+			location: "/",
+			redirection: {
+				condition:
 					!session &&
 					!url.pathname.includes("/signin") &&
 					!url.pathname.includes("/signup") &&
-					!url.pathname.includes("/reset-password"),
+					!url.pathname.includes("/reset-password") &&
+					!url.pathname.includes("/verify-email"),
 				to: "/signin",
 			},
 		},
@@ -74,17 +85,8 @@ export default async function middleware(req: NextRequest) {
 			redirection: {
 				condition:
 					Boolean(session) &&
-					!session?.emailVerified &&
-					!url.pathname.includes("/verify-email"),
-				to: "/verify-email",
-			},
-		},
-		{
-			location: "/",
-			redirection: {
-				condition:
-					Boolean(session) &&
 					!session?.username &&
+					Boolean(session?.emailVerified) &&
 					!url.pathname.includes("/complete-profile"),
 				to: "/complete-profile",
 			},

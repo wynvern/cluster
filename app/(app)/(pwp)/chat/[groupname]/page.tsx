@@ -36,7 +36,7 @@ export default function ChatPage({
 	const [messages, setMessages] = useState<MessageProps[]>([]);
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
-	const formRef = useRef<HTMLFormElement>(null);
+	const [batchIndex, setBatchIndex] = useState(1);
 
 	async function initChat() {
 		const retreivedGroup = await fetchGroup({
@@ -47,21 +47,18 @@ export default function ChatPage({
 			return false;
 		}
 		setGroup(retreivedGroup);
+		console.log("fetched messages");
 
-		const retreivedMessages = await fetchMessages(retreivedGroup.id);
-		if (retreivedMessages !== "no-session") {
-			setMessages(retreivedMessages);
-		}
+		loadMessageBatch(retreivedGroup?.id || "", true);
 
 		socket.emit("joinGroup", retreivedGroup?.GroupChat?.id);
 	}
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (endOfMessagesRef.current) {
+	function scrollDown() {
+		if (endOfMessagesRef?.current) {
 			endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
 		}
-	}, [messages]);
+	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -111,6 +108,7 @@ export default function ChatPage({
 					image: session.data?.user?.image || "",
 				},
 				chatId: group?.GroupChat?.id,
+				media: [selectedImage?.base64 || ""],
 				createdAt: new Date(),
 			} as MessageProps;
 			socket.emit("sendMessage", messageToSend);
@@ -134,11 +132,44 @@ export default function ChatPage({
 		}
 	}
 
+	async function handleMessageLoadScroll(e: React.UIEvent<HTMLDivElement>) {
+		if (e.currentTarget.scrollTop === 0) {
+			loadMessageBatch(group?.id || "");
+		}
+	}
+
+	async function loadMessageBatch(groupId: string, overwrite = false) {
+		const retreivedMessages = await fetchMessages(
+			groupId,
+			batchIndex + (overwrite ? 0 : 1)
+		);
+
+		switch (retreivedMessages) {
+			case "no-session":
+				alert("sem sessão");
+				return false;
+			case "no-more-messages":
+				alert("sem mais mensagens");
+				return false;
+		}
+		if (overwrite) setMessages(retreivedMessages);
+		else {
+			setMessages((prevMessages) => [
+				...retreivedMessages,
+				...prevMessages,
+			]);
+			setBatchIndex((prev) => prev + 1);
+		}
+	}
+
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden max-h-dvh">
 			<div className="h-20 bottom-border">abc</div>
 			<div className="grow flex flex-col overflow-hidden my-4">
-				<ScrollShadow className="w-full h-full px-10 gap-y-4 flex flex-col overflow-auto">
+				<ScrollShadow
+					className="w-full h-full px-10 gap-y-4 flex flex-col overflow-auto"
+					onScroll={handleMessageLoadScroll}
+				>
 					<ListMessages messages={messages} />
 					<div ref={endOfMessagesRef} />
 				</ScrollShadow>
@@ -155,14 +186,15 @@ export default function ChatPage({
 						name="message"
 						isDisabled={isSending}
 						classNames={{ inputWrapper: "border-none" }}
-						onKeyDown={(event) => {
-							if (event.key === "Enter" && !event.shiftKey) {
-								event.preventDefault();
-								formRef.current?.dispatchEvent(
-									new Event("submit", { cancelable: true })
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								e.currentTarget.form?.dispatchEvent(
+									new Event("submit", { bubbles: true })
 								);
 							}
 						}}
+						max={1000}
 					/>
 					{selectedImage && (
 						<div className="relative">

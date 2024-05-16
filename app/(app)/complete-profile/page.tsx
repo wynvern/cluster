@@ -83,6 +83,7 @@ export default function Finish() {
 				return false;
 		}
 
+		setIsLoading(false);
 		setSuccess(true);
 		update({ username: data });
 	}

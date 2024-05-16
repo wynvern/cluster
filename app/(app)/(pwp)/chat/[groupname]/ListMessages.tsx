@@ -35,7 +35,8 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 							}`}
 						>
 							{i === 0 ||
-							message.user.id !== messages[i - 1].user.id ? (
+							message.user.id !== messages[i - 1].user.id ||
+							isNewDay ? (
 								<div>
 									<UserAvatar
 										avatarURL={message.user.image}
@@ -79,6 +80,16 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 								</div>
 							</div>
 						</div>
+						{message.media && message.media.length > 0 && (
+							<div>
+								<div>
+									<Image
+										src={message.media[0]}
+										removeWrapper={true}
+									/>
+								</div>
+							</div>
+						)}
 					</div>
 				);
 			})}

@@ -25,3 +25,4 @@ export default interface Post {
 	}[];
 	createdAt: Date;
 }
+5;

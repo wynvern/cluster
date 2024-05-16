@@ -9,4 +9,6 @@ export interface MessageProps {
 	};
 	createdAt: Date;
 	chatId: string;
+	attachments?: string[];
+	media?: string[];
 }

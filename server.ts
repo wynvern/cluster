@@ -1,13 +1,13 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
-import socketHandlers from "./lib/socketServerHandler.mjs";
+import socketHandlers from "./lib/socketServerHandler";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.SERVER_HOSTNAME;
 const port = process.env.SERVER_PORT;
 
-const app = next({ dev, hostname, port });
+const app = next({ dev, hostname, port: Number(port) || 3000 });
 const handler = app.getRequestHandler();
 
 app.prepare().then(() => {

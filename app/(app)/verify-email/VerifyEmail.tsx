@@ -1,5 +1,4 @@
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
-import LogoTitle from "@/components/sign/LogoTitle";
 import { verifyEmail } from "@/lib/db/verifyEmail/verifyEmail";
 import { AtSymbolIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Button, Input, Link } from "@nextui-org/react";
@@ -51,7 +50,7 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (session.data?.user?.emailVerified) {
-			router.push("/login"); // auto redirects to correct page
+			router.push("/complete-profile"); // auto redirects to correct page
 		}
 	}, [session]);
 

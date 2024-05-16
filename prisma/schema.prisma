@@ -299,6 +299,7 @@ model Message {
    chatId      String
    chat        GroupChat  @relation(fields: [chatId], references: [id])
    attachments String[]
+   media       String[]
    reactions   Reaction[]
    createdAt   DateTime   @default(now())
 

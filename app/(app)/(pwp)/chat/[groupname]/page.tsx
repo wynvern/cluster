@@ -1,6 +1,5 @@
 "use client";
 
-import type { UserGroupInfo } from "@/lib/db/group/type";
 import { fetchMessages } from "@/lib/db/groupChat/groupChat";
 import getFileBase64 from "@/util/getFile";
 import {
@@ -8,20 +7,22 @@ import {
 	PhotoIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Button, ScrollShadow, Image, Link, Textarea } from "@nextui-org/react";
+import { Button, ScrollShadow, Image, Textarea } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
-import { socket } from "@/lib/SocketClient";
 import { ListMessages } from "./ListMessages";
 import type { MessageProps } from "@/lib/db/groupChat/type";
 import fetchGroup from "@/lib/db/group/group";
 import type Group from "@/lib/db/group/type";
+import { type Socket, io } from "socket.io-client";
 
 interface FileBase64Info {
 	base64: string;
 	preview: string;
 	file?: File;
 }
+
+let socket: Socket;
 
 export default function ChatPage({
 	params,
@@ -37,6 +38,15 @@ export default function ChatPage({
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
 	const [batchIndex, setBatchIndex] = useState(1);
+
+	useEffect(() => {
+		const initChat = async () => {
+			await fetch("/api/socket");
+			socket = io();
+		};
+
+		initChat();
+	}, []);
 
 	async function initChat() {
 		const retreivedGroup = await fetchGroup({
@@ -175,7 +185,6 @@ export default function ChatPage({
 				</ScrollShadow>
 			</div>
 			<form
-				ref={formRef}
 				onSubmit={handleSubmit}
 				className="w-full px-10 flex gap-x-4 transition-height duration-200 mb-6"
 			>
@@ -186,7 +195,9 @@ export default function ChatPage({
 						name="message"
 						isDisabled={isSending}
 						classNames={{ inputWrapper: "border-none" }}
-						onKeyDown={(e) => {
+						onKeyDown={(
+							e: React.KeyboardEvent<HTMLTextAreaElement>
+						) => {
 							if (e.key === "Enter" && !e.shiftKey) {
 								e.preventDefault();
 								e.currentTarget.form?.dispatchEvent(

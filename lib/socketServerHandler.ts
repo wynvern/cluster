@@ -2,7 +2,6 @@ import type { Server, Socket } from "socket.io";
 import { db } from "./db";
 import { compressImage } from "./image";
 import { put } from "@vercel/blob";
-import { sendNotification } from "./notification.js";
 
 interface MessageData {
 	content: string;
@@ -85,6 +84,7 @@ async function createMessage(data: MessageData) {
 	if (data.media) {
 		for (const media of data.media) {
 			if (!media) return;
+			console.log("media!");
 			const buffer = Buffer.from(media, "base64");
 			const processedImage = await compressImage(buffer);
 

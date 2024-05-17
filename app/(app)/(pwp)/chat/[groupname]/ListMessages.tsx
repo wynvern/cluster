@@ -29,9 +29,7 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 						</div>
 						<div
 							className={`w-full flex gap-x-4 message-animation ${
-								message.user.id === session.data?.user?.id
-									? "flex-row-reverse"
-									: ""
+								isUserMessage ? "flex-row-reverse" : ""
 							}`}
 						>
 							{i === 0 ||
@@ -81,13 +79,20 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 							</div>
 						</div>
 						{message.media && message.media.length > 0 && (
-							<div>
-								<div>
+							<div
+								className={
+									isUserMessage
+										? "flex items-end justify-end mr-16 mt-2"
+										: "flex items-start"
+								}
+							>
+								<div className="max-w-[300px] max-h-[400px]">
 									<Image
 										src={message.media[0]}
 										removeWrapper={true}
 									/>
 								</div>
+								<div />
 							</div>
 						)}
 					</div>

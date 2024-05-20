@@ -139,7 +139,10 @@ export async function fetchUserPosts(
 	return posts;
 }
 
-export async function fetchUserBookmarks(userId: string) {
+export async function fetchUserBookmarks(
+	userId: string,
+	pagination?: { skip: number; take: number }
+) {
 	const session = await getServerSession(authOptions);
 	if (!session) return [];
 
@@ -156,6 +159,8 @@ export async function fetchUserBookmarks(userId: string) {
 	const bookmarks = await db.bookmark.findMany({
 		where: { userId: user.id },
 		orderBy: { createdAt: "desc" },
+		skip: pagination?.skip,
+		take: pagination?.take,
 		select: {
 			post: {
 				select: {

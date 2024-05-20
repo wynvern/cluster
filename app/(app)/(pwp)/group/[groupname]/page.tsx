@@ -43,7 +43,6 @@ export default function GroupPage({
 	async function handleGetRole() {
 		const role = await getRole({ groupname: group?.groupname || "" });
 		setUserRole(role);
-		console.log(role);
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

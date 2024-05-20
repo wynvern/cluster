@@ -14,15 +14,13 @@ import { ListMessages } from "./ListMessages";
 import type { MessageProps } from "@/lib/db/groupChat/type";
 import fetchGroup from "@/lib/db/group/group";
 import type Group from "@/lib/db/group/type";
-import { type Socket, io } from "socket.io-client";
+import { socket } from "../../../../../lib/SocketClient";
 
 interface FileBase64Info {
 	base64: string;
 	preview: string;
 	file?: File;
 }
-
-let socket: Socket;
 
 export default function ChatPage({
 	params,
@@ -39,15 +37,6 @@ export default function ChatPage({
 	const session = useSession();
 	const [batchIndex, setBatchIndex] = useState(1);
 
-	useEffect(() => {
-		const initChat = async () => {
-			await fetch("/api/socket");
-			socket = io();
-		};
-
-		initChat();
-	}, []);
-
 	async function initChat() {
 		const retreivedGroup = await fetchGroup({
 			groupname: params.groupname,
@@ -57,8 +46,6 @@ export default function ChatPage({
 			return false;
 		}
 		setGroup(retreivedGroup);
-		console.log("fetched messages");
-
 		loadMessageBatch(retreivedGroup?.id || "", true);
 
 		socket.emit("joinGroup", retreivedGroup?.GroupChat?.id);
@@ -86,6 +73,7 @@ export default function ChatPage({
 				onConnect();
 				socket.on("receiveMessage", (message: MessageProps) => {
 					setMessages((prevMessages) => [...prevMessages, message]);
+					scrollDown();
 				});
 			}
 

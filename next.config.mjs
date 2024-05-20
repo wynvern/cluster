@@ -18,6 +18,12 @@ const nextConfig = {
 				port: "",
 				pathname: "/**",
 			},
+			{
+				hostname: "j9hcaotorwfwldub.public.blob.vercel-storage.com",
+				protocol: "https",
+				port: "",
+				pathname: "/**",
+			},
 		],
 	},
 };
@@ -26,7 +32,7 @@ import withPWAInit from "@ducanh2912/next-pwa";
 
 const withPWA = withPWAInit({
 	dest: "public",
-	disable: process.env.NODE_ENV === "development",
+	disable: true,
 	register: true,
 	skipWaiting: true,
 });

@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 		},
 	],
 	icons: [
-		{ rel: "apple-touch-icon", url: "brand/icon-512x512.png" },
-		{ rel: "icon", url: "brand/icon-512x512.png" },
+		{ rel: "apple-touch-icon", url: "/brand/icon-512x512.png" },
+		{ rel: "icon", url: "/brand/icon-512x512.png" },
 	],
 };
 

@@ -21,7 +21,7 @@ import {
 	Button,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function UserActions({ user }: { user: User }) {
 	const [customizeProfileActive, setCustomizeProfileActive] = useState(false);
@@ -96,12 +96,10 @@ export default function UserActions({ user }: { user: User }) {
 				</DropdownTrigger>
 				<DropdownMenu aria-label="Static Actions">
 					{dropdownItems
-						.filter(
-							(item) =>
-								!(
-									item.isUserPrivate &&
-									user.id !== session.data?.user.id
-								)
+						.filter((item) =>
+							session.data?.user.id === user.id
+								? item.isUserPrivate
+								: !item.isUserPrivate
 						)
 						.map((item) => (
 							<DropdownItem

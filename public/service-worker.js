@@ -21,14 +21,14 @@ const urlBase64ToUint8Array = (base64String) => {
 const activateEvent = () => {
 	self.addEventListener("activate", async (event) => {
 		event.waitUntil(clients.claim());
+		console.log("service worker activated");
 
 		const subscription = await self.registration.pushManager.subscribe({
 			userVisibleOnly: true,
 			applicationServerKey: urlBase64ToUint8Array(
-				"BFjRmLs2pxASc4SWPiDH7JUhd7VpkgLfdjSpUsRCxi9rOZ-C6BsdOEYC54F7AMlic5Pk9pqHWhV60mce_aCS9Z4"
+				"BEDVVQFbCkcsYg88gOW1uWihBmEyiKe0rVZwA-c_PgYM4I2Zny_kxEPdUvlVY5zYSO7XhDNDuSTBwehxDHRwJBs"
 			),
 		});
-
 		self.clients.matchAll().then((clients) => {
 			for (const client of clients) {
 				client.postMessage({

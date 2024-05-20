@@ -20,8 +20,6 @@ export async function fetchMessages(groupId: string, batchIndex: number) {
 		return "no-more-messages";
 	}
 
-	console.log("fetching messages");
-	console.log(totalMessages - batchIndex * 30);
 	const skippedMessages = totalMessages - batchIndex * 30;
 
 	const messages = await db.message.findMany({

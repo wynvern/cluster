@@ -9,7 +9,7 @@ interface UserContentProps {
 
 export default async function UserContent({ user }: UserContentProps) {
 	const posts = await fetchUserPosts(user.id, { skip: 0, take: 20 });
-	const bookmarks = await fetchUserBookmarks(user.id);
+	const bookmarks = await fetchUserBookmarks(user.id, { skip: 0, take: 20 });
 	const groups = await fetchUserGroups(user.id);
 
 	return (

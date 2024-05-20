@@ -1,4 +1,4 @@
-import { Image, avatar } from "@nextui-org/react";
+import Image from "next/image";
 
 export default function UserAvatar({
 	avatarURL,
@@ -8,8 +8,11 @@ export default function UserAvatar({
 	return (
 		<Image
 			src={avatarURL || "/brand/default-avatar.svg"}
-			removeWrapper={true}
-			className="h-10 sm:h-12 border-default"
+			className="h-10 w-10 sm:w-12 sm:h-12 rounded-large"
+			alt="user-image"
+			width={40}
+			height={40}
+			loading="lazy"
 		/>
 	);
 }

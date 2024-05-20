@@ -157,9 +157,7 @@ export default function SignUp() {
 				<div className="flex justify-between items-center">
 					<div>
 						<p className="text-center">
-							<Link size="sm" href="/signin">
-								Fazer Login
-							</Link>
+							<Link href="/signin">Fazer Login</Link>
 						</p>
 					</div>
 					<Button

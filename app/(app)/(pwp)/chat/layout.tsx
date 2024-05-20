@@ -15,14 +15,12 @@ export default function LayoutChat({
 	const [userGroups, setUserGroups] = useState<UserGroupInfo[]>([]);
 	const session = useSession();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function handleUserGroups() {
 			const response = await fetchUserGroups(
 				session?.data?.user.id || "",
 				{ groupChatId: true }
 			);
-			console.log(response);
 			setUserGroups(response);
 		}
 

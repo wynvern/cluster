@@ -31,11 +31,7 @@ export default function PostCard({
 								<b>{post.author.username}</b>
 							</Link>
 							{post.pinned && !isUserPage && (
-								<Chip
-									size="sm"
-									color="success"
-									className="ml-4"
-								>
+								<Chip className="ml-4">
 									<div className="flex gap-x-2 items-center">
 										<ArrowUpOnSquareStackIcon className="h-5 w-5" />
 										Pinado
@@ -44,9 +40,7 @@ export default function PostCard({
 							)}
 						</div>
 						<Link href={`/group/${post.group.groupname}`}>
-							<Chip variant="bordered">
-								{post.group.groupname}
-							</Chip>
+							<Chip>{post.group.groupname}</Chip>
 						</Link>
 					</div>
 				</div>

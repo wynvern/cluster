@@ -17,7 +17,7 @@ export default function Appearance() {
 					<div>
 						<Switch
 							color="success"
-							onValueChange={(selected) =>
+							onValueChange={(selected: boolean) =>
 								setTheme(selected ? "dark" : "light")
 							}
 							isSelected={theme === "dark"}

@@ -92,13 +92,18 @@ export async function fetchGroupPosts(groupId: string) {
 }
 
 // Fetches the bookmarks for the session user for optimization purposes
-export async function fetchUserPosts(authorId: string) {
+export async function fetchUserPosts(
+	authorId: string,
+	pagination?: { skip: number; take: number }
+) {
 	const session = await getServerSession(authOptions);
 	if (!session) return [];
 
 	const posts = await db.post.findMany({
 		where: { authorId },
-		orderBy: { createdAt: "desc" },
+		orderBy: [{ createdAt: "desc" }],
+		skip: pagination?.skip,
+		take: pagination?.take,
 		select: {
 			bookmarks: {
 				where: {
@@ -134,7 +139,7 @@ export async function fetchUserPosts(authorId: string) {
 	return posts;
 }
 
-export async function fetchUserBookmarkPosts(userId: string) {
+export async function fetchUserBookmarks(userId: string) {
 	const session = await getServerSession(authOptions);
 	if (!session) return [];
 

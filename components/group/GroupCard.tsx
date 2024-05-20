@@ -10,7 +10,7 @@ export default function GroupCard({ group }: { group: GroupCardType }) {
 			className="w-[400px] min-w-[400px]"
 		>
 			<div className="rounded-large border-default w-full mb-4">
-				<div className="relative">
+				<div className="relative bg-neutral-800 rounded-large rounded-b-none">
 					<Image
 						src={group.banner || ""}
 						removeWrapper={true}
@@ -29,7 +29,10 @@ export default function GroupCard({ group }: { group: GroupCardType }) {
 				</div>
 				<div className="w-full h-20 px-4">
 					<h2>{group.name}</h2>
-					<p>g/{group.groupname}</p>
+					<p>
+						<b>g/</b>
+						{group.groupname}
+					</p>
 				</div>
 			</div>
 		</Link>

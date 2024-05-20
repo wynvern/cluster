@@ -84,7 +84,6 @@ async function createMessage(data: MessageData) {
 	if (data.media) {
 		for (const media of data.media) {
 			if (!media) return;
-			console.log("media!");
 			const buffer = Buffer.from(media, "base64");
 			const processedImage = await compressImage(buffer);
 

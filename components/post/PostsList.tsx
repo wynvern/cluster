@@ -6,9 +6,10 @@ import NoPosts from "../card/NoPosts";
 
 interface PostsListProps {
 	posts: Post[] | null;
+	noPosts: string;
 }
 
-const PostsList: React.FC<PostsListProps> = ({ posts }) => {
+const PostsList: React.FC<PostsListProps> = ({ posts, noPosts }) => {
 	return (
 		<div className="mt-6 flex flex-col gap-y-10">
 			{posts === null ? (
@@ -19,18 +20,6 @@ const PostsList: React.FC<PostsListProps> = ({ posts }) => {
 						<PostCard post={post} isUserPage={true} />
 					</div>
 				))
-			)}
-			<div
-				className={`px-4 sm:px-10 mt-10 ${
-					posts && posts.length >= 1 ? "hidden" : ""
-				}`}
-			>
-				<NoPosts message="Usuário não tem nenhum post." />
-			</div>
-			{posts && posts.length >= 1 && (
-				<div className="mb-4">
-					<NoPosts message="Fim dos posts." />
-				</div>
 			)}
 		</div>
 	);

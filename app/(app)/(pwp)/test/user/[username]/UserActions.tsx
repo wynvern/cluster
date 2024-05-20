@@ -1,10 +1,13 @@
 "use client";
 
 import CustomizeProfile from "@/components/modal/CustomizeProfile";
+import Notifications from "@/components/modal/Notifications";
+import ReportProfile from "@/components/modal/ReportProfile";
 import { useConfirmationModal } from "@/components/provider/ConfirmationModal";
 import type User from "@/lib/db/user/type";
 import { blockUser } from "@/lib/db/user/user";
 import {
+	BellIcon,
 	EllipsisHorizontalIcon,
 	FlagIcon,
 	NoSymbolIcon,
@@ -20,8 +23,11 @@ import {
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
+export default function UserActions({ user }: { user: User }) {
 	const [customizeProfileActive, setCustomizeProfileActive] = useState(false);
+	const [notificationsActive, setNotificationsActive] = useState(false);
+	const [reportProfileActive, setReportProfileActive] = useState(false);
+	const session = useSession();
 	const { confirm } = useConfirmationModal();
 	const [dropdownItems, setDropdownItems] = useState([
 		{
@@ -46,18 +52,17 @@ export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 			description: "Reportar usuário",
 			icon: <FlagIcon className="h-8" aria-label="Sign Out" />,
 			ariaLabel: "report user",
-			onClick: () => alert("Reportar usuário"),
+			onClick: () => setReportProfileActive(true),
 			text: "Reportar Perfil",
 			className: "text-danger",
 		},
 	]);
-	const session = useSession();
 
 	async function handleBlockUser() {
 		await confirm({
 			isDanger: true,
 			onConfirm: async () => {
-				const response = await blockUser(defaultUser.id);
+				const response = await blockUser(user.id);
 
 				if (response === "ok") {
 					alert("Usuário bloqueado com sucesso!");
@@ -65,27 +70,21 @@ export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 					alert("Erro ao bloquear usuário.");
 				}
 			},
-			description: `Tem certaza que deseja bloquear o usuário ${defaultUser.username}?`,
+			description: `Tem certaza que deseja bloquear o usuário ${user.username}?`,
 			title: "Bloquear Usuário",
 			onCancel: () => {},
 		});
 	}
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (session.data?.user.id === defaultUser.id) {
-			setDropdownItems((prev) =>
-				prev.filter((item) => item.isUserPrivate === true)
-			);
-		} else {
-			setDropdownItems((prev) =>
-				prev.filter((item) => item.isUserPrivate === false)
-			);
-		}
-	}, [session]);
-
 	return (
 		<>
+			<Button
+				isIconOnly={true}
+				variant="bordered"
+				onClick={() => setNotificationsActive(true)}
+			>
+				<BellIcon className="h-6" />
+			</Button>
 			<Dropdown
 				className="default-border shadow-none"
 				placement="bottom-end"
@@ -96,18 +95,26 @@ export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 					</Button>
 				</DropdownTrigger>
 				<DropdownMenu aria-label="Static Actions">
-					{dropdownItems.map((item) => (
-						<DropdownItem
-							key={item.ariaLabel}
-							description={item.description}
-							startContent={item.icon}
-							aria-label={item.ariaLabel}
-							onClick={item.onClick}
-							className={item.className}
-						>
-							{item.text}
-						</DropdownItem>
-					))}
+					{dropdownItems
+						.filter(
+							(item) =>
+								!(
+									item.isUserPrivate &&
+									user.id !== session.data?.user.id
+								)
+						)
+						.map((item) => (
+							<DropdownItem
+								key={item.ariaLabel}
+								description={item.description}
+								startContent={item.icon}
+								aria-label={item.ariaLabel}
+								onClick={item.onClick}
+								className={item.className}
+							>
+								{item.text}
+							</DropdownItem>
+						))}
 				</DropdownMenu>
 			</Dropdown>
 
@@ -115,7 +122,16 @@ export default function UserDropdown({ defaultUser }: { defaultUser: User }) {
 				onUpdate={() => window.location.reload()}
 				active={customizeProfileActive}
 				setActive={setCustomizeProfileActive}
-				defaultUser={defaultUser}
+				user={user}
+			/>
+			<Notifications
+				isActive={notificationsActive}
+				setIsActive={setNotificationsActive}
+			/>
+			<ReportProfile
+				active={reportProfileActive}
+				setActive={setReportProfileActive}
+				username={user.username}
 			/>
 		</>
 	);

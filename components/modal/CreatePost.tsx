@@ -239,7 +239,9 @@ export default function CreatePost({
 				<>
 					<Tabs
 						selectedKey={activeTab}
-						onSelectionChange={(key) => setActiveTab(key as string)}
+						onSelectionChange={(key: string) =>
+							setActiveTab(key as string)
+						}
 						aria-label="Options"
 						color="primary"
 						disableAnimation={false}
@@ -301,7 +303,7 @@ export default function CreatePost({
 									}
 									maxLength={100}
 									value={title}
-									onValueChange={(e) => {
+									onValueChange={(e: string) => {
 										setTitle(e);
 										setErrors({
 											...errors,
@@ -326,7 +328,7 @@ export default function CreatePost({
 									value={content}
 									isInvalid={Boolean(errors.content)}
 									errorMessage={errors.content}
-									onValueChange={(e) => {
+									onValueChange={(e: string) => {
 										setContent(e);
 										setErrors({
 											...errors,
@@ -386,7 +388,7 @@ export default function CreatePost({
 													<CloudArrowUpIcon className="h-20 w-20" />
 													<p>
 														Arraste ou{" "}
-														<Link
+														<Button
 															onClick={
 																handleSelectMedia
 															}
@@ -395,10 +397,11 @@ export default function CreatePost({
 																selectedImages.length >=
 																	5
 															}
+															variant="secondary"
 															className="text-foreground"
 														>
 															<b>clique aqui</b>
-														</Link>{" "}
+														</Button>{" "}
 														para adicionar mídia.
 													</p>
 												</div>
@@ -495,7 +498,7 @@ export default function CreatePost({
 													<CloudArrowUpIcon className="h-20 w-20" />
 													<p>
 														Arraste ou{" "}
-														<Link
+														<Button
 															onClick={
 																handleSelectDocument
 															}
@@ -504,10 +507,11 @@ export default function CreatePost({
 																selectedDocuments.length >=
 																	6
 															}
+															variant="secondary"
 															className="text-foreground"
 														>
 															<b>clique aqui</b>
-														</Link>{" "}
+														</Button>{" "}
 														para adicionar
 														documentos.
 													</p>

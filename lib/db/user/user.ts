@@ -34,12 +34,23 @@ export async function createUser(
 export default async function fetchUser(
 	params: UserId | UserName
 ): Promise<User | null> {
+	const session = await getServerSession(authOptions);
+	if (!session) return null;
+
 	const searchBy = params.id
 		? { id: params.id }
 		: { username: params.username };
 
 	const query = await db.user.findUnique({
-		where: params,
+		where: {
+			...params,
+			NOT: {
+				OR: [
+					{ blockedUsers: { some: { blockedId: session.user.id } } },
+					{ blockedBy: { some: { userId: session.user.id } } },
+				],
+			},
+		},
 		select: {
 			id: true,
 			name: true,
@@ -98,8 +109,6 @@ export async function fetchUserGroups(
 		include: {},
 	};
 
-	console.log(queryOptions.where.members.some);
-
 	if (options?.groupChatId) {
 		queryOptions.include = {
 			GroupChat: {
@@ -109,8 +118,6 @@ export async function fetchUserGroups(
 			},
 		};
 	}
-
-	console.log(queryOptions);
 
 	const groups = await db.group.findMany(queryOptions);
 

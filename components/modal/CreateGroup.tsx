@@ -316,7 +316,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								isInvalid={errors.categories !== ""}
 								max={20}
 								value={category}
-								onValueChange={(e) => {
+								onValueChange={(e: string) => {
 									if (e.includes(" ")) {
 										if (categories.length > 4) {
 											setErrors((prev) => ({

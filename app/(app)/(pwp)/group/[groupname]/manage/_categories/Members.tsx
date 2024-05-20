@@ -153,15 +153,7 @@ export default function Members({ groupname }: { groupname: string }) {
 									</div>
 								</TableCell>
 								<TableCell>
-									<Chip
-										color={
-											member.role === "moderator"
-												? "success"
-												: "default"
-										}
-									>
-										{member.role}
-									</Chip>
+									<Chip>{member.role}</Chip>
 								</TableCell>
 								<TableCell>
 									{new Date(member.joinedAt).toLocaleString()}

@@ -8,15 +8,17 @@ datasource db {
 }
 
 model User {
-   id             String            @id @default(cuid())
-   name           String?
-   username       String?           @unique
-   bio            String?
-   email          String?           @unique
-   emailVerified  DateTime?         @map("email_verified")
-   password       String?
-   image          String?
-   banner         String?
+   id            String    @id @default(cuid())
+   name          String?
+   username      String?   @unique
+   bio           String?
+   email         String?   @unique
+   emailVerified DateTime? @map("email_verified")
+   password      String?
+   image         String?
+   banner        String?
+   createdAt     DateTime  @default(now()) @map("created_at")
+
    posts          Post[]
    comments       Comment[]
    bookmarks      Bookmark[]
@@ -30,7 +32,6 @@ model User {
    reports        UserReport[]      @relation("ReportedUser")
    bannedGroups   BannedGroupUser[]
    GroupReport    GroupReport[]
-   createdAt      DateTime          @default(now()) @map("created_at")
    blockedUsers   BlockedUser[]     @relation("BlockedUserRelation")
    blockedBy      BlockedUser[]     @relation("BlockedByRelation")
    Subscriptions  Subscription[]
@@ -44,7 +45,7 @@ model User {
 
 model Subscription {
    id           String @id @default(cuid())
-   subscription Json
+   subscription Json   @unique
    user         User   @relation(fields: [userId], references: [id])
    userId       String
 
@@ -70,7 +71,7 @@ model CodeReset {
    email  String
    expiry DateTime
 
-   @@map("code_reset_password")
+   @@map("password_reset_code")
 }
 
 model CodeVerifyAccount {
@@ -79,7 +80,7 @@ model CodeVerifyAccount {
    email  String
    expiry DateTime
 
-   @@map("code_verify_account")
+   @@map("verify_account_code")
 }
 
 model Notification {
@@ -127,6 +128,7 @@ model Post {
    createdAt  DateTime     @default(now())
    pinned     Boolean      @default(false)
    PostReport PostReport[]
+   approved   Boolean      @default(false)
 
    @@map("post")
 }

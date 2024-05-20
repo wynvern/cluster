@@ -13,19 +13,18 @@ import { uploadUserAvatar, uploadUserBanner } from "@/lib/blob/userBlob";
 import type User from "@/lib/db/user/type";
 import getFileBase64 from "@/util/getFile";
 import Draggable from "../general/Draggable";
-import UserAvatar from "../user/UserAvatar";
 
 interface CustomizeProfileProps {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
-	defaultUser: User;
+	user: User;
 	onUpdate: () => void;
 }
 
 export default function CustomizeProfile({
 	active,
 	setActive,
-	defaultUser,
+	user,
 	onUpdate,
 }: CustomizeProfileProps) {
 	const [loading, setLoading] = useState(false);
@@ -169,7 +168,7 @@ export default function CustomizeProfile({
 									removeWrapper={true}
 									src={
 										selectedImages.banner.preview ||
-										defaultUser.banner ||
+										user.banner ||
 										""
 									}
 									className="absolute w-full h-full object-cover z-1"
@@ -205,7 +204,7 @@ export default function CustomizeProfile({
 									className="h-[140px] w-[140px] object-cover z-1"
 									src={
 										selectedImages.avatar.preview ||
-										defaultUser.image ||
+										user.image ||
 										"/brand/default-avatar.svg"
 									}
 									removeWrapper={true}
@@ -237,7 +236,7 @@ export default function CustomizeProfile({
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
 								max={50}
-								defaultValue={defaultUser.name || ""}
+								defaultValue={user.name || ""}
 							/>
 							<Textarea
 								name="bio"
@@ -248,7 +247,7 @@ export default function CustomizeProfile({
 									input: "mt-[2px]",
 								}}
 								max={200}
-								defaultValue={defaultUser.bio || ""}
+								defaultValue={user.bio || ""}
 								startContent={
 									<PencilIcon className="h-6 text-neutral-500" />
 								}

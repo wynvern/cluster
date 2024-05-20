@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../../style/global.css";
-import Cluster from "@/components/Cluster";
+import Providers from "@/components/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,7 +31,7 @@ export default function RootLayout({
 	return (
 		<html lang="pt-BR">
 			<body className={`${inter.className}`}>
-				<Cluster>{children}</Cluster>
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);

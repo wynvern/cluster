@@ -108,7 +108,7 @@ export default function Finish() {
 					classNames={{ inputWrapper: "h-14" }}
 					value={username}
 					isDisabled={isLoading || success}
-					onChange={(e) => {
+					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 						if (e.target.value.length >= 20) {
 							setInputValidation({
 								active: true,
@@ -134,12 +134,13 @@ export default function Finish() {
 
 				<div className="flex items-center justify-between">
 					<div>
-						<Link
+						<Button
 							onClick={assignRandomUsername}
 							isDisabled={isLoading || success}
+							color="secondary"
 						>
 							Nome aleatório
-						</Link>
+						</Button>
 					</div>
 					<Button
 						type="submit"

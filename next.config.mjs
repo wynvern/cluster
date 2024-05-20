@@ -10,6 +10,16 @@ const nextConfig = {
 			allowedOrigins: [process.env.SERVER_HOSTNAME, "localhost:3000"],
 		},
 	},
+	images: {
+		remotePatterns: [
+			{
+				hostname: "lh3.googleusercontent.com",
+				protocol: "https",
+				port: "",
+				pathname: "/**",
+			},
+		],
+	},
 };
 
 import withPWAInit from "@ducanh2912/next-pwa";

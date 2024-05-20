@@ -84,13 +84,9 @@ export default function Groups() {
 							orientation="horizontal"
 							className="flex overflow-x-scroll gap-x-2"
 						>
-							<Chip color="primary">Todas</Chip>
+							<Chip>Todas</Chip>
 							{Categories.map((category) => (
-								<Chip
-									variant="bordered"
-									key={category}
-									className="mb-4"
-								>
+								<Chip key={category} className="mb-4">
 									{category}
 								</Chip>
 							))}

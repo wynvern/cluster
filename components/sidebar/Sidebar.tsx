@@ -8,7 +8,7 @@ import { Link } from "@nextui-org/react";
 import Image from "next/image";
 import ProfileDropdown from "./ProfileDropdown";
 
-export default function Sidebar() {
+export default async function Sidebar() {
 	return (
 		<>
 			<div className="fixed h-dvh items-center sidebar-border flex-col justify-between py-6 w-20 hidden sm:flex">

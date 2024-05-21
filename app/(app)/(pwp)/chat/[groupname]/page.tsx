@@ -63,7 +63,9 @@ export default function ChatPage({
 	}, []);
 
 	function onConnect() {
-		socket.emit("authenticate", { token: session.data?.user });
+		if (session.data?.user) {
+			socket.emit("authenticate", { token: session.data?.user });
+		}
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -71,17 +73,18 @@ export default function ChatPage({
 		if (group) {
 			if (socket.connected) {
 				onConnect();
+
 				socket.on("receiveMessage", (message: MessageProps) => {
 					setMessages((prevMessages) => [...prevMessages, message]);
 					scrollDown();
 				});
 			}
 
-			socket.on("connect", onConnect);
+			socket.on("connect", () => console.warn("connected to socket..."));
 			socket.on("disconnect", () => console.log("disconnected"));
 
 			return () => {
-				socket.off("connect", onConnect);
+				socket.off("connect");
 				socket.off("disconnect", () => console.log("disconnected"));
 				socket.off("receiveMessage");
 			};
@@ -93,7 +96,7 @@ export default function ChatPage({
 		if (isSending) return false;
 
 		setIsSending(true);
-		const formData = new FormData(e.target as HTMLFormElement);
+		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const message = formData.get("message") as string;
 
 		if (message) {
@@ -174,6 +177,12 @@ export default function ChatPage({
 			</div>
 			<form
 				onSubmit={handleSubmit}
+				onKeyDown={(e: React.KeyboardEvent<HTMLFormElement>) => {
+					if (e.key === "Enter" && !e.shiftKey) {
+						e.preventDefault();
+						handleSubmit(e);
+					}
+				}}
 				className="w-full px-10 flex gap-x-4 transition-height duration-200 mb-6"
 			>
 				<div className="flex flex-col default-border rounded-large p-2 grow">
@@ -183,16 +192,6 @@ export default function ChatPage({
 						name="message"
 						isDisabled={isSending}
 						classNames={{ inputWrapper: "border-none" }}
-						onKeyDown={(
-							e: React.KeyboardEvent<HTMLTextAreaElement>
-						) => {
-							if (e.key === "Enter" && !e.shiftKey) {
-								e.preventDefault();
-								e.currentTarget.form?.dispatchEvent(
-									new Event("submit", { bubbles: true })
-								);
-							}
-						}}
 						max={1000}
 					/>
 					{selectedImage && (

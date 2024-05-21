@@ -11,43 +11,17 @@ interface MessageData {
 	media?: string[];
 }
 
-const socketToUser: [] = {};
+interface User {
+	name: string;
+	email: string;
+	image: string | null;
+	id: string;
+	emailVerified: string;
+	username: string;
+	banner: string | null;
+}
 
-const socketHandlers = (io: Server, socket: Socket) => {
-	socket.on(
-		"authenticate",
-		(data: {
-			token: {
-				id: string;
-				email: string;
-				image: string;
-				emailVerified: Date;
-			};
-		}) => {
-			socketToUser[socket.id] = data.token;
-		}
-	);
-
-	socket.on("joinGroup", (data: string) => {
-		// TODO: Authenticate if the user is present at that group
-		socket.join(data);
-	});
-
-	socket.on("sendMessage", (data: MessageData) => {
-		createMessage(data).then((newMessage) => {
-			io.to(data.chatId).emit("receiveMessage", {
-				...data,
-				id: newMessage?.id,
-			});
-		});
-	});
-
-	socket.on("disconnect", () => {
-		socketToUser.delete(socket.id);
-	});
-};
-
-export default socketHandlers;
+const socketToUser: Record<string, string> = {};
 
 async function createMessage(data: MessageData) {
 	const mediaUrl: string[] = [];
@@ -83,7 +57,10 @@ async function createMessage(data: MessageData) {
 		},
 	});
 
-	sendMessageNotifications(data.chatId);
+	sendMessageNotifications(data.chatId, {
+		content: data.content,
+		senderName: newMessage.user.username || "",
+	});
 
 	if (data.media) {
 		for (const media of data.media) {
@@ -116,7 +93,10 @@ async function createMessage(data: MessageData) {
 	return newMessage;
 }
 
-async function sendMessageNotifications(chatId: string) {
+async function sendMessageNotifications(
+	chatId: string,
+	message: { senderName: string; content: string }
+) {
 	const group = await db.group.findFirst({
 		where: {
 			GroupChat: {
@@ -127,27 +107,56 @@ async function sendMessageNotifications(chatId: string) {
 
 	if (!group) return;
 
-	const users: unknown[] = await db.groupMember.findMany({
+	const users = await db.groupMember.findMany({
 		where: {
 			groupId: group.id,
 		},
 		select: {
-			id: true,
+			user: {
+				select: {
+					id: true,
+				},
+			},
 		},
 	});
 
-	console.log(socketToUser.values());
+	const userNotInChat = users.filter((user) => {
+		return !Object.values(socketToUser).some(
+			(socketUser) => socketUser === user.user.id
+		);
+	});
 
-	const userNotInChat = users.filter(
-		(user) =>
-			![...socketToUser.values()].includes((user as { id: string }).id)
-	);
-	for (const userSub in userNotInChat) {
-		console.log(userSub);
-
-		/* await sendNotification({
-			message: { title: "abc", body: "def" },
-			receiverUserId: userSub,
-		}); */
+	for (const user of userNotInChat) {
+		await sendNotification({
+			message: {
+				title: `Mensagem em ${group.groupname}`,
+				body: `${message.senderName}: ${message.content}`,
+			},
+			receiverUserId: user.user.id,
+		});
 	}
+}
+
+export default async function socketHandlers(io: Server, socket: Socket) {
+	socket.on("authenticate", (data: { token: User }) => {
+		socketToUser[socket.id] = data.token.id;
+	});
+
+	socket.on("joinGroup", (data: string) => {
+		// TODO: Authenticate if the user is present at that group
+		socket.join(data);
+	});
+
+	socket.on("sendMessage", (data: MessageData) => {
+		createMessage(data).then((newMessage) => {
+			io.to(data.chatId).emit("receiveMessage", {
+				...data,
+				id: newMessage?.id,
+			});
+		});
+	});
+
+	socket.on("disconnect", () => {
+		delete socketToUser[socket.id];
+	});
 }

@@ -26,7 +26,7 @@ const activateEvent = () => {
 		const subscription = await self.registration.pushManager.subscribe({
 			userVisibleOnly: true,
 			applicationServerKey: urlBase64ToUint8Array(
-				"BEDVVQFbCkcsYg88gOW1uWihBmEyiKe0rVZwA-c_PgYM4I2Zny_kxEPdUvlVY5zYSO7XhDNDuSTBwehxDHRwJBs"
+				"BFjRmLs2pxASc4SWPiDH7JUhd7VpkgLfdjSpUsRCxi9rOZ-C6BsdOEYC54F7AMlic5Pk9pqHWhV60mce_aCS9Z4"
 			),
 		});
 		self.clients.matchAll().then((clients) => {

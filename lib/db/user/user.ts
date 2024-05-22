@@ -97,6 +97,16 @@ export async function getNotifications() {
 		where: { userId: session.user.id },
 	});
 
+	await db.notification.updateMany({
+		where: {
+			userId: session.user.id,
+			viewed: false,
+		},
+		data: {
+			viewed: true,
+		},
+	});
+
 	return notifications;
 }
 

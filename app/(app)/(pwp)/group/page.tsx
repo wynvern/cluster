@@ -1,104 +1,55 @@
-"use client";
-
-import FollowUnfollowGroup from "@/components/general/FollowUnfollowGroup";
-import CreateGroup from "@/components/modal/CreateGroup";
-import { fetchRecentGroups } from "@/lib/db/group/group";
-import { Button, Chip, ScrollShadow } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import Categories from "../../../../public/categories.json";
-import type { GroupCard as GroupCardType } from "@/lib/db/group/type";
 import GroupCard from "@/components/group/GroupCard";
+import { fetchRecentGroups } from "@/lib/db/group/group";
+import { ScrollShadow } from "@nextui-org/react";
+import CreateGroupHandler from "./CreateGroupHandler";
 
-export default function Groups() {
-	const [createGroupActive, setCreateGroupActive] = useState(false);
-	const [recentGroups, setRecentGroups] = useState<GroupCardType[] | null>(
-		null
-	);
-
-	async function handleFetchRecentGroups() {
-		const data = await fetchRecentGroups();
-		// temp
-		if (data && data.length > 0) {
-			const firstDataDuplicated = { ...data[0] };
-			setRecentGroups([
-				firstDataDuplicated,
-				firstDataDuplicated,
-				firstDataDuplicated,
-				...data,
-			]);
-		}
-	}
-
-	// onload
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		handleFetchRecentGroups();
-	}, []);
+export default async function GroupPage() {
+	const recentGroups = await fetchRecentGroups();
 
 	return (
-		<>
-			<div className="flex justify-center w-full h-full">
-				<div className="side-borders w-full max-w-[1000px] h-full px-10 pt-10 flex flex-col gap-y-10">
-					<div>
-						<h1>Grupos</h1>
-						<h2>Conecte-se, Colabore e Cresça.</h2>
-						<p>
-							Descubra grupos que compartilham dos seus interesses
-							e participe de discussões enriquecedoras.
-						</p>
-					</div>
+		<div className="flex justify-center w-full h-full">
+			<div className="side-borders w-full max-w-[100vw] sm:max-w-[1000px] h-full relative pt-10">
+				<div className="px-4 sm:px-10 ">
+					<h1>Grupos</h1>
+					<h2>Conecte-se, Colabore e Cresça.</h2>
+					<p>
+						Descubra grupos que compartilham dos seus interesses e
+						participe de discussões enriquecedoras.
+					</p>
+				</div>
 
-					<div className="w-full">
-						<h2 className="mb-4">Recentes</h2>
-						<ScrollShadow
-							orientation="horizontal"
-							className="overflow-x-scroll gap-x-4 flex"
-						>
-							{recentGroups?.map((group) => (
-								<GroupCard key={group.id} group={group} />
-							))}
-						</ScrollShadow>
-					</div>
+				<div className="my-4 sm:my-8 bottom-border w-full" />
 
-					<div>
-						<h2 className="mb-4">Crie o seu</h2>
-						<div className="w-full h-[400px] border-default rounded-large p-10 flex flex-col justify-between">
-							<div>
-								<h1>Crie o seu Grupo</h1>
-								<h2>Blalbalb</h2>
-								<p>aoiqwoighi</p>
-							</div>
+				<div className="w-full px-4 sm:px-10 ">
+					<h2 className="mb-4">Recentes</h2>
+					<ScrollShadow
+						orientation="horizontal"
+						className="gap-x-4 flex w-full"
+					>
+						{recentGroups?.map((group) => (
+							<GroupCard key={group.id} group={group} />
+						))}
+					</ScrollShadow>
+				</div>
 
-							<Button
-								onClick={() => setCreateGroupActive(true)}
-								variant="bordered"
-							>
-								Criar
-							</Button>
+				<div className="my-4 sm:my-8 bottom-border w-full" />
+
+				<div className="w-full px-4 sm:px-10 ">
+					<h2 className="mb-4">Crie o seu</h2>
+					<div className="w-full gap-y-10 border-default rounded-large p-10 flex flex-col justify-between">
+						<div>
+							<h1>Crie o seu Grupo</h1>
+							<h2>Construa sua Comunidade</h2>
+							<p>
+								Compartilhe ideias, colabore em projetos e
+								cresça junto com pessoas que compartilham dos
+								mesmos interesses.
+							</p>
 						</div>
-					</div>
-
-					<div>
-						<h2 className="mb-4">Categorias</h2>
-						<ScrollShadow
-							orientation="horizontal"
-							className="flex overflow-x-scroll gap-x-2"
-						>
-							<Chip>Todas</Chip>
-							{Categories.map((category) => (
-								<Chip key={category} className="mb-4">
-									{category}
-								</Chip>
-							))}
-						</ScrollShadow>
+						<CreateGroupHandler />
 					</div>
 				</div>
 			</div>
-
-			<CreateGroup
-				active={createGroupActive}
-				setActive={setCreateGroupActive}
-			/>
-		</>
+		</div>
 	);
 }

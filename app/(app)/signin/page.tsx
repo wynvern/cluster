@@ -13,6 +13,7 @@ import { useState } from "react";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import PasswordInput from "@/components/auth/PasswordInput";
 import GoogleLoginButton from "@/components/auth/GLoginButton";
+import ErrorBox from "@/components/general/ErrorBox";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ export default function Login() {
 		message: "",
 		active: false,
 	});
+	const [generalError, setGeneralError] = useState("");
 	const [success, setSuccess] = useState(false);
 	const router = useRouter();
 	const [inputPasswordVal, setInputPasswordVal] = useState({
@@ -93,23 +95,33 @@ export default function Login() {
 			return false;
 		}
 
-		if (signInResult.error === "password-not-match") {
-			setInputPasswordVal({
-				message: "Senha incorreta.",
-				active: true,
-			});
+		switch (signInResult.error) {
+			case "missing-data":
+				setGeneralError("Dados faltando.");
+				break;
+			case "email-not-found":
+				setInputEmailVal({
+					message: "Email não encontrado.",
+					active: true,
+				});
+				break;
+			case "password-not-match":
+				setInputPasswordVal({
+					message: "Senha incorreta.",
+					active: true,
+				});
+				break;
+			case "different-sign-in-provider":
+				setGeneralError(
+					"Este email está conectado com outro provedor."
+				);
+				break;
+			default:
+				setSuccess(true);
+				router.push("/");
+				break;
 		}
-
-		if (signInResult.error === "email-not-found") {
-			setInputEmailVal({
-				message: "Email não encontrado.",
-				active: true,
-			});
-		}
-
 		setLoading(false);
-		setSuccess(true);
-		router.push("/");
 	}
 
 	return (
@@ -132,6 +144,7 @@ export default function Login() {
 							message: "",
 							active: false,
 						});
+						setGeneralError("");
 					}}
 				/>
 				<PasswordInput
@@ -148,6 +161,7 @@ export default function Login() {
 							message: "",
 							active: false,
 						});
+						setGeneralError("");
 					}}
 				/>
 				<Input
@@ -156,8 +170,14 @@ export default function Login() {
 					placeholder="Número de Telefone"
 					className="absolute left-0 -top-40"
 				/>
+
+				<ErrorBox
+					error={generalError}
+					isVisible={Boolean(generalError)}
+				/>
+
 				<div>
-					<p className="text-center">
+					<p>
 						<Link href="/reset-password">Esqueceu sua senha?</Link>
 					</p>
 				</div>
@@ -174,6 +194,7 @@ export default function Login() {
 						color={success ? "success" : "primary"}
 						isDisabled={loading || success}
 						isLoading={loading}
+						className="h-14"
 						startContent={
 							loading ? (
 								""

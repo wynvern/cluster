@@ -262,7 +262,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 									<PhotoIcon className="h-6" />
 								</Button>
 								<Image
-									className="h-[140px] w-[140px] object-cover z-1"
+									className="h-[100px] sm:h-[140px] w-[100px] sm:w-[140px] object-cover z-1"
 									src={
 										selectedImages.image.preview ||
 										"/brand/default-group.svg"

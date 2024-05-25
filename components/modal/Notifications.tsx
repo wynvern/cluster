@@ -1,7 +1,18 @@
 import { use, useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
-import { ScrollShadow, CircularProgress, Link, Image } from "@nextui-org/react";
+import {
+	ScrollShadow,
+	CircularProgress,
+	Link,
+	Image,
+	Button,
+} from "@nextui-org/react";
 import { getNotifications } from "@/lib/db/user/user";
+import prettyDate from "@/util/prettyDate";
+import { PhoneXMarkIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { cleanNotifications } from "@/lib/db/notification/notification";
+import { useConfirmationModal } from "../provider/ConfirmationModal";
+import NoPosts from "../card/NoPosts";
 
 interface NotificationsProps {
 	isActive: boolean;
@@ -27,13 +38,14 @@ export default function Notifications({
 	const [notifications, setNotifications] = useState<{
 		[title: string]: Notification[];
 	}>({});
+	const { confirm } = useConfirmationModal();
 
 	async function fetchNotifications() {
 		setLoading(true);
 		const response = await getNotifications();
 
 		const groupedNotifications = response.reduce(
-			(groups: { [key: string]: any[] }, notification) => {
+			(groups: { [key: string]: Notification[] }, notification) => {
 				if (!groups[notification.title]) {
 					groups[notification.title] = [];
 				}
@@ -47,9 +59,29 @@ export default function Notifications({
 		setLoading(false);
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (isActive) fetchNotifications();
 	}, [isActive]);
+
+	async function handleCleanNotifications() {
+		await confirm({
+			onConfirm: async () => {
+				const response = await cleanNotifications();
+
+				switch (response) {
+					case "ok":
+						fetchNotifications();
+						break;
+				}
+			},
+			title: "Limpar notificações",
+			description:
+				"Deseja limpar todas as notificações? Esta ação é irreversível.",
+			onCancel: () => {},
+			isDanger: true,
+		});
+	}
 
 	return (
 		<BaseModal
@@ -64,6 +96,11 @@ export default function Notifications({
 					}`}
 					orientation="vertical"
 				>
+					{Object.values(notifications).length === 0 && (
+						<div className="w-full h-full flex items-center justify-center my-10">
+							<NoPosts message="Nenhuma notificação." />
+						</div>
+					)}
 					{loading ? (
 						<CircularProgress />
 					) : (
@@ -77,7 +114,7 @@ export default function Notifications({
 										{group.map((i, index) => (
 											<div
 												key={i.id}
-												className={`bg-neutral-800 p-3 rounded-large ${
+												className={`bg-neutral-800 p-3 w-full rounded-large ${
 													i.viewed
 														? "brightness-[70%]"
 														: ""
@@ -94,23 +131,21 @@ export default function Notifications({
 													className="text-foreground flex h-full w-full items-center gap-x-4"
 													href={i.link || ""}
 												>
-													<Image
-														src={i.image || ""}
-														className="h-10 w-10 rounded-full"
-														removeWrapper={true}
-													/>
+													{i.image && (
+														<Image
+															src={i.image || ""}
+															className="h-10 w-10 rounded-full"
+															removeWrapper={true}
+														/>
+													)}
 													<div className="flex flex-col">
 														<div className="flex items-center gap-x-1">
-															<h3 className="font-bold">
-																{i.title}
-															</h3>
 															<p className="text-foreground">
-																•
-															</p>
-															<p>
-																{new Date(
+																{`${
+																	i.title
+																} • ${prettyDate(
 																	i.createdAt
-																).toLocaleString()}
+																)}`}
 															</p>
 														</div>
 														<p>{i.body}</p>
@@ -124,6 +159,15 @@ export default function Notifications({
 						</div>
 					)}
 				</ScrollShadow>
+			}
+			footer={
+				<Button
+					isIconOnly={true}
+					variant={"bordered"}
+					onClick={handleCleanNotifications}
+				>
+					<XMarkIcon className="h-6" />
+				</Button>
 			}
 		/>
 	);

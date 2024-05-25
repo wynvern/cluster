@@ -15,6 +15,7 @@ import type { MessageProps } from "@/lib/db/groupChat/type";
 import fetchGroup from "@/lib/db/group/group";
 import type Group from "@/lib/db/group/type";
 import { socket } from "../../../../../lib/SocketClient";
+import ChatHeader from "./ChatHeader";
 
 interface FileBase64Info {
 	base64: string;
@@ -164,8 +165,8 @@ export default function ChatPage({
 	}
 
 	return (
-		<div className="w-full h-full flex flex-col overflow-hidden max-h-dvh">
-			<div className="h-20 bottom-border">abc</div>
+		<div className="w-full h-calc(100vh-300px) flex flex-col overflow-hidden">
+			{group?.groupname && <ChatHeader groupname={group.groupname} />}
 			<div className="grow flex flex-col overflow-hidden my-4">
 				<ScrollShadow
 					className="w-full h-full px-10 gap-y-4 flex flex-col overflow-auto"

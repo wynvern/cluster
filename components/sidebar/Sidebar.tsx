@@ -42,7 +42,7 @@ export default async function Sidebar() {
 
 			<div
 				style={{ zIndex: "999999" }}
-				className="default-background fixed bottom-0 w-full sm:hidden flex items-center justify-around py-4 px-6 h-18 sidebar-border-mobile"
+				className="bg-background fixed bottom-0 w-full sm:hidden flex items-center justify-around py-4 px-6 h-14 sidebar-border-mobile"
 			>
 				<Link href="/">
 					<HomeIcon className="h-8" />

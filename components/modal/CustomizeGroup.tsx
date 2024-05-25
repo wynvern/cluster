@@ -17,13 +17,13 @@ import Draggable from "../general/Draggable";
 interface CustomizeGroupProps {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
-	defaultGroup: Group;
+	group: Group;
 }
 
 export default function CustomizeGroup({
 	active,
 	setActive,
-	defaultGroup,
+	group,
 }: CustomizeGroupProps) {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
@@ -50,19 +50,13 @@ export default function CustomizeGroup({
 		const description = form.get("description") as string;
 
 		if (selectedImages.image.base64) {
-			await uploadGroupImage(
-				defaultGroup.id,
-				selectedImages.image.base64
-			);
+			await uploadGroupImage(group.id, selectedImages.image.base64);
 		}
 		if (selectedImages.banner.base64) {
-			await uploadGroupBanner(
-				defaultGroup.id,
-				selectedImages.banner.base64
-			);
+			await uploadGroupBanner(group.id, selectedImages.banner.base64);
 		}
 
-		const data = await updateGroup(defaultGroup.id, name, description);
+		const data = await updateGroup(group.id, name, description);
 
 		if (!data) {
 			// handle error
@@ -171,7 +165,7 @@ export default function CustomizeGroup({
 									removeWrapper={true}
 									src={
 										selectedImages.banner.preview ||
-										defaultGroup.banner ||
+										group.banner ||
 										""
 									}
 									className="absolute w-full h-full object-cover z-1"
@@ -204,10 +198,10 @@ export default function CustomizeGroup({
 									<PhotoIcon className="h-6" />
 								</Button>
 								<Image
-									className="h-[140px] w-[140px] object-cover z-1"
+									className="h-[100px] sm:h-[140px] w-[100px] sm:w-[140px] object-cover z-1"
 									src={
 										selectedImages.image.preview ||
-										defaultGroup.image ||
+										group.image ||
 										"/brand/default-group.svg"
 									}
 									removeWrapper={true}
@@ -239,7 +233,7 @@ export default function CustomizeGroup({
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
 								max={50}
-								defaultValue={defaultGroup.name || ""}
+								defaultValue={group.name || ""}
 							/>
 							<Textarea
 								name="description"
@@ -250,7 +244,7 @@ export default function CustomizeGroup({
 									input: "mt-[2px]",
 								}}
 								max={200}
-								defaultValue={defaultGroup.description || ""}
+								defaultValue={group.description || ""}
 								startContent={
 									<PencilIcon className="h-6 text-neutral-500" />
 								}

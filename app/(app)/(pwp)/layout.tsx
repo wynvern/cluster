@@ -7,11 +7,9 @@ export default async function ProtectedPages({
 	children: ReactNode;
 }) {
 	return (
-		<div className="min-h-dvh min-w-full flex">
+		<div className="min-w-full flex">
+			<main className="grow sm:ml-20 mb-14 sm:mb-0">{children}</main>
 			<Sidebar />
-			<main className="grow min-h-dvh sm:ml-20 mb-14 sm:mb-0">
-				{children}
-			</main>
 		</div>
 	);
 }

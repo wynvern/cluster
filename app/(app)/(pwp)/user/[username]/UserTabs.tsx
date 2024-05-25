@@ -47,7 +47,7 @@ function UserPostsTab({
 			loading={loading}
 			onBottomReached={fetchMorePosts}
 		>
-			<PostsList posts={posts} noPosts="O usuário não tem posts" />
+			<PostsList posts={posts} />
 			{noMoreData && initialPosts && initialPosts.length >= 1 && (
 				<div className="mt-4 py-6">
 					<NoPosts message="Fim dos posts." />
@@ -91,7 +91,7 @@ function UserBookmarksTab({
 			loading={loading}
 			onBottomReached={fetchMorePosts}
 		>
-			<PostsList posts={posts} noPosts="O usuário não tem posts" />
+			<PostsList posts={posts} />
 			{noMoreData && initialBookmarks && initialBookmarks.length >= 1 && (
 				<div className="mt-4 py-6">
 					<NoPosts message="Fim dos posts salvos." />

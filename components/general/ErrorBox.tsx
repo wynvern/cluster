@@ -15,7 +15,7 @@ export default function ErrorBox({
 					className={`bg-red-950 text-danger px-4 py-3 rounded-large relative ${className}`}
 					role="alert"
 				>
-					<span className="block sm:inline">{error}</span>
+					<p className="block sm:inline">{error}</p>
 				</div>
 			)}
 		</>

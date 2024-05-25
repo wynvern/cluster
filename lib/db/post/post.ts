@@ -49,13 +49,18 @@ export async function createPost(
 }
 
 // Fetches the bookmarks for the session user for optimization purposes
-export async function fetchGroupPosts(groupId: string) {
+export async function fetchGroupPosts(
+	groupId: string,
+	pagination?: { skip: number; take: number }
+) {
 	const session = await getServerSession(authOptions);
 	if (!session) return [];
 
 	const posts = await db.post.findMany({
 		where: { groupId },
 		orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
+		skip: pagination?.skip,
+		take: pagination?.take,
 		select: {
 			bookmarks: {
 				where: {

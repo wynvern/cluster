@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function LogoTitle() {
 	return (
-		<div className="flex w-full justify-center items-center gap-x-4 mb-6">
+		<div className="flex w-full justify-center items-center gap-x-4 sm:mb-6">
 			<Image
 				priority={true}
 				width="100"

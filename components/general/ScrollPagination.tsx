@@ -35,19 +35,12 @@ export default function ScrollPagination({
 			observer.observe(bottomRef.current);
 		}
 
-		// Cleanup function
 		return () => {
 			if (bottomRef.current) {
 				observer.unobserve(bottomRef.current);
 			}
 		};
-	}, [loading, noMoreData, skip]); // Include skip in the dependency array
-
-	useEffect(() => {
-		if (loading) {
-			window.scrollTo(0, document.body.scrollHeight);
-		}
-	}, [loading]);
+	}, [loading, noMoreData, skip]);
 
 	return (
 		<>

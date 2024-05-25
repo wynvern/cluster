@@ -4,33 +4,32 @@ import {
 	CheckIcon,
 	FlagIcon,
 	PencilIcon,
-	PencilSquareIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { reportProfile } from "@/lib/db/report/report";
+import { reportGroup } from "@/lib/db/group/group";
 
-export default function ReportProfile({
-	username,
+export default function ReportGroup({
+	groupname,
 	active,
 	setActive,
 }: {
-	username: string | null;
+	groupname: string | null;
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
-	const [inputError, setInputError] = useState({ title: "", reason: "" });
+	const [inputError, setInputError] = useState({ title: "", content: "" });
 
-	async function handleReportProfile(e: React.FormEvent<HTMLFormElement>) {
+	async function handleReportGroup(e: React.FormEvent<HTMLFormElement>) {
 		setLoading(true);
 		e.preventDefault();
-		if (!username) return;
+		if (!groupname) return;
 
 		const form = new FormData(e.currentTarget);
 		const title = form.get("title") as string;
-		const reason = form.get("reason") as string;
+		const content = form.get("content") as string;
 
 		if (!title) {
 			setInputError((prev) => ({
@@ -39,14 +38,14 @@ export default function ReportProfile({
 			}));
 		}
 
-		if (!reason) {
+		if (!content) {
 			setInputError((prev) => ({
 				...prev,
-				reason: "Razão é obrigatória",
+				content: "Razão é obrigatória",
 			}));
 		}
 
-		const response = await reportProfile(username, title, reason);
+		const response = await reportGroup(groupname, { title, content });
 
 		switch (response) {
 			case "ok":
@@ -55,11 +54,8 @@ export default function ReportProfile({
 			case "no-session":
 				alert("Sessão inválida");
 				break;
-			case "no-user":
-				alert("Usuário não encontrado");
-				break;
-			case "error":
-				alert("Erro ao reportar usuário");
+			case "no-group":
+				alert("Grupo não encontrado");
 				break;
 		}
 
@@ -70,14 +66,14 @@ export default function ReportProfile({
 	return (
 		<div>
 			<BaseModal
-				title={`Reportar ${username}`}
+				title={`Reportar ${groupname}`}
 				size="xl"
 				active={active}
 				setActive={setActive}
 				body={
 					<>
 						<form
-							onSubmit={handleReportProfile}
+							onSubmit={handleReportGroup}
 							className="flex gap-y-3 flex-col"
 							id="report-profile"
 						>
@@ -96,7 +92,7 @@ export default function ReportProfile({
 							<Textarea
 								variant="bordered"
 								placeholder="Razão"
-								name="reason"
+								name="content"
 								classNames={{
 									innerWrapper: "py-[9px]",
 									input: "mt-[2px]",
@@ -105,8 +101,8 @@ export default function ReportProfile({
 								startContent={
 									<PencilIcon className="h-6 text-neutral-500" />
 								}
-								errorMessage={inputError.reason}
-								isInvalid={inputError.reason !== ""}
+								errorMessage={inputError.content}
+								isInvalid={inputError.content !== ""}
 							/>
 						</form>
 					</>

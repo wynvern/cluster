@@ -133,7 +133,7 @@ export default function SignUp() {
 					}}
 				/>
 				<PasswordInput
-					placeholder="Digite a senha novamente"
+					placeholder="Senha novamente"
 					name="repeat-password"
 					classNames={{ inputWrapper: "h-14" }}
 					variant="bordered"
@@ -164,6 +164,7 @@ export default function SignUp() {
 						type="submit"
 						color={success ? "success" : "primary"}
 						isLoading={loading}
+						className="h-14"
 						isDisabled={loading || success}
 						startContent={
 							loading ? (

@@ -108,6 +108,7 @@ export default function PostDropdown({
 			onConfirm: () => {
 				deletePost(post.id);
 			},
+			isDanger: true,
 			onCancel: () => {},
 		});
 	}

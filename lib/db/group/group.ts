@@ -418,3 +418,29 @@ export async function fetchRecentGroups() {
 
 	return groups.map((group) => group.group);
 }
+
+export async function reportGroup(
+	groupname: string,
+	content: { title: string; content: string }
+) {
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+		select: { id: true },
+	});
+
+	if (!group) return "no-group";
+
+	await db.groupReport.create({
+		data: {
+			title: content.title,
+			creatorId: session.user.id,
+			content: content.content,
+			groupId: group.id,
+		},
+	});
+
+	return "ok";
+}

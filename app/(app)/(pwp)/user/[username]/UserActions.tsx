@@ -78,13 +78,16 @@ export default function UserActions({ user }: { user: User }) {
 
 	return (
 		<>
-			<Button
-				isIconOnly={true}
-				variant="bordered"
-				onClick={() => setNotificationsActive(true)}
-			>
-				<BellIcon className="h-6" />
-			</Button>
+			{session.data?.user.id === user.id && (
+				<Button
+					isIconOnly={true}
+					variant="bordered"
+					className="mr-4"
+					onClick={() => setNotificationsActive(true)}
+				>
+					<BellIcon className="h-6" />
+				</Button>
+			)}
 			<Dropdown
 				className="default-border shadow-none"
 				placement="bottom-end"

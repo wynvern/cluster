@@ -3,10 +3,11 @@ import {
 	ArrowUpOnSquareStackIcon,
 	DocumentIcon,
 } from "@heroicons/react/24/outline";
-import { Chip, Image, Link } from "@nextui-org/react";
+import { Chip, Image, Link, Tooltip } from "@nextui-org/react";
 import PostDropdown from "../post/PostDropdown";
 import BookmarkPost from "../post/BookmarkPost";
 import UserAvatar from "../user/UserAvatar";
+import prettyDate from "@/util/prettyDate";
 
 export default function PostCard({
 	post,
@@ -30,17 +31,28 @@ export default function PostCard({
 							<Link href={`/user/${post.author.username}`}>
 								<b>{post.author.username}</b>
 							</Link>
+							<Tooltip
+								content={new Date(
+									post.createdAt
+								).toLocaleString()}
+							>
+								<p className="text-neutral-400 ml-4">
+									{prettyDate(post.createdAt)}
+								</p>
+							</Tooltip>
 							{post.pinned && !isUserPage && (
-								<Chip className="ml-4">
+								<Chip className="ml-4 bg-success">
 									<div className="flex gap-x-2 items-center">
 										<ArrowUpOnSquareStackIcon className="h-5 w-5" />
-										Pinado
+										<p>Pinado</p>
 									</div>
 								</Chip>
 							)}
 						</div>
 						<Link href={`/group/${post.group.groupname}`}>
-							<Chip>{post.group.groupname}</Chip>
+							<Chip className="bg-background border-default">
+								<p>{post.group.groupname}</p>
+							</Chip>
 						</Link>
 					</div>
 				</div>
@@ -97,7 +109,10 @@ export default function PostCard({
 				{/* Image */}
 				{post.media && !disableImages && post.media.length > 0 ? (
 					<div>
-						<Image src={post.media[0]} />
+						<Image
+							src={post.media[0]}
+							className="max-w-full max-h-[80vh]"
+						/>
 					</div>
 				) : (
 					""

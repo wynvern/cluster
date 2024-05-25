@@ -15,7 +15,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				style={{ aspectRatio: "1000 / 400" }}
 			>
 				<Image
-					className="absolute w-full h-full rounded-none object-cover z-1"
+					className="absolute w-full h-full rounded-none object-cover z-1 max-w-[1000px] max-h-[400px]"
 					src={user ? (user.banner as string) : ""}
 					removeWrapper={true}
 				/>
@@ -27,14 +27,14 @@ export default async function UserProfile({ user }: UserProfileProps) {
 								: "/brand/default-avatar.svg"
 						}
 						removeWrapper={true}
-						className="h-[150px] sm:h-60 w-auto object-cover"
+						className="h-[120px] sm:h-60 w-auto object-cover"
 					/>
 				</div>
 			</div>
 
 			{/* Information */}
 			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
-				<div className="w-full h-20 flex items-center justify-end gap-x-4">
+				<div className="w-full h-20 flex items-center justify-end">
 					<UserActions user={user} />
 				</div>
 				<div>

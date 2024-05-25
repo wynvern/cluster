@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
 					throw new Error("email-not-found");
 				}
 				if (!existingUser.password) {
-					throw new Error("differnt-signin-provider");
+					throw new Error("different-sign-in-provider");
 				}
 
 				const passwordMatch = await compare(

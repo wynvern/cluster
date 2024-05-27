@@ -3,6 +3,7 @@ import GroupHeader from "./GroupHeader";
 import fetchGroup from "@/lib/db/group/group";
 import GroupProfile from "./GroupProfile";
 import GroupContent from "./GroupContent";
+import CreatePostButton from "./CreatePostButton";
 
 interface GroupPageProps {
 	params: {
@@ -26,10 +27,12 @@ export default async function GroupPage({
 					</>
 				) : (
 					<div className="w-full h-full flex items-center justify-center">
-						<NoPosts message="Usuário não encontrado." />
+						<NoPosts message="Grupo não encontrado." />
 					</div>
 				)}
 			</div>
+
+			{groupData && <CreatePostButton group={groupData} />}
 		</div>
 	);
 }

@@ -9,7 +9,7 @@ import ServiceWorkerHandler from "./service/ServiceWorkerHandler";
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<NextUIProvider className="min-h-dvh">
+			<NextUIProvider>
 				<SessionProvider>
 					<ConfirmationModalProvider>
 						<NextThemesProvider

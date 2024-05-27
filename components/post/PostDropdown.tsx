@@ -1,10 +1,11 @@
-import { getRole, pinPost } from "@/lib/db/group/group";
+import { approvePost, getRole, pinPost } from "@/lib/db/group/group";
 import type Post from "@/lib/db/post/type";
 import {
 	ArrowUpOnSquareStackIcon,
 	EllipsisHorizontalIcon,
 	FlagIcon,
 	MapPinIcon,
+	ShieldCheckIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -53,7 +54,37 @@ export default function PostDropdown({
 		await pinPost({ postId: post.id });
 	}
 
+	async function handleApprovePost() {
+		await confirm({
+			title: "Aprovar post",
+			description:
+				"Tem certeza que deseja aprovar o post? Lembre-se de verficar se está de acordo com as regras do grupo",
+			onConfirm: () => {
+				approvePost({ postId: post.id });
+			},
+			isDanger: false,
+			onCancel: () => {},
+		});
+	}
+
 	const dropdownItems = [
+		// Approve Post action
+		["owner", "moderator"].includes(String(userRole)) && !isUserPage
+			? {
+					description: "Aprovar post",
+					className: "text-success",
+					icon: (
+						<ShieldCheckIcon
+							className="h-8"
+							aria-label="Pin Post"
+						/>
+					),
+					ariaLabel: "approve-post",
+					text: "Aprovar Post",
+					onClick: handleApprovePost,
+			  }
+			: null,
+
 		// Pin Post action
 		["owner", "moderator"].includes(String(userRole)) && !isUserPage
 			? {

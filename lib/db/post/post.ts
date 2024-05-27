@@ -71,6 +71,7 @@ export async function fetchGroupPosts(
 			content: true,
 			createdAt: true,
 			document: true,
+			approved: true,
 			groupId: true,
 			id: true,
 			title: true,
@@ -80,7 +81,22 @@ export async function fetchGroupPosts(
 				select: {
 					id: true,
 					username: true,
+					name: true,
 					image: true,
+					bio: true,
+					groups: {
+						select: {
+							group: {
+								select: {
+									members: {
+										select: {
+											joinedAt: true,
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 			group: {
@@ -122,6 +138,7 @@ export async function fetchUserPosts(
 			groupId: true,
 			id: true,
 			title: true,
+			approved: true,
 			media: true,
 			pinned: true,
 			author: {
@@ -129,6 +146,20 @@ export async function fetchUserPosts(
 					id: true,
 					username: true,
 					image: true,
+					bio: true,
+					groups: {
+						select: {
+							group: {
+								select: {
+									members: {
+										select: {
+											joinedAt: true,
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 			group: {
@@ -278,6 +309,7 @@ export async function fetchPostById(postId: string) {
 			content: true,
 			createdAt: true,
 			document: true,
+			approved: true,
 			groupId: true,
 			id: true,
 			title: true,

@@ -6,6 +6,7 @@ interface GroupCount {
 export default interface Group {
 	id: string;
 	name: string | null;
+	categories: string[];
 	image: string | null;
 	banner: string | null;
 	groupname: string;
@@ -40,3 +41,28 @@ export interface GroupCard {
 	banner: string | null;
 }
 [];
+
+export interface GroupSettings {
+	id: string;
+	groupId: string;
+	memberPosting: boolean;
+	memberJoining: boolean;
+	createdAt: Date;
+}
+
+export interface UserGroupChats {
+	id: string;
+	name: string | null;
+	groupname: string;
+	image: string | null;
+	GroupChat: {
+		id: string;
+		messages: {
+			user: {
+				username: string | null;
+			};
+			createdAt: Date;
+			content: string;
+		}[];
+	} | null;
+}

@@ -1,12 +1,15 @@
 "use server";
 
 import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { getRole } from "@/lib/db/group/group";
 import { getServerSession } from "next-auth";
 
+const roleHierarchy = ["member", "moderator", "owner"];
+
 export default async function hasPermission(
-	groupname: string
+	groupname: string,
+	permission = "moderator",
+	userId = null
 ): Promise<boolean> {
 	const session = await getServerSession(authOptions);
 	if (!session) return false;
@@ -14,5 +17,6 @@ export default async function hasPermission(
 
 	const role = await getRole({ groupname });
 	if (!role) return false;
-	return ["owner", "moderator"].includes(role);
+
+	return roleHierarchy.indexOf(permission) <= roleHierarchy.indexOf(role);
 }

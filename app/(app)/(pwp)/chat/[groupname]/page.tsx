@@ -16,6 +16,7 @@ import fetchGroup from "@/lib/db/group/group";
 import type Group from "@/lib/db/group/type";
 import { socket } from "../../../../../lib/SocketClient";
 import ChatHeader from "./ChatHeader";
+import { useMessageAttr } from "@/hooks/ChatMessage";
 
 interface FileBase64Info {
 	base64: string;
@@ -37,6 +38,7 @@ export default function ChatPage({
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
 	const [batchIndex, setBatchIndex] = useState(1);
+	const replyToMessageId = useMessageAttr((state) => state.replyToMessageId);
 
 	async function initChat() {
 		const retreivedGroup = await fetchGroup({
@@ -165,11 +167,11 @@ export default function ChatPage({
 	}
 
 	return (
-		<div className="w-full h-calc(100vh-300px) flex flex-col overflow-hidden">
+		<div className="w-full max-h-[calc(100vh)] h-full flex flex-col overflow-hidden">
 			{group?.groupname && <ChatHeader groupname={group.groupname} />}
 			<div className="grow flex flex-col overflow-hidden my-4">
 				<ScrollShadow
-					className="w-full h-full px-10 gap-y-4 flex flex-col overflow-auto"
+					className="w-full h-full px-4 sm:px-10 gap-y-4 flex flex-col overflow-auto"
 					onScroll={handleMessageLoadScroll}
 				>
 					<ListMessages messages={messages} />
@@ -184,8 +186,9 @@ export default function ChatPage({
 						handleSubmit(e);
 					}
 				}}
-				className="w-full px-10 flex gap-x-4 transition-height duration-200 mb-6"
+				className="w-full px-4 sm:px-10 flex gap-x-4 transition-height duration-200 mb-6 "
 			>
+				<p>{replyToMessageId}</p>
 				<div className="flex flex-col default-border rounded-large p-2 grow">
 					<Textarea
 						placeholder="mensagem"

@@ -13,10 +13,20 @@ export default interface Post {
 		id: string;
 		username: string | null;
 		image: string | null;
+		name: string | null;
+		bio: string | null;
+		groups: {
+			group: {
+				members: {
+					joinedAt: Date;
+				}[];
+			};
+		}[];
 	};
 	media: string[];
 	document?: string[];
 	pinned: boolean;
+	approved: boolean;
 	bookmarks: {
 		id: string;
 		userId: string;

@@ -2,12 +2,22 @@ import type Post from "@/lib/db/post/type";
 import {
 	ArrowUpOnSquareStackIcon,
 	DocumentIcon,
+	ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
-import { Chip, Image, Link, Tooltip } from "@nextui-org/react";
+import {
+	Chip,
+	Image,
+	Link,
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+	Tooltip,
+} from "@nextui-org/react";
 import PostDropdown from "../post/PostDropdown";
 import BookmarkPost from "../post/BookmarkPost";
 import UserAvatar from "../user/UserAvatar";
 import prettyDate from "@/util/prettyDate";
+import UserPopover from "../user/UserPopover";
 
 export default function PostCard({
 	post,
@@ -20,6 +30,8 @@ export default function PostCard({
 	isUserPage?: boolean;
 	disableLink?: boolean;
 }) {
+	console.log(post.author.groups[0].group.members[0].joinedAt);
+
 	return (
 		<div className="w-full flex flex-col gap-y-4">
 			<div className="w-full justify-between flex items-start">
@@ -28,9 +40,17 @@ export default function PostCard({
 					<UserAvatar avatarURL={post.author.image} />
 					<div className="flex flex-col gap-y-2">
 						<div className="flex items-center">
-							<Link href={`/user/${post.author.username}`}>
-								<b>{post.author.username}</b>
-							</Link>
+							<Popover className="default-border rounded-large">
+								<PopoverTrigger>
+									<b>{post.author.username}</b>
+								</PopoverTrigger>
+								<PopoverContent>
+									<UserPopover
+										user={post.author}
+										groupname={post.group.groupname}
+									/>
+								</PopoverContent>
+							</Popover>
 							<Tooltip
 								content={new Date(
 									post.createdAt
@@ -47,6 +67,17 @@ export default function PostCard({
 										<p>Pinado</p>
 									</div>
 								</Chip>
+							)}
+							{post.approved && !isUserPage && (
+								<Tooltip
+									content={
+										"Moderadores deste grupo aprovaram este post."
+									}
+								>
+									<Chip className="ml-4 bg-primary text-secondary px-0">
+										<ShieldCheckIcon className="h-5 w-5" />
+									</Chip>
+								</Tooltip>
 							)}
 						</div>
 						<Link href={`/group/${post.group.groupname}`}>
@@ -69,13 +100,19 @@ export default function PostCard({
 				{disableLink ? (
 					<div>
 						<h2>{post.title}</h2>
-						<p>{post.content}</p>
+						<div
+							dangerouslySetInnerHTML={{ __html: post.content }}
+						/>
 					</div>
 				) : (
 					<Link href={`/post/${post.id}`}>
 						<div>
 							<h2>{post.title}</h2>
-							<p>{post.content}</p>
+							<div
+								dangerouslySetInnerHTML={{
+									__html: post.content,
+								}}
+							/>
 						</div>
 					</Link>
 				)}

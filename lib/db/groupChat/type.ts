@@ -1,5 +1,5 @@
 export interface MessageProps {
-	id?: string;
+	id: string;
 	content: string;
 	userId: string;
 	user: {

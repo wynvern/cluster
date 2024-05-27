@@ -1,4 +1,4 @@
-import { Image } from "@nextui-org/react";
+import { Chip, Image } from "@nextui-org/react";
 import type Group from "@/lib/db/group/type";
 import GroupActions from "./GroupActions";
 
@@ -20,7 +20,7 @@ export default async function GroupProfile({ group }: { group: Group }) {
 						src={
 							group?.image
 								? group.image
-								: "/brand/default-avatar.svg"
+								: "/brand/default-group.svg"
 						}
 						removeWrapper={true}
 						className="h-[150px] sm:h-60 w-auto object-cover"
@@ -42,6 +42,21 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				</div>
 				<div>
 					<p>{group.description}</p>
+				</div>
+				<div className="flex gap-x-2">
+					<p>
+						Posts <b>{group._count.posts}</b>
+					</p>
+					<p>
+						Membros <b>{group._count.members}</b>
+					</p>
+				</div>
+				<div className="flex gap-x-2">
+					{group.categories.map((i) => (
+						<Chip className="border-default bg-background" key={i}>
+							<p>{i}</p>
+						</Chip>
+					))}
 				</div>
 			</div>
 			<div className="bottom-border w-full mt-10" />

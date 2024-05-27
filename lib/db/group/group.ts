@@ -30,6 +30,7 @@ export default async function fetchGroup(
 			name: true,
 			image: true,
 			banner: true,
+			categories: true,
 			groupname: true,
 			description: true,
 			GroupChat: {
@@ -133,6 +134,33 @@ export async function pinPost({ postId }: { postId: string }) {
 	await db.post.update({
 		where: { id: postId },
 		data: { pinned: true },
+	});
+
+	return "ok";
+}
+
+export async function approvePost({ postId }: { postId: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: {
+			group: {
+				select: { members: { where: { userId: session.user.id } } },
+			},
+		},
+	});
+
+	if (!post) return "post-not-found";
+
+	if (!["owner", "moderator"].includes(post.group.members[0].role))
+		return "no-permission";
+
+	await db.post.update({
+		where: { id: postId },
+		data: { approved: true },
 	});
 
 	return "ok";
@@ -443,4 +471,110 @@ export async function reportGroup(
 	});
 
 	return "ok";
+}
+
+export async function fetchGroupSettings({ groupname }: { groupname: string }) {
+	const groupSettings = await db.groupSetting.findFirst({
+		where: { group: { groupname } },
+	});
+
+	if (!groupSettings) return null;
+
+	return groupSettings;
+}
+
+export async function updateGroupSetting({
+	groupname,
+	memberPosting,
+	memberJoining,
+}: {
+	groupname: string;
+	memberPosting: boolean;
+	memberJoining: boolean;
+}) {
+	if (!(await isOwner({ groupname }))) return "not-owner";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	await db.groupSetting.update({
+		where: { groupId: group.id },
+		data: { memberPosting, memberJoining },
+	});
+
+	return "ok";
+}
+
+export async function banMember({
+	groupname,
+	userId,
+	reason,
+}: {
+	groupname: string;
+	userId: string;
+	reason: string;
+}) {
+	if (!(await isOwner({ groupname }))) return "not-owner";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	await db.groupMember.delete({
+		where: { groupId_userId: { groupId: group.id, userId } },
+	});
+
+	await db.bannedGroupUser.create({
+		data: {
+			groupId: group.id,
+			userId,
+			reason,
+		},
+	});
+
+	return "ok";
+}
+
+export async function fetchUserChats() {
+	const session = await getServerSession(authOptions);
+	if (!session) return [];
+
+	const groups = await db.groupMember.findMany({
+		where: { userId: session.user.id },
+		select: {
+			group: {
+				select: {
+					id: true,
+					name: true,
+					groupname: true,
+					image: true,
+					GroupChat: {
+						select: {
+							id: true,
+							messages: {
+								orderBy: { createdAt: "desc" },
+								take: 1,
+								select: {
+									content: true,
+									user: {
+										select: {
+											username: true,
+										},
+									},
+									createdAt: true,
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	});
+
+	return groups.map((group) => group.group);
 }

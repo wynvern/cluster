@@ -22,11 +22,13 @@ import CustomizeGroup from "@/components/modal/CustomizeGroup";
 import ReportGroup from "@/components/modal/ReportGroup";
 import FollowUnfollowGroup from "@/components/general/FollowUnfollowGroup";
 import hasPermission from "@/util/hasPermission";
+import { useRouter } from "next/navigation";
 
 export default function GroupActions({ group }: { group: Group }) {
 	const [customizeGroup, setCustomizeGroupActive] = useState(false);
 	const [reportGroup, setReportGroup] = useState(false);
 	const [hasGroupPermission, setHasGroupPermission] = useState(false);
+	const router = useRouter();
 	const dropdownItems = [
 		{
 			modRequired: true,
@@ -43,7 +45,7 @@ export default function GroupActions({ group }: { group: Group }) {
 				<Cog6ToothIcon className="h-8" aria-label="gerenciar-grupo" />
 			),
 			ariaLabel: "manage group",
-
+			onClick: () => router.push(`/group/${group.groupname}/manage`),
 			text: "Gerenciar Grupo",
 		},
 		{

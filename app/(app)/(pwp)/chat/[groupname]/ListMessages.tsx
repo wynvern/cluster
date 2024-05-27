@@ -1,7 +1,10 @@
 import UserAvatar from "@/components/user/UserAvatar";
 import type { MessageProps } from "@/lib/db/groupChat/type";
-import { Link, Image, Chip } from "@nextui-org/react";
+import prettyDate from "@/util/prettyDate";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
+import { Link, Image, Chip, Button } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
+import MessageActions from "./MessageActions";
 
 export function ListMessages({ messages }: { messages: MessageProps[] }) {
 	const session = useSession();
@@ -21,9 +24,7 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 						<div className="w-full flex justify-center">
 							{isNewDay && (
 								<div className="my-8 text-neutral-600 ">
-									{new Date(
-										message.createdAt
-									).toLocaleDateString()}
+									{prettyDate(message.createdAt)}
 								</div>
 							)}
 						</div>
@@ -43,12 +44,15 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 							) : (
 								<div className="w-12" />
 							)}
-							<div>
-								<div
-									className={`flex flex-col gap-y-1 ${
-										isUserMessage ? "items-end" : ""
-									}`}
-								>
+							<div
+								className={`flex flex-col gap-y-1 grow ${
+									isUserMessage ? "items-end" : ""
+								}`}
+							>
+								<div className="w-full flex justify-between items-start">
+									<div>
+										<MessageActions message={message} />
+									</div>
 									{i === 0 ||
 									message.user.id !==
 										messages[i - 1].user.id ? (
@@ -58,24 +62,24 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 											<b>{message.user.username}</b>
 										</Link>
 									) : null}
-									<p
-										className={
-											isUserMessage ? "text-rigth" : ""
-										}
-									>
-										{message.content}
-									</p>
-									<p
-										className={`text-neutral-600 ${
-											isUserMessage ? "text-right" : ""
-										}`}
-										style={{ fontSize: "12px" }}
-									>
-										{new Date(
-											message.createdAt
-										).toLocaleString()}
-									</p>
 								</div>
+								<p
+									className={
+										isUserMessage ? "text-rigth" : ""
+									}
+								>
+									{message.content}
+								</p>
+								<p
+									className={`text-neutral-600 ${
+										isUserMessage ? "text-right" : ""
+									}`}
+									style={{ fontSize: "12px" }}
+								>
+									{new Date(
+										message.createdAt
+									).toLocaleString()}
+								</p>
 							</div>
 						</div>
 						{message.media && message.media.length > 0 && (

@@ -2,6 +2,7 @@ import GroupCard from "@/components/group/GroupCard";
 import { fetchRecentGroups } from "@/lib/db/group/group";
 import { ScrollShadow } from "@nextui-org/react";
 import CreateGroupHandler from "./CreateGroupHandler";
+import NoPosts from "@/components/card/NoPosts";
 
 export default async function GroupPage() {
 	const recentGroups = await fetchRecentGroups();
@@ -22,14 +23,20 @@ export default async function GroupPage() {
 
 				<div className="w-full px-4 sm:px-10 ">
 					<h2 className="mb-4">Recentes</h2>
-					<ScrollShadow
-						orientation="horizontal"
-						className="gap-x-4 flex w-full"
-					>
-						{recentGroups?.map((group) => (
-							<GroupCard key={group.id} group={group} />
-						))}
-					</ScrollShadow>
+					{recentGroups.length > 0 ? (
+						<ScrollShadow
+							orientation="horizontal"
+							className="gap-x-4 flex w-full"
+						>
+							{recentGroups?.map((group) => (
+								<GroupCard key={group.id} group={group} />
+							))}
+						</ScrollShadow>
+					) : (
+						<div className="h-20 flex items-center justify-center">
+							<NoPosts message="Nenhum grupo recente." />
+						</div>
+					)}
 				</div>
 
 				<div className="my-4 sm:my-8 bottom-border w-full" />

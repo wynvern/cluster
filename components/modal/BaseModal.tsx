@@ -28,7 +28,7 @@ export default function BaseModal({
 		<Modal
 			size={size || "sm"}
 			isOpen={active}
-			className="text-foreground py-2 sm:py-4 default-border px-4 sm:px-6"
+			className="text-foreground py-2 sm:py-4 default-border px-3 sm:px-6"
 			placement="center"
 			motionProps={{
 				variants: {
@@ -55,7 +55,7 @@ export default function BaseModal({
 			<ModalContent>
 				{() => (
 					<>
-						<ModalHeader className="px-0">
+						<ModalHeader className="px-2">
 							<h2>{title}</h2>
 						</ModalHeader>
 						<ModalBody className="px-0">{body}</ModalBody>

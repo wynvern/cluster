@@ -380,7 +380,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 							/>
 							<Textarea
 								name="description"
-								placeholder="descriptiongrafia"
+								placeholder="Descrição"
 								variant="bordered"
 								classNames={{
 									innerWrapper: "py-[9px]",

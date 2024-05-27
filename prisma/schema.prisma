@@ -215,6 +215,7 @@ model BannedGroupUser {
    group    Group    @relation(fields: [groupId], references: [id])
    groupId  String   @map("group_id")
    bannedAt DateTime @default(now()) @map("banned_at")
+   reason   String?
 
    @@unique([groupId, userId])
    @@map("banned_group_user")

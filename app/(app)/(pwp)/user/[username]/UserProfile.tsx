@@ -47,6 +47,17 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				<div>
 					<p>{user.bio}</p>
 				</div>
+				<div className="flex gap-x-2">
+					<p>
+						Posts <b>{user._count.posts}</b>
+					</p>
+					<p>
+						Membros <b>{user._count.bookmarks}</b>
+					</p>
+					<p>
+						Grupos <b>{user._count.groups}</b>
+					</p>
+				</div>
 			</div>
 		</div>
 	);

@@ -17,7 +17,7 @@ import {
 	Tabs,
 	Textarea,
 } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { type Key, useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
 import type Group from "@/lib/db/group/type";
 import ErrorBox from "../general/ErrorBox";
@@ -26,6 +26,8 @@ import getFileBase64 from "@/util/getFile";
 import { createPost } from "@/lib/db/post/post";
 import { useConfirmationModal } from "../provider/ConfirmationModal";
 import Draggable from "../general/Draggable";
+import markdownit from "markdown-it";
+import MarkdownIt from "markdown-it";
 
 function fileToBase64(
 	file: File
@@ -128,7 +130,7 @@ export default function CreatePost({
 
 		const data = await createPost(
 			title,
-			content,
+			mdParser.render(content),
 			selectedImages.map((i) => i.base64),
 			selectedDocuments.map((d) => d.base64),
 			group.id
@@ -229,6 +231,8 @@ export default function CreatePost({
 		}
 	}
 
+	const mdParser = new MarkdownIt();
+
 	return (
 		<BaseModal
 			title={`Criar Post em g/${group.groupname}`}
@@ -239,7 +243,7 @@ export default function CreatePost({
 				<>
 					<Tabs
 						selectedKey={activeTab}
-						onSelectionChange={(key: string) =>
+						onSelectionChange={(key: Key) =>
 							setActiveTab(key as string)
 						}
 						aria-label="Options"
@@ -337,6 +341,9 @@ export default function CreatePost({
 									}}
 									isDisabled={loading}
 								/>
+								<p className="text-tiny text-neutral-500">
+									Suporte a markdown
+								</p>
 								<div>
 									{content.length > 1000 ? (
 										<p className="text-neutral-500">
@@ -397,7 +404,7 @@ export default function CreatePost({
 																selectedImages.length >=
 																	5
 															}
-															variant="secondary"
+															color="secondary"
 															className="text-foreground"
 														>
 															<b>clique aqui</b>
@@ -507,7 +514,7 @@ export default function CreatePost({
 																selectedDocuments.length >=
 																	6
 															}
-															variant="secondary"
+															color="secondary"
 															className="text-foreground"
 														>
 															<b>clique aqui</b>

@@ -59,11 +59,6 @@ async function createMessage(data: MessageData) {
 		},
 	});
 
-	sendMessageNotifications(data.chatId, {
-		content: data.content,
-		senderName: newMessage.user.username || "",
-	});
-
 	if (data.media) {
 		for (const media of data.media) {
 			if (!media) return;
@@ -72,10 +67,11 @@ async function createMessage(data: MessageData) {
 
 			const blob = await postBlob(
 				processedImage.toString("base64"),
-				"image"
+				"png"
 			);
 
-			mediaUrl.push(blob.url);
+			console.log(blob.urlToMedia);
+			mediaUrl.push(blob.urlToMedia);
 		}
 
 		await db.message.update({
@@ -87,9 +83,15 @@ async function createMessage(data: MessageData) {
 			},
 		});
 
-		console.log(mediaUrl);
-		return { ...newMessage, media: mediaUrl };
+		newMessage.media = mediaUrl;
 	}
+
+	sendMessageNotifications(data.chatId, {
+		content: data.content,
+		senderName: newMessage.user.username || "",
+	});
+
+	console.log(newMessage);
 	return newMessage;
 }
 
@@ -151,7 +153,7 @@ export default async function socketHandlers(io: Server, socket: Socket) {
 		createMessage(data).then((newMessage) => {
 			io.to(data.chatId).emit("receiveMessage", {
 				...data,
-				id: newMessage?.id,
+				...newMessage,
 			});
 		});
 	});

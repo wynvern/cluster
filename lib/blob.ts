@@ -14,5 +14,7 @@ export async function postBlob(data: string, type: string) {
 		},
 	});
 
-	return response;
+	const responseData = await response.json();
+
+	return responseData;
 }

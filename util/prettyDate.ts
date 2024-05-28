@@ -1,3 +1,5 @@
+"use client";
+
 export default function prettyDate(date: Date) {
 	const now = new Date();
 	const sameDay =

@@ -14,15 +14,19 @@ import {
 
 export default function ({ message }: { message: MessageProps }) {
 	const setReplyToMessageId = useMessageAttr(
-		(state) => state.setReplyToMessageId
+		(state) => state.setReplyToMessageContent
 	);
 
 	function setReplyTo() {
-		setReplyToMessageId(message.id);
+		setReplyToMessageId({
+			id: message.id,
+			content: message.content,
+			authorUsername: message.user.username || "",
+		});
 	}
 
 	return (
-		<div className="flex items-center gap-x-4">
+		<div className="flex items-center gap-x-4 message-actions">
 			<Link onClick={setReplyTo}>
 				<ArrowUturnLeftIcon className="h-4" />
 			</Link>

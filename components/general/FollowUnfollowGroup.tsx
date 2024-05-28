@@ -18,10 +18,10 @@ export default function ({ groupname }: { groupname: string }) {
 	useEffect(() => {
 		async function checkFollowingStatus() {
 			const userRole = await getRole({ groupname });
-			setUserRole(userRole);
-
 			const role = await hasPermission(groupname, "member");
 			const settings = await fetchGroupSettings({ groupname });
+
+			setUserRole(userRole);
 			setIsLoading(false);
 			setIsFollowing(role);
 			setIsJoiningDisabled(!settings?.memberJoining);

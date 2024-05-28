@@ -44,6 +44,7 @@ async function createMessage(data: MessageData) {
 		select: {
 			id: true,
 			content: true,
+			media: true,
 			createdAt: true,
 			chatId: true,
 			userId: true,
@@ -88,8 +89,10 @@ async function createMessage(data: MessageData) {
 				media: mediaUrl,
 			},
 		});
-	}
 
+		console.log(mediaUrl);
+		return { ...newMessage, media: mediaUrl };
+	}
 	return newMessage;
 }
 

@@ -1,11 +1,18 @@
 import { create } from "zustand";
 
 type messageAttr = {
-	replyToMessageId: string | null;
-	setReplyToMessageId: (id: string) => void;
+	replyToMessage: messageInfo | null;
+	setReplyToMessageContent: (data: messageInfo | null) => void;
+};
+
+type messageInfo = {
+	id: string;
+	content: string;
+	authorUsername: string;
 };
 
 export const useMessageAttr = create<messageAttr>((set) => ({
-	replyToMessageId: null,
-	setReplyToMessageId: (id: string) => set({ replyToMessageId: id }),
+	replyToMessage: null,
+	setReplyToMessageContent: (data: messageInfo | null) =>
+		set({ replyToMessage: data }),
 }));

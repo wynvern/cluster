@@ -20,7 +20,7 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 						new Date(message.createdAt).getDate();
 
 				return (
-					<div key={message.id}>
+					<div key={message.id} className="message-action-container">
 						<div className="w-full flex justify-center">
 							{isNewDay && (
 								<div className="my-8 text-neutral-600 ">
@@ -49,13 +49,18 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 									isUserMessage ? "items-end" : ""
 								}`}
 							>
-								<div className="w-full flex justify-between items-start">
+								<div
+									className={`w-full flex justify-between items-start ${
+										!isUserMessage ? "flex-row-reverse" : ""
+									}`}
+								>
 									<div>
 										<MessageActions message={message} />
 									</div>
 									{i === 0 ||
 									message.user.id !==
-										messages[i - 1].user.id ? (
+										messages[i - 1].user.id ||
+									isNewDay ? (
 										<Link
 											href={`/user/${message.user.username}`}
 										>
@@ -87,7 +92,7 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 								className={
 									isUserMessage
 										? "flex items-end justify-end mr-16 mt-2"
-										: "flex items-start"
+										: "flex items-start mt-2 ml-16"
 								}
 							>
 								<div className="max-w-[300px] max-h-[400px]">

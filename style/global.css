@@ -153,3 +153,12 @@ header {
 .message-animation {
 	animation: opacity 200ms ease-out;
 }
+
+.message-action-container:hover .message-actions {
+	opacity: 1;
+}
+
+.message-actions {
+	opacity: 0;
+	transition: opacity 200ms ease-in-out;
+}

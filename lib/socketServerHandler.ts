@@ -3,6 +3,7 @@ import { db } from "./db";
 import { compressImage } from "./image";
 import { put } from "@vercel/blob";
 import { sendNotification } from "./notification";
+import { postBlob } from "./blob";
 
 interface MessageData {
 	content: string;
@@ -69,13 +70,9 @@ async function createMessage(data: MessageData) {
 			const buffer = Buffer.from(media, "base64");
 			const processedImage = await compressImage(buffer);
 
-			const blob = await put(
-				`message_media/${newMessage.id}`,
-				processedImage,
-				{
-					access: "public",
-					contentType: "image/png",
-				}
+			const blob = await postBlob(
+				processedImage.toString("base64"),
+				"image"
 			);
 
 			mediaUrl.push(blob.url);

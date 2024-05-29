@@ -2,9 +2,9 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
-import { put } from "@vercel/blob";
 import { compressImage, squareImage } from "../image";
 import { db } from "../db";
+import { postBlob } from "../blob";
 
 interface fileNameBase64 {
 	base64: string;
@@ -21,12 +21,9 @@ export async function uploadPostMedia(id: string, media: string[]) {
 		const buffer = Buffer.from(mediaItem, "base64");
 		const processedImage = await compressImage(buffer);
 
-		const blob = await put(`post_media/${id}`, processedImage, {
-			access: "public",
-			contentType: "image/png",
-		});
+		const blob = await postBlob(processedImage.toString("base64"), "png");
 
-		newMediaUrls.push(blob.url);
+		newMediaUrls.push(blob.urlToMedia);
 	}
 
 	await db.post.update({
@@ -44,11 +41,8 @@ export async function uploadPostDocument(id: string, files: fileNameBase64[]) {
 
 	for (const file of files) {
 		const buffer = Buffer.from(file.base64, "base64");
-		const blob = await put(`post_documents/${file.name}`, buffer, {
-			access: "public",
-			contentType: "application/pdf",
-		});
-		documentUrls.push(blob.url);
+		const blob = await postBlob(buffer.toString("base64"), "pdf");
+		documentUrls.push(blob.urlToMedia);
 	}
 
 	await db.post.update({

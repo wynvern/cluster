@@ -17,7 +17,6 @@
 		"@prisma/client": "^5.13.0",
 		"@types/bcrypt": "^5.0.2",
 		"@types/web-push": "^3.6.3",
-		"@vercel/blob": "^0.23.2",
 		"add": "^2.0.6",
 		"bcrypt": "^5.1.1",
 		"biome": "^0.2.2",

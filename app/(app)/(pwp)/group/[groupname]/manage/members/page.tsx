@@ -41,10 +41,15 @@ export default function ({ params }: { params: { groupname: string } }) {
 		handleFetch();
 	}, []);
 
+	const rolesDictionary: Record<string, string> = {
+		owner: "Dono",
+		member: "Membro",
+		moderator: "Moderador",
+	};
+
 	return (
 		<div>
 			<CategoryHeader title="Geral" />
-
 			<div className="pt-10 px-4 sm:px-10">
 				{members ? (
 					<Table>
@@ -54,23 +59,21 @@ export default function ({ params }: { params: { groupname: string } }) {
 							<TableColumn>Entrou em</TableColumn>
 							<TableColumn>Ações</TableColumn>
 						</TableHeader>
-						<TableBody items={members}>
-							{(item: Member) => (
-								<TableRow key={item.user.id}>
-									{(columnKey) => (
-										<>
-											<TableCell>
-												{item.user.username}
-											</TableCell>
-											<TableCell>{item.role}</TableCell>
-											<TableCell>
-												{prettyDate(item.joinedAt)}
-											</TableCell>
-											<TableCell>abc</TableCell>
-										</>
-									)}
+						<TableBody>
+							{members.map((member) => (
+								<TableRow key={member.user.id}>
+									<TableCell>
+										{member.user.username}
+									</TableCell>
+									<TableCell>
+										{rolesDictionary[member.role]}
+									</TableCell>
+									<TableCell>
+										{prettyDate(member.joinedAt)}
+									</TableCell>
+									<TableCell>actions</TableCell>
 								</TableRow>
-							)}
+							))}
 						</TableBody>
 					</Table>
 				) : (

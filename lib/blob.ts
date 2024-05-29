@@ -1,4 +1,13 @@
-export async function postBlob(data: string, type: string) {
+interface postBlobResponse {
+	urlToMedia: string;
+	uuid: string;
+	status: string;
+}
+
+export async function postBlob(
+	data: string,
+	type: string
+): Promise<postBlobResponse> {
 	const apiKey = process.env.BLOB_API_KEY;
 
 	if (!apiKey) {

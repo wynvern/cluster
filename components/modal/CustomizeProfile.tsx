@@ -72,7 +72,13 @@ export default function CustomizeProfile({
 
 	async function handleSelectBanner() {
 		try {
-			const data = await getFileBase64(["jpg", "jpeg", "png", "webp"]);
+			const data = await getFileBase64([
+				"jpg",
+				"jpeg",
+				"png",
+				"webp",
+				"gif",
+			]);
 
 			if (!data) return false;
 
@@ -98,7 +104,13 @@ export default function CustomizeProfile({
 
 	async function handleSelectAvatar() {
 		try {
-			const data = await getFileBase64(["jpg", "jpeg", "png", "webp"]);
+			const data = await getFileBase64([
+				"jpg",
+				"jpeg",
+				"png",
+				"webp",
+				"gif",
+			]);
 
 			if (!data) return false;
 
@@ -162,6 +174,13 @@ export default function CustomizeProfile({
 									avatar: prev.avatar,
 								}));
 							}}
+							acceptedTypes={[
+								"png",
+								"jpg",
+								"jpeg",
+								"webp",
+								"gif",
+							]}
 						>
 							<div className="w-full h-full absolute bg-neutral-500 ">
 								<Image
@@ -190,6 +209,13 @@ export default function CustomizeProfile({
 									avatar: { ...file, error: "" },
 								}));
 							}}
+							acceptedTypes={[
+								"png",
+								"jpg",
+								"jpeg",
+								"webp",
+								"gif",
+							]}
 						>
 							<div className="absolute -bottom-10 left-4 flex items-center justify-center">
 								<Button

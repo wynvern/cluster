@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth";
 export async function createPost(
 	title: string,
 	content: string,
-	media: string[],
+	media: { base64: string; fileType: string }[],
 	document: string[],
 	groupId: string
 ) {

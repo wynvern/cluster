@@ -52,6 +52,7 @@ export default function ChatPage({
 			([entry]) => {
 				// If the element is in the viewport, entry.isIntersecting will be true
 				// If not, it will be false
+				console.log(entry.isIntersecting);
 				setIsAtBottom(entry.isIntersecting);
 			},
 			{
@@ -211,8 +212,7 @@ export default function ChatPage({
 					className="w-full h-full px-4 sm:px-10 gap-y-4 flex flex-col overflow-auto relative"
 					onScroll={handleMessageLoadScroll}
 				>
-					<ListMessages messages={messages} />
-					<div ref={endOfMessagesRef} />
+					<ListMessages messages={messages} ref={endOfMessagesRef} />
 				</ScrollShadow>
 				{!isAtBottom && (
 					<div className="absolute bottom-40 right-10">

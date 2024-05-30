@@ -27,7 +27,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 								: "/brand/default-avatar.svg"
 						}
 						removeWrapper={true}
-						className="h-[120px] sm:h-60 w-auto object-cover"
+						className="h-[120px] sm:h-60 object-cover aspect-square"
 					/>
 				</div>
 			</div>

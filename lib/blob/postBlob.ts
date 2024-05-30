@@ -5,24 +5,30 @@ import { authOptions } from "../auth";
 import { compressImage, squareImage } from "../image";
 import { db } from "../db";
 import { postBlob } from "../blob";
+import supportedFormats from "../../public/supportedFormats.json";
 
 interface fileNameBase64 {
 	base64: string;
 	name: string;
 }
 
-export async function uploadPostMedia(id: string, media: string[]) {
+export async function uploadPostMedia(
+	id: string,
+	media: { base64: string; fileType: string }[]
+) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
+	const type = media[0].fileType.split("/")[1];
 
 	const newMediaUrls = [];
 
 	for (const mediaItem of media) {
-		const buffer = Buffer.from(mediaItem, "base64");
-		const processedImage = await compressImage(buffer);
+		let buffer = Buffer.from(mediaItem.base64, "base64");
+		if (supportedFormats.image.includes(type)) {
+			buffer = await compressImage(buffer);
+		}
 
-		const blob = await postBlob(processedImage.toString("base64"), "png");
-
+		const blob = await postBlob(buffer.toString("base64"), type);
 		newMediaUrls.push(blob.urlToMedia);
 	}
 

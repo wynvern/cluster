@@ -61,6 +61,7 @@ function documentFileBase64(
 interface FileBase64Info {
 	base64: string;
 	preview: string;
+	fileType: string;
 }
 
 interface DocumentFileBase64 {
@@ -131,7 +132,10 @@ export default function CreatePost({
 		const data = await createPost(
 			title,
 			mdParser.render(content),
-			selectedImages.map((i) => i.base64),
+			selectedImages.map((i) => ({
+				base64: i.base64,
+				fileType: i.fileType,
+			})),
 			selectedDocuments.map((d) => d.base64),
 			group.id
 		);
@@ -165,7 +169,14 @@ export default function CreatePost({
 
 	async function handleSelectMedia() {
 		try {
-			const file = await getFileBase64(["png", "jpg", "jpeg", "webp"]);
+			const file = await getFileBase64([
+				"png",
+				"jpg",
+				"jpeg",
+				"webp",
+				"gif",
+				"mp4",
+			]);
 			setSelectedImages((prev) => [...prev, file]);
 		} catch (error) {
 			console.error("Error while selecting media:", error);
@@ -381,9 +392,11 @@ export default function CreatePost({
 												{
 													base64: file.base64,
 													preview: file.preview,
+													fileType: file.fileType,
 												},
 											]);
 										}}
+										acceptedTypes={supportedFormats.image}
 									>
 										<div
 											className={

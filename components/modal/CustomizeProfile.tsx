@@ -35,11 +35,13 @@ export default function CustomizeProfile({
 			base64: "",
 			preview: "",
 			error: "",
+			fileType: "",
 		},
 		banner: {
 			base64: "",
 			preview: "",
 			error: "",
+			fileType: "",
 		},
 	});
 
@@ -52,10 +54,16 @@ export default function CustomizeProfile({
 		const bio = form.get("bio") as string;
 
 		if (selectedImages.avatar.base64) {
-			await uploadUserAvatar(selectedImages.avatar.base64);
+			await uploadUserAvatar(
+				selectedImages.avatar.base64,
+				selectedImages.avatar.fileType
+			);
 		}
 		if (selectedImages.banner.base64) {
-			await uploadUserBanner(selectedImages.banner.base64);
+			await uploadUserBanner(
+				selectedImages.banner.base64,
+				selectedImages.banner.fileType
+			);
 		}
 
 		const data = await updateUser(name, bio);
@@ -67,7 +75,6 @@ export default function CustomizeProfile({
 		setLoading(false);
 		setSuccess(true);
 		onUpdate();
-		setTimeout(() => setActive(false), 1000);
 	}
 
 	async function handleSelectBanner() {
@@ -89,12 +96,22 @@ export default function CustomizeProfile({
 		} catch (e) {
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
-					banner: { base64: "", preview: "", error: "image-too-big" },
+					banner: {
+						base64: "",
+						preview: "",
+						error: "image-too-big",
+						fileType: "",
+					},
 					avatar: prev.avatar,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
-						banner: { base64: "", preview: "", error: "" },
+						banner: {
+							base64: "",
+							preview: "",
+							error: "",
+							fileType: "",
+						},
 						avatar: prev.avatar,
 					}));
 				}, 3000);
@@ -121,12 +138,22 @@ export default function CustomizeProfile({
 		} catch (e) {
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
-					avatar: { base64: "", preview: "", error: "image-too-big" },
+					avatar: {
+						base64: "",
+						preview: "",
+						error: "image-too-big",
+						fileType: "",
+					},
 					banner: prev.banner,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
-						avatar: { base64: "", preview: "", error: "" },
+						avatar: {
+							base64: "",
+							preview: "",
+							error: "",
+							fileType: "",
+						},
 						banner: prev.banner,
 					}));
 				}, 3000);
@@ -141,11 +168,13 @@ export default function CustomizeProfile({
 					base64: "",
 					preview: "",
 					error: "",
+					fileType: "",
 				},
 				banner: {
 					base64: "",
 					preview: "",
 					error: "",
+					fileType: "",
 				},
 			});
 			setSuccess(false);

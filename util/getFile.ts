@@ -1,11 +1,13 @@
-interface FileBase64Info {
+export interface FileBase64Info {
 	base64: string;
 	preview: string;
 	file?: File;
+	fileType: string;
 }
 
 interface Options {
 	file?: boolean;
+	fileType?: boolean;
 }
 
 export default function getFileBase64(
@@ -52,10 +54,13 @@ export default function getFileBase64(
 					const [, base64] = reader.result.split(",");
 					// Use createObjectURL to generate the file's URL for preview
 					const preview = URL.createObjectURL(file);
+					const fileType = file.type;
+
 					resolve({
 						base64,
 						preview,
 						file: options.file ? file : undefined,
+						fileType,
 					});
 				} else {
 					reject(new Error("Failed to read file as base64."));

@@ -18,6 +18,8 @@ import BookmarkPost from "../post/BookmarkPost";
 import UserAvatar from "../user/UserAvatar";
 import prettyDate from "@/util/prettyDate";
 import UserPopover from "../user/UserPopover";
+import { useState } from "react";
+import MediaDisplayPost from "../post/MediaDisplayPost";
 
 export default function PostCard({
 	post,
@@ -31,6 +33,7 @@ export default function PostCard({
 	disableLink?: boolean;
 }) {
 	console.log(post.author.groups[0].group.members[0].joinedAt);
+	const [mediaIndex, setMediaIndex] = useState(0);
 
 	return (
 		<div className="w-full flex flex-col gap-y-4">
@@ -146,9 +149,10 @@ export default function PostCard({
 				{/* Image */}
 				{post.media && !disableImages && post.media.length > 0 ? (
 					<div>
-						<Image
-							src={post.media[0]}
-							className="max-w-full max-h-[80vh]"
+						<MediaDisplayPost
+							setIndex={(i) => setMediaIndex(i)}
+							media={post.media}
+							index={mediaIndex}
 						/>
 					</div>
 				) : (

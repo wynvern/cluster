@@ -1,12 +1,17 @@
 import UserAvatar from "@/components/user/UserAvatar";
 import type { MessageProps } from "@/lib/db/groupChat/type";
 import prettyDate from "@/util/prettyDate";
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
-import { Link, Image, Chip, Button } from "@nextui-org/react";
+import { Link, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
 
-export function ListMessages({ messages }: { messages: MessageProps[] }) {
+export function ListMessages({
+	messages,
+	ref,
+}: {
+	messages: MessageProps[];
+	ref: React.RefObject<HTMLDivElement>;
+}) {
 	const session = useSession();
 
 	return (
@@ -20,7 +25,13 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 						new Date(message.createdAt).getDate();
 
 				return (
-					<div key={message.id} className="message-action-container">
+					<div
+						key={message.id}
+						className={`message-action-container ${
+							i === messages.length - 2 ? "bg-red-500" : ""
+						}`}
+						ref={i === messages.length - 2 ? ref : null}
+					>
 						<div className="w-full flex justify-center">
 							{isNewDay && (
 								<div className="my-8 text-neutral-600 ">
@@ -75,16 +86,6 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 								>
 									{message.content}
 								</p>
-								<p
-									className={`text-neutral-600 ${
-										isUserMessage ? "text-right" : ""
-									}`}
-									style={{ fontSize: "12px" }}
-								>
-									{new Date(
-										message.createdAt
-									).toLocaleString()}
-								</p>
 							</div>
 						</div>
 						{message.media && message.media.length > 0 && (
@@ -104,6 +105,14 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 								<div />
 							</div>
 						)}
+						<p
+							className={`text-neutral-600 mt-2 ${
+								isUserMessage ? "text-right mr-16" : "ml-16"
+							}`}
+							style={{ fontSize: "12px" }}
+						>
+							{new Date(message.createdAt).toLocaleString()}
+						</p>
 					</div>
 				);
 			})}

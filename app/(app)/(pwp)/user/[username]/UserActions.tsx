@@ -120,7 +120,7 @@ export default function UserActions({ user }: { user: User }) {
 			</Dropdown>
 
 			<CustomizeProfile
-				onUpdate={() => window.location.reload()}
+				onUpdate={() => console.log("not implemented")}
 				active={customizeProfileActive}
 				setActive={setCustomizeProfileActive}
 				user={user}

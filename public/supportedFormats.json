@@ -47,5 +47,6 @@
 		"pywz",
 		"pyzw",
 		"pyzz"
-	]
+	],
+	"image": ["png", "jpg", "jpeg", "webp", "bmp"]
 }

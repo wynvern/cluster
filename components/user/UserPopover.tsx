@@ -6,10 +6,11 @@ import {
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Button, Link } from "@nextui-org/react";
-import { useConfirmationModal } from "../provider/ConfirmationModal";
 import { useEffect, useState } from "react";
-import hasPermission from "@/util/hasPermission";
 import BanGroupMember from "../modal/BanGroupMember";
+import { useConfirmationModal } from "@/providers/ConfirmationModal";
+import { memberHasPermission } from "@/lib/db/group/groupUtils";
+import { useSession } from "next-auth/react";
 
 export default function UserPopover({
 	user,
@@ -27,11 +28,18 @@ export default function UserPopover({
 	const { confirm } = useConfirmationModal();
 	const [hasGroupModeration, setHasGroupModeration] = useState(false);
 	const [activeBanMember, setActiveBanMember] = useState(false);
+	const session = useSession();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function checkGroupModeration() {
-			const permission = await hasPermission(groupname, "moderator");
+			if (!session.data?.user) return false;
+
+			const permission = await memberHasPermission(
+				session.data.user.id,
+				groupname,
+				"moderator"
+			);
 			setHasGroupModeration(permission);
 		}
 

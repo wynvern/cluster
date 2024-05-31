@@ -1,13 +1,13 @@
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import PasswordInput from "@/components/auth/PasswordInput";
 import ErrorBox from "@/components/general/ErrorBox";
-import { updatePassword } from "@/lib/db/reset-password/resetPassword";
+import { updatePassword } from "@/lib/db/user/userUtils";
 import {
 	CheckIcon,
 	KeyIcon,
 	PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Input, Link } from "@nextui-org/react";
+import { Button, Link } from "@nextui-org/react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 

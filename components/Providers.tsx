@@ -2,9 +2,9 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react";
-import { ConfirmationModalProvider } from "./provider/ConfirmationModal";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import ServiceWorkerHandler from "./service/ServiceWorkerHandler";
+import { ConfirmationModalProvider } from "@/providers/ConfirmationModal";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (

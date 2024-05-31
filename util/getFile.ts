@@ -1,19 +1,12 @@
 export interface FileBase64Info {
 	base64: string;
 	preview: string;
-	file?: File;
 	fileType: string;
-}
-
-interface Options {
-	file?: boolean;
-	fileType?: boolean;
 }
 
 export default function getFileBase64(
 	acceptedTypes: string[],
-	maxSize = 4.5,
-	options: Options = {}
+	maxSize = 5
 ): Promise<FileBase64Info> {
 	return new Promise((resolve, reject) => {
 		const fileInput = document.createElement("input");
@@ -23,7 +16,7 @@ export default function getFileBase64(
 		fileInput.addEventListener("change", (event) => {
 			const file = (event.target as HTMLInputElement).files?.[0];
 			if (!file) {
-				reject(new Error("No file selected."));
+				reject(new Error("no-file-selected"));
 				return;
 			}
 
@@ -33,18 +26,12 @@ export default function getFileBase64(
 			);
 
 			if (file.size > maxSize * 1024 * 1024) {
-				reject(new Error("image-too-big"));
+				reject(new Error("file-too-large"));
 				return;
 			}
 
 			if (!isAcceptedType) {
-				reject(
-					new Error(
-						`Invalid file type. Accepted types: ${acceptedTypes.join(
-							", "
-						)}`
-					)
-				);
+				reject(new Error("invalid-file-type"));
 				return;
 			}
 
@@ -52,18 +39,17 @@ export default function getFileBase64(
 			reader.onload = () => {
 				if (typeof reader.result === "string") {
 					const [, base64] = reader.result.split(",");
-					// Use createObjectURL to generate the file's URL for preview
+
 					const preview = URL.createObjectURL(file);
 					const fileType = file.type;
 
 					resolve({
 						base64,
 						preview,
-						file: options.file ? file : undefined,
 						fileType,
 					});
 				} else {
-					reject(new Error("Failed to read file as base64."));
+					reject(new Error("cant-read-base64"));
 				}
 			};
 

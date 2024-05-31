@@ -1,7 +1,7 @@
 "use client";
 
 import NoPosts from "@/components/card/NoPosts";
-import { fetchUserChats } from "@/lib/db/group/group";
+import { fetchUserChats } from "@/lib/db/group/groupChat";
 import type { UserGroupChats } from "@/lib/db/group/type";
 import prettyDate from "@/util/prettyDate";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";

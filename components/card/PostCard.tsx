@@ -1,3 +1,5 @@
+"use client";
+
 import type Post from "@/lib/db/post/type";
 import {
 	ArrowUpOnSquareStackIcon,

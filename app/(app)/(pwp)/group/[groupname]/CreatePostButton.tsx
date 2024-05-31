@@ -1,9 +1,8 @@
 "use client";
 
 import CreatePost from "@/components/modal/CreatePost";
-import { fetchGroupSettings, getRole } from "@/lib/db/group/group";
+import { fetchGroupSettings } from "@/lib/db/group/groupManagement";
 import type Group from "@/lib/db/group/type";
-import hasPermission from "@/util/hasPermission";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -40,7 +39,7 @@ export default function CreatePostButton({ group }: { group: Group }) {
 		}
 
 		checkPermission();
-	}, [group.groupname]); // add the dependencies here
+	}, [group.groupname]);
 
 	if (!hasPostPermission) return null;
 

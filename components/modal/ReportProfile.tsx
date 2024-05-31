@@ -4,11 +4,10 @@ import {
 	CheckIcon,
 	FlagIcon,
 	PencilIcon,
-	PencilSquareIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { reportProfile } from "@/lib/db/report/report";
+import { reportUser } from "@/lib/db/user/user";
 
 export default function ReportProfile({
 	username,
@@ -46,7 +45,7 @@ export default function ReportProfile({
 			}));
 		}
 
-		const response = await reportProfile(username, title, reason);
+		const response = await reportUser(username, title, reason);
 
 		switch (response) {
 			case "ok":

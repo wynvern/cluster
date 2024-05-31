@@ -1,5 +1,5 @@
 import { useMessageAttr } from "@/hooks/ChatMessage";
-import type { MessageProps } from "@/lib/db/groupChat/type";
+import type { MessageProps } from "@/lib/db/group/type";
 import {
 	ArrowUturnLeftIcon,
 	EllipsisHorizontalIcon,

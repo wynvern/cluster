@@ -3,9 +3,9 @@
 import CustomizeProfile from "@/components/modal/CustomizeProfile";
 import Notifications from "@/components/modal/Notifications";
 import ReportProfile from "@/components/modal/ReportProfile";
-import { useConfirmationModal } from "@/components/provider/ConfirmationModal";
 import type User from "@/lib/db/user/type";
 import { blockUser } from "@/lib/db/user/user";
+import { useConfirmationModal } from "@/providers/ConfirmationModal";
 import {
 	BellIcon,
 	EllipsisHorizontalIcon,

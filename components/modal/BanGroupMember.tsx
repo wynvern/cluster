@@ -7,7 +7,7 @@ import {
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { banMember } from "@/lib/db/group/group";
+import { banMember } from "@/lib/db/group/groupMember";
 
 export default function ({
 	groupname,

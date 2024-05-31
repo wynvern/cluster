@@ -2,7 +2,7 @@
 
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import ErrorBox from "@/components/general/ErrorBox";
-import { sendCode } from "@/lib/db/verifyEmail/verifyEmail";
+import { sendCode } from "@/lib/db/user/userUtils";
 import { CheckIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Button, Link } from "@nextui-org/react";
 import { signOut } from "next-auth/react";
@@ -12,8 +12,6 @@ export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
 	const [success, setSuccess] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [inputError, setInputError] = useState("");
-
-	function setCodeSent() {}
 
 	async function handleSendRequest(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();

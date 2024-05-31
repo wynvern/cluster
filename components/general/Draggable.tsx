@@ -1,20 +1,10 @@
-import {
-	type ReactElement,
-	cloneElement,
-	isValidElement,
-	useState,
-	useEffect,
-} from "react";
+import type { FileBase64Info } from "@/util/getFile";
+import { cloneElement, isValidElement, useState, useEffect } from "react";
 
 interface DraggableProps {
 	children: React.ReactNode;
-	onFileDrag: (file: {
-		base64: string;
-		preview: string;
-		file: File;
-		fileType: string;
-	}) => void;
-	acceptedTypes?: string[];
+	onFileDrag: (file: FileBase64Info) => void;
+	acceptedTypes: string[];
 	maxSize?: number;
 }
 
@@ -29,7 +19,7 @@ interface DraggableElementProps {
 export default function Draggable({
 	children,
 	onFileDrag,
-	acceptedTypes = ["jpg", "png", "gif", "webp", "jpeg"],
+	acceptedTypes,
 	maxSize = 4.5,
 }: DraggableProps) {
 	const [dragging, setDragging] = useState(false);
@@ -70,14 +60,7 @@ export default function Draggable({
 		if (error) setTimeout(() => setError(false), 2000);
 	}, [error]);
 
-	function toImagePreview(
-		files: File[]
-	): Promise<{
-		base64: string;
-		preview: string;
-		file: File;
-		fileType: string;
-	}> {
+	function toImagePreview(files: File[]): Promise<FileBase64Info> {
 		return new Promise((resolve, reject) => {
 			const file = files[0];
 			const reader = new FileReader();
@@ -85,7 +68,6 @@ export default function Draggable({
 			reader.onload = () => {
 				resolve({
 					base64: reader.result as string,
-					file: file,
 					fileType: file.type,
 					preview: URL.createObjectURL(file),
 				});

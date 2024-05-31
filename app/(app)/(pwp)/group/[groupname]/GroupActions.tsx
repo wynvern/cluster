@@ -1,12 +1,10 @@
 "use client";
 
 import {
-	BellIcon,
 	ChatBubbleBottomCenterTextIcon,
 	Cog6ToothIcon,
 	EllipsisHorizontalIcon,
 	FlagIcon,
-	NoSymbolIcon,
 	PencilIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -21,14 +19,16 @@ import type Group from "@/lib/db/group/type";
 import CustomizeGroup from "@/components/modal/CustomizeGroup";
 import ReportGroup from "@/components/modal/ReportGroup";
 import FollowUnfollowGroup from "@/components/general/FollowUnfollowGroup";
-import hasPermission from "@/util/hasPermission";
 import { useRouter } from "next/navigation";
+import { memberHasPermission } from "@/lib/db/group/groupUtils";
+import { useSession } from "next-auth/react";
 
 export default function GroupActions({ group }: { group: Group }) {
 	const [customizeGroup, setCustomizeGroupActive] = useState(false);
 	const [reportGroup, setReportGroup] = useState(false);
 	const [hasGroupPermission, setHasGroupPermission] = useState(false);
 	const router = useRouter();
+	const session = useSession();
 	const dropdownItems = [
 		{
 			modRequired: true,
@@ -59,9 +59,16 @@ export default function GroupActions({ group }: { group: Group }) {
 		},
 	];
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const handleHasPermission = async () => {
-			const permission = await hasPermission(group.groupname);
+			if (!session.data?.user) return;
+
+			const permission = await memberHasPermission(
+				session.data?.user.id,
+				group.groupname,
+				"moderator"
+			);
 			setHasGroupPermission(permission);
 		};
 		handleHasPermission();

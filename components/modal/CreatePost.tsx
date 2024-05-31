@@ -22,52 +22,11 @@ import BaseModal from "./BaseModal";
 import type Group from "@/lib/db/group/type";
 import ErrorBox from "../general/ErrorBox";
 import supportedFormats from "@/public/supportedFormats.json";
-import getFileBase64 from "@/util/getFile";
+import getFileBase64, { type FileBase64Info } from "@/util/getFile";
 import { createPost } from "@/lib/db/post/post";
-import { useConfirmationModal } from "../provider/ConfirmationModal";
 import Draggable from "../general/Draggable";
-import markdownit from "markdown-it";
 import MarkdownIt from "markdown-it";
-
-function fileToBase64(
-	file: File
-): Promise<{ base64: string; preview: string }> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			const base64 = reader.result as string;
-			const preview = URL.createObjectURL(file);
-			resolve({ base64, preview });
-		};
-		reader.onerror = reject;
-		reader.readAsDataURL(file);
-	});
-}
-
-function documentFileBase64(
-	file: File
-): Promise<{ base64: string; file: File }> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			const base64 = reader.result as string;
-			resolve({ base64, file });
-		};
-		reader.onerror = reject;
-		reader.readAsDataURL(file);
-	});
-}
-
-interface FileBase64Info {
-	base64: string;
-	preview: string;
-	fileType: string;
-}
-
-interface DocumentFileBase64 {
-	base64: string;
-	file: File | undefined;
-}
+import { useConfirmationModal } from "@/providers/ConfirmationModal";
 
 interface CreatePostProps {
 	active: boolean;
@@ -85,9 +44,9 @@ export default function CreatePost({
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [activeTab, setActiveTab] = useState("text");
-	const [selectedImages, setSelectedImages] = useState<FileBase64Info[]>([]);
+	const [selectedMedia, setSelectedMedia] = useState<FileBase64Info[]>([]);
 	const [selectedDocuments, setSelectedDocuments] = useState<
-		DocumentFileBase64[]
+		FileBase64Info[]
 	>([]);
 	const [errors, setErrors] = useState({
 		title: "",
@@ -95,6 +54,7 @@ export default function CreatePost({
 		media: "",
 		document: "",
 	});
+	const mdParser = new MarkdownIt();
 	const { confirm } = useConfirmationModal();
 
 	function validateInputs() {
@@ -132,11 +92,13 @@ export default function CreatePost({
 		const data = await createPost(
 			title,
 			mdParser.render(content),
-			selectedImages.map((i) => ({
+			selectedMedia.map((i) => ({
 				base64: i.base64,
 				fileType: i.fileType,
 			})),
-			selectedDocuments.map((d) => d.base64),
+			selectedDocuments.map((d) => {
+				return { base64: d.base64, fileType: d.fileType };
+			}),
 			group.id
 		);
 
@@ -156,7 +118,7 @@ export default function CreatePost({
 
 	useEffect(() => {
 		if (!active) {
-			setSelectedImages([]);
+			setSelectedMedia([]);
 			setSuccess(false);
 			setLoading(false);
 			setTitle("");
@@ -177,7 +139,7 @@ export default function CreatePost({
 				"gif",
 				"mp4",
 			]);
-			setSelectedImages((prev) => [...prev, file]);
+			setSelectedMedia((prev) => [...prev, file]);
 		} catch (error) {
 			console.error("Error while selecting media:", error);
 		}
@@ -187,7 +149,7 @@ export default function CreatePost({
 		if (
 			!title &&
 			!content &&
-			!selectedImages.length &&
+			!selectedMedia.length &&
 			!selectedDocuments.length
 		) {
 			setActive(false);
@@ -205,16 +167,11 @@ export default function CreatePost({
 
 	async function handleSelectDocument() {
 		try {
-			const file = await getFileBase64(supportedFormats.document, 4.5, {
-				file: true,
-			});
-			if (!file.file) return false;
-			setSelectedDocuments((prev) => [
-				...prev,
-				{ ...file, file: file.file },
-			]);
+			const file = await getFileBase64(supportedFormats.document);
+			if (!file.fileType) return false;
+			setSelectedDocuments((prev) => [...prev, file]);
 		} catch (error) {
-			if ((error as { message: string }).message === "image-too-big") {
+			if ((error as { message: string }).message === "file-too-large") {
 				setErrors({
 					...errors,
 					document: "Arquivo muito grande.",
@@ -226,7 +183,7 @@ export default function CreatePost({
 					});
 				}, 3000);
 			} else if (
-				(error as { message: string }).message === "Invalid file type"
+				(error as { message: string }).message === "invalid-file-type"
 			) {
 				setErrors({
 					...errors,
@@ -241,8 +198,6 @@ export default function CreatePost({
 			}
 		}
 	}
-
-	const mdParser = new MarkdownIt();
 
 	return (
 		<BaseModal
@@ -380,14 +335,14 @@ export default function CreatePost({
 									{/* Upload image */}
 									<Draggable
 										onFileDrag={(file) => {
-											if (selectedImages.length >= 6) {
+											if (selectedMedia.length >= 6) {
 												setErrors({
 													...errors,
 													media: "Você atingiu o limite de 6 imagens.",
 												});
 											}
 
-											setSelectedImages((prev) => [
+											setSelectedMedia((prev) => [
 												...prev,
 												{
 													base64: file.base64,
@@ -414,7 +369,7 @@ export default function CreatePost({
 															}
 															isDisabled={
 																loading ||
-																selectedImages.length >=
+																selectedMedia.length >=
 																	5
 															}
 															color="secondary"
@@ -433,13 +388,13 @@ export default function CreatePost({
 										error={errors.media}
 										isVisible={Boolean(errors.media)}
 									/>
-									{selectedImages.length < 1 && (
+									{selectedMedia.length < 1 && (
 										<p className="text-neutral-600 text-center mt-3">
 											Suas imagens aparecerão aqui.
 										</p>
 									)}
 									<div className="grid grid-cols-3 gap-3 mt-3">
-										{selectedImages.map((item, index) => (
+										{selectedMedia.map((item, index) => (
 											<div
 												key={item.preview}
 												className="bg-default-100 relative rounded-large aspect-square flex p-3 bg-cover bg-center"
@@ -454,13 +409,13 @@ export default function CreatePost({
 														isIconOnly={true}
 														onClick={() => {
 															const newMedia = [
-																...selectedImages,
+																...selectedMedia,
 															];
 															newMedia.splice(
 																index,
 																1
 															);
-															setSelectedImages(
+															setSelectedMedia(
 																newMedia
 															);
 														}}
@@ -498,10 +453,7 @@ export default function CreatePost({
 
 											setSelectedDocuments((prev) => [
 												...prev,
-												{
-													base64: file.base64,
-													file: file.file,
-												},
+												file,
 											]);
 										}}
 										acceptedTypes={

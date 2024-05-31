@@ -4,12 +4,14 @@ import { authOptions } from "@/lib/auth";
 import { uploadPostDocument, uploadPostMedia } from "@/lib/blob/postBlob";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
+import type Post from "./type";
+import { postSelection } from "../prismaSelections";
 
 export async function createPost(
 	title: string,
 	content: string,
 	media: { base64: string; fileType: string }[],
-	document: string[],
+	document: { base64: string; fileType: string }[],
 	groupId: string
 ) {
 	const session = await getServerSession(authOptions);
@@ -61,52 +63,7 @@ export async function fetchGroupPosts(
 		orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
 		skip: pagination?.skip,
 		take: pagination?.take,
-		select: {
-			bookmarks: {
-				where: {
-					userId: session.user.id,
-				},
-			},
-			authorId: true,
-			content: true,
-			createdAt: true,
-			document: true,
-			approved: true,
-			groupId: true,
-			id: true,
-			title: true,
-			media: true,
-			pinned: true,
-			author: {
-				select: {
-					id: true,
-					username: true,
-					name: true,
-					image: true,
-					bio: true,
-					groups: {
-						select: {
-							group: {
-								select: {
-									members: {
-										select: {
-											joinedAt: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			group: {
-				select: {
-					id: true,
-					groupname: true,
-					image: true,
-				},
-			},
-		},
+		select: { ...postSelection(session.user.id) },
 	});
 
 	return posts;
@@ -125,51 +82,7 @@ export async function fetchUserPosts(
 		orderBy: [{ createdAt: "desc" }],
 		skip: pagination?.skip,
 		take: pagination?.take,
-		select: {
-			bookmarks: {
-				where: {
-					userId: session.user.id,
-				},
-			},
-			authorId: true,
-			content: true,
-			createdAt: true,
-			document: true,
-			groupId: true,
-			id: true,
-			title: true,
-			approved: true,
-			media: true,
-			pinned: true,
-			author: {
-				select: {
-					id: true,
-					username: true,
-					image: true,
-					bio: true,
-					groups: {
-						select: {
-							group: {
-								select: {
-									members: {
-										select: {
-											joinedAt: true,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-			group: {
-				select: {
-					id: true,
-					groupname: true,
-					image: true,
-				},
-			},
-		},
+		select: { ...postSelection(session.user.id) },
 	});
 
 	return posts;
@@ -178,7 +91,7 @@ export async function fetchUserPosts(
 export async function fetchUserBookmarks(
 	userId: string,
 	pagination?: { skip: number; take: number }
-) {
+): Promise<Post[]> {
 	const session = await getServerSession(authOptions);
 	if (!session) return [];
 
@@ -197,40 +110,7 @@ export async function fetchUserBookmarks(
 		orderBy: { createdAt: "desc" },
 		skip: pagination?.skip,
 		take: pagination?.take,
-		select: {
-			post: {
-				select: {
-					bookmarks: {
-						where: {
-							userId: user.id,
-						},
-					},
-					authorId: true,
-					content: true,
-					createdAt: true,
-					document: true,
-					groupId: true,
-					id: true,
-					title: true,
-					author: {
-						select: {
-							id: true,
-							username: true,
-							image: true,
-						},
-					},
-					group: {
-						select: {
-							id: true,
-							groupname: true,
-							image: true,
-						},
-					},
-					media: true,
-					pinned: true,
-				},
-			},
-		},
+		select: { post: { select: { ...postSelection(session.user.id) } } },
 	});
 	const posts = bookmarks.map((bookmark) => bookmark.post);
 
@@ -283,39 +163,12 @@ export async function unbookmarkPost(postId: string) {
 }
 
 export async function fetchPostById(postId: string) {
+	const session = await getServerSession(authOptions);
+	if (!session) return null;
+
 	const post = await db.post.findUnique({
 		where: { id: postId },
-		select: {
-			authorId: true,
-			author: {
-				select: {
-					id: true,
-					username: true,
-					image: true,
-				},
-			},
-			bookmarks: {
-				where: {
-					postId: postId,
-				},
-			},
-			group: {
-				select: {
-					id: true,
-					groupname: true,
-					image: true,
-				},
-			},
-			content: true,
-			createdAt: true,
-			document: true,
-			approved: true,
-			groupId: true,
-			id: true,
-			title: true,
-			media: true,
-			pinned: true,
-		},
+		select: { ...postSelection(session.user.id) },
 	});
 
 	return post;
@@ -341,6 +194,60 @@ export async function deletePost(postId: string) {
 
 	await db.post.delete({
 		where: { id: postId },
+	});
+
+	return "ok";
+}
+
+export async function pinPost({ postId }: { postId: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: {
+			group: {
+				select: { members: { where: { userId: session.user.id } } },
+			},
+		},
+	});
+
+	if (!post) return "post-not-found";
+
+	if (!["owner", "moderator"].includes(post.group.members[0].role))
+		return "no-permission";
+
+	await db.post.update({
+		where: { id: postId },
+		data: { pinned: true },
+	});
+
+	return "ok";
+}
+
+export async function approvePost({ postId }: { postId: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: {
+			group: {
+				select: { members: { where: { userId: session.user.id } } },
+			},
+		},
+	});
+
+	if (!post) return "post-not-found";
+
+	if (!["owner", "moderator"].includes(post.group.members[0].role))
+		return "no-permission";
+
+	await db.post.update({
+		where: { id: postId },
+		data: { approved: true },
 	});
 
 	return "ok";

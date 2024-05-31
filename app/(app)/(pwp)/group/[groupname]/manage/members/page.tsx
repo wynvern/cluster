@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import CategoryHeader from "../CategoryHeader";
-import { fetchGroupSettings, getMembers } from "@/lib/db/group/group";
-import type { GroupMember } from "@prisma/client";
 import {
 	Button,
 	CircularProgress,
@@ -15,6 +13,13 @@ import {
 	TableRow,
 } from "@nextui-org/react";
 import prettyDate from "@/util/prettyDate";
+import {
+	ChevronUpIcon,
+	NoSymbolIcon,
+	XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { getGroupMembers, promoteMember } from "@/lib/db/group/groupMember";
+import { useConfirmationModal } from "@/providers/ConfirmationModal";
 
 interface Member {
 	user: {
@@ -29,11 +34,14 @@ interface Member {
 
 export default function ({ params }: { params: { groupname: string } }) {
 	const [members, setMembers] = useState<Member[] | null>(null);
+	const { confirm } = useConfirmationModal();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function handleFetch() {
-			const response = await getMembers({ groupname: params.groupname });
+			const response = await getGroupMembers({
+				groupname: params.groupname,
+			});
 			if (response) setMembers(response);
 			console.log(response);
 		}
@@ -46,6 +54,24 @@ export default function ({ params }: { params: { groupname: string } }) {
 		member: "Membro",
 		moderator: "Moderador",
 	};
+
+	async function handlePromoteMember(member: Member) {
+		await confirm({
+			onConfirm: async () => {
+				const response = await promoteMember({
+					groupname: params.groupname,
+					userId: member.user.id,
+				});
+				if (response && members) {
+					const newMembers = members;
+					setMembers(newMembers);
+				}
+			},
+			title: "Promover membro",
+			description: `Tem certeza que deseja promover ${member.user.id} a moderador?`,
+			onCancel: () => {},
+		});
+	}
 
 	return (
 		<div>
@@ -71,7 +97,31 @@ export default function ({ params }: { params: { groupname: string } }) {
 									<TableCell>
 										{prettyDate(member.joinedAt)}
 									</TableCell>
-									<TableCell>actions</TableCell>
+									<TableCell>
+										<div className="flex gap-x-2">
+											<Button
+												isIconOnly={true}
+												color="danger"
+											>
+												<NoSymbolIcon className="h-6" />
+											</Button>
+											<Button
+												isIconOnly={true}
+												color="danger"
+											>
+												<XMarkIcon className="h-6" />
+											</Button>
+											<Button
+												isIconOnly={true}
+												color="success"
+												onClick={() =>
+													handlePromoteMember(member)
+												}
+											>
+												<ChevronUpIcon className="h-6" />
+											</Button>
+										</div>
+									</TableCell>
 								</TableRow>
 							))}
 						</TableBody>

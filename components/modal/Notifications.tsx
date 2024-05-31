@@ -7,12 +7,11 @@ import {
 	Image,
 	Button,
 } from "@nextui-org/react";
-import { getNotifications } from "@/lib/db/user/user";
+import { cleanUserNotifications, getNotifications } from "@/lib/db/user/user";
 import prettyDate from "@/util/prettyDate";
-import { PhoneXMarkIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { cleanNotifications } from "@/lib/db/notification/notification";
-import { useConfirmationModal } from "../provider/ConfirmationModal";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import NoPosts from "../card/NoPosts";
+import { useConfirmationModal } from "@/providers/ConfirmationModal";
 
 interface NotificationsProps {
 	isActive: boolean;
@@ -67,7 +66,7 @@ export default function Notifications({
 	async function handleCleanNotifications() {
 		await confirm({
 			onConfirm: async () => {
-				const response = await cleanNotifications();
+				const response = await cleanUserNotifications();
 
 				switch (response) {
 					case "ok":

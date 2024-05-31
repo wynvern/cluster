@@ -1,9 +1,5 @@
 import type User from "@/lib/db/group/type";
-import {
-	fetchGroupPosts,
-	fetchUserBookmarks,
-	fetchUserPosts,
-} from "@/lib/db/post/post";
+import { fetchGroupPosts } from "@/lib/db/post/post";
 import GroupTabs from "./GroupTabs";
 
 interface GroupContentProps {

@@ -1,6 +1,5 @@
 "use client";
 
-import { fetchMessages } from "@/lib/db/groupChat/groupChat";
 import getFileBase64 from "@/util/getFile";
 import {
 	ChevronDownIcon,
@@ -12,12 +11,13 @@ import { Button, ScrollShadow, Image, Textarea } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ListMessages } from "./ListMessages";
-import type { MessageProps } from "@/lib/db/groupChat/type";
-import fetchGroup from "@/lib/db/group/group";
 import type Group from "@/lib/db/group/type";
 import { socket } from "../../../../../lib/SocketClient";
 import ChatHeader from "./ChatHeader";
 import { useMessageAttr } from "@/hooks/ChatMessage";
+import type { MessageProps } from "@/lib/db/group/type";
+import fetchGroup from "@/lib/db/group/groupManagement";
+import { fetchMessages } from "@/lib/db/group/groupChat";
 
 interface FileBase64Info {
 	base64: string;

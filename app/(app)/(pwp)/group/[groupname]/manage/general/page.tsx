@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import CategoryHeader from "../CategoryHeader";
-import { fetchGroupSettings, updateGroupSetting } from "@/lib/db/group/group";
 import type { GroupSettings } from "@/lib/db/group/type";
 import { CircularProgress, Switch } from "@nextui-org/react";
+import {
+	fetchGroupSettings,
+	updateGroupSetting,
+} from "@/lib/db/group/groupManagement";
 
 export default function GeneralSettings({
 	params,

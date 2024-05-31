@@ -1,5 +1,5 @@
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
-import { verifyEmail } from "@/lib/db/verifyEmail/verifyEmail";
+import { verifyEmail } from "@/lib/db/user/userUtils";
 import { AtSymbolIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { Button, Input, Link } from "@nextui-org/react";
 import { signOut, useSession } from "next-auth/react";

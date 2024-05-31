@@ -1,9 +1,9 @@
 import UserAvatar from "@/components/user/UserAvatar";
-import type { MessageProps } from "@/lib/db/groupChat/type";
 import prettyDate from "@/util/prettyDate";
 import { Link, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
+import type { MessageProps } from "@/lib/db/group/type";
 
 export function ListMessages({
 	messages,

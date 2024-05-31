@@ -1,10 +1,10 @@
-import { approvePost, getRole, pinPost } from "@/lib/db/group/group";
+"use client";
+
 import type Post from "@/lib/db/post/type";
 import {
 	ArrowUpOnSquareStackIcon,
 	EllipsisHorizontalIcon,
 	FlagIcon,
-	MapPinIcon,
 	ShieldCheckIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -17,8 +17,9 @@ import {
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useConfirmationModal } from "../provider/ConfirmationModal";
-import { deletePost } from "@/lib/db/post/post";
+import { approvePost, deletePost, pinPost } from "@/lib/db/post/post";
+import { useConfirmationModal } from "@/providers/ConfirmationModal";
+import { getMemberRole } from "@/lib/db/group/groupMember";
 
 interface DropdownItemProps {
 	description: string;
@@ -43,7 +44,9 @@ export default function PostDropdown({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function handleGetRole() {
-			const role = await getRole({ groupname: post.group.groupname });
+			const role = await getMemberRole({
+				groupname: post.group.groupname,
+			});
 			setUserRole(role);
 		}
 

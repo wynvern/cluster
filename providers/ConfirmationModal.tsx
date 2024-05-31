@@ -6,8 +6,8 @@ import {
 	useContext,
 	useState,
 } from "react";
-import BaseModal from "../modal/BaseModal";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import BaseModal from "@/components/modal/BaseModal";
 
 function ConfirmationModal({
 	title,

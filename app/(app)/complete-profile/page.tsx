@@ -1,14 +1,14 @@
 "use client";
 
-import completeProfile from "@/lib/db/complete-profile/completeProfile";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { UserIcon } from "@heroicons/react/24/solid";
 import { Button, Input, Link } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import words from "../../../public/randomWords.json";
+import words from "../../../public/nameGenerator.json";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
+import completeProfile from "@/lib/db/user/userUtils";
 
 export default function Finish() {
 	const { update } = useSession();

@@ -1,8 +1,8 @@
 import GroupCard from "@/components/group/GroupCard";
-import { fetchRecentGroups } from "@/lib/db/group/group";
 import { ScrollShadow } from "@nextui-org/react";
 import CreateGroupHandler from "./CreateGroupHandler";
 import NoPosts from "@/components/card/NoPosts";
+import { fetchRecentGroups } from "@/lib/db/group/groupManagement";
 
 export default async function GroupPage() {
 	const recentGroups = await fetchRecentGroups();

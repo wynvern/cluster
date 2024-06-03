@@ -7,12 +7,13 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Image, Input, Textarea } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import BaseModal from "./BaseModal";
+import BaseModal from "@/components/modal/BaseModal";
 import type Group from "@/lib/db/group/type";
-import { updateGroup } from "@/lib/db/group/group";
 import getFileBase64 from "@/util/getFile";
 import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
-import Draggable from "../general/Draggable";
+import Draggable from "@/components/general/Draggable";
+import { updateGroup } from "@/lib/db/group/groupManagement";
+import supportedFormats from "@/public/supportedFormats.json";
 
 interface CustomizeGroupProps {
 	active: boolean;
@@ -159,6 +160,7 @@ export default function CustomizeGroup({
 									image: prev.image,
 								}));
 							}}
+							acceptedTypes={supportedFormats.image}
 						>
 							<div className="w-full h-full absolute bg-neutral-500 ">
 								<Image
@@ -187,6 +189,7 @@ export default function CustomizeGroup({
 									image: { ...file, error: "" },
 								}));
 							}}
+							acceptedTypes={supportedFormats.image}
 						>
 							<div className="absolute -bottom-10 left-4 flex items-center justify-center">
 								<Button

@@ -1,9 +1,9 @@
 import NoPosts from "@/components/card/NoPosts";
 import GroupHeader from "./GroupHeader";
-import fetchGroup from "@/lib/db/group/group";
 import GroupProfile from "./GroupProfile";
 import GroupContent from "./GroupContent";
 import CreatePostButton from "./CreatePostButton";
+import fetchGroup from "@/lib/db/group/groupManagement";
 
 interface GroupPageProps {
 	params: {

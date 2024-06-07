@@ -2,6 +2,7 @@
 
 import CreatePost from "@/components/modal/CreatePost";
 import { fetchGroupSettings } from "@/lib/db/group/groupManagement";
+import { getMemberRole } from "@/lib/db/group/groupMember";
 import type Group from "@/lib/db/group/type";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "@nextui-org/react";
@@ -13,7 +14,7 @@ export default function CreatePostButton({ group }: { group: Group }) {
 
 	useEffect(() => {
 		async function checkPermission() {
-			const role = await getRole({ groupname: group.groupname });
+			const role = await getMemberRole({ groupname: group.groupname });
 			switch (role) {
 				case "owner":
 					setHasPostPermission(true);

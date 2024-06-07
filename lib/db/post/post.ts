@@ -176,6 +176,7 @@ export async function fetchPostById(postId: string) {
 
 export async function deletePost(postId: string) {
 	// TODO: Validate if user has permission
+
 	// TODO: Delete images from blob
 	const session = await getServerSession(authOptions);
 

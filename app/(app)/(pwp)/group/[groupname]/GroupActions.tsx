@@ -69,6 +69,7 @@ export default function GroupActions({ group }: { group: Group }) {
 				group.groupname,
 				"moderator"
 			);
+			alert(permission);
 			setHasGroupPermission(permission);
 		};
 		handleHasPermission();

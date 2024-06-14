@@ -43,12 +43,12 @@ export async function fetchUserChats() {
 	return groups.map((group) => group.group);
 }
 
-export async function createMessage(author, message, groupChatId) {
+export async function createMessage(message: string, groupChatId: string) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
 	const groupMember = await db.groupMember.findFirst({
-		where: { userId: session.user.id, groupId: author },
+		where: { userId: session.user.id },
 	});
 
 	if (!groupMember) return "not-member";
@@ -56,8 +56,8 @@ export async function createMessage(author, message, groupChatId) {
 	await db.message.create({
 		data: {
 			content: message,
-			authorId: session.user.id,
-			groupChatId,
+			userId: session.user.id,
+			chatId: groupChatId,
 		},
 	});
 

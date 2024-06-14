@@ -70,6 +70,7 @@ export default function Draggable({
 					base64: reader.result as string,
 					fileType: file.type,
 					preview: URL.createObjectURL(file),
+					file: file,
 				});
 			};
 			reader.onerror = (error) => {

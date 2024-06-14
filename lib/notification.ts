@@ -17,7 +17,7 @@ export default async function registerSubscription({
 	subscription: string;
 }) {
 	const session = await getServerSession(authOptions);
-	if (!session?.user) return false;
+	if (!session?.user.id || !session.user) return false;
 
 	await db.subscription.create({
 		data: {

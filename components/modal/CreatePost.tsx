@@ -344,11 +344,7 @@ export default function CreatePost({
 
 											setSelectedMedia((prev) => [
 												...prev,
-												{
-													base64: file.base64,
-													preview: file.preview,
-													fileType: file.fileType,
-												},
+												file,
 											]);
 										}}
 										acceptedTypes={supportedFormats.image}

@@ -48,10 +48,6 @@ export default function ({ groupname }: { groupname: string }) {
 		}
 	};
 
-	if (isLoading) {
-		return <div />;
-	}
-
 	return (
 		<Button
 			variant={isFollowing ? "bordered" : "solid"}

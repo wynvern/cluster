@@ -12,9 +12,10 @@ import { useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
 import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
 import getFileBase64 from "@/util/getFile";
-import { createGroup } from "@/lib/db/group/group";
 import { useRouter } from "next/navigation";
 import Draggable from "../general/Draggable";
+import { image } from "@/public/supportedFormats.json";
+import { createGroup } from "@/lib/db/group/groupManagement";
 
 interface CreateGroupProps {
 	active: boolean;
@@ -227,6 +228,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 									image: prev.image,
 								}));
 							}}
+							acceptedTypes={image}
 						>
 							<div className="w-full h-full absolute bg-neutral-500 ">
 								<Image
@@ -251,6 +253,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 									image: { ...file, error: "" },
 								}));
 							}}
+							acceptedTypes={image}
 						>
 							<div className="absolute -bottom-10 left-4 flex items-center justify-center">
 								<Button

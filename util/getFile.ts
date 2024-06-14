@@ -2,6 +2,7 @@ export interface FileBase64Info {
 	base64: string;
 	preview: string;
 	fileType: string;
+	file: File;
 }
 
 export default function getFileBase64(
@@ -47,6 +48,7 @@ export default function getFileBase64(
 						base64,
 						preview,
 						fileType,
+						file,
 					});
 				} else {
 					reject(new Error("cant-read-base64"));

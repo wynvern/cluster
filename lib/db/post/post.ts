@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import type Post from "./type";
 import { postSelection } from "../prismaSelections";
+import { memberHasPermission } from "../group/groupUtils";
 
 export async function createPost(
 	title: string,
@@ -37,8 +38,7 @@ export async function createPost(
 
 	if (document.length > 0) {
 		const documentToSend = document.map((doc) => {
-			const [base64, name] = doc.split(";");
-			return { base64, name: name.split("=")[1] };
+			return { base64: doc.base64 };
 		});
 		const result = await uploadPostDocument(data.id, documentToSend);
 
@@ -175,23 +175,30 @@ export async function fetchPostById(postId: string) {
 }
 
 export async function deletePost(postId: string) {
-	// TODO: Validate if user has permission
-
-	// TODO: Delete images from blob
 	const session = await getServerSession(authOptions);
-
 	if (!session) return "no-session";
 
 	const post = await db.post.findUnique({
 		where: { id: postId },
 		select: {
 			authorId: true,
+			group: {
+				select: { groupname: true },
+			},
 		},
 	});
 
 	if (!post) return "post-not-found";
 
-	if (post.authorId !== session.user.id) return "unauthorized";
+	if (
+		post.authorId !== session.user.id ||
+		!(await memberHasPermission(
+			session.user.id,
+			post.group.groupname,
+			"moderator"
+		))
+	)
+		return "unauthorized";
 
 	await db.post.delete({
 		where: { id: postId },

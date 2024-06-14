@@ -7,11 +7,6 @@ import { db } from "../db";
 import { postBlob } from "../blob";
 import supportedFormats from "../../public/supportedFormats.json";
 
-interface fileNameBase64 {
-	base64: string;
-	name: string;
-}
-
 export async function uploadPostMedia(
 	id: string,
 	media: { base64: string; fileType: string }[]
@@ -40,7 +35,10 @@ export async function uploadPostMedia(
 	return "ok";
 }
 
-export async function uploadPostDocument(id: string, files: fileNameBase64[]) {
+export async function uploadPostDocument(
+	id: string,
+	files: { base64: string }[]
+) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 	const documentUrls = [];

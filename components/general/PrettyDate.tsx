@@ -1,4 +1,6 @@
-export default function prettyDate({ date }: { date: Date }) {
+"use client";
+
+function prettyDate(date: Date) {
 	const now = new Date();
 	const sameDay =
 		now.getDate() === date.getDate() &&
@@ -16,4 +18,8 @@ export default function prettyDate({ date }: { date: Date }) {
 		return date.toLocaleDateString([], { month: "short", day: "numeric" }); // returns month and day
 	}
 	return date.toLocaleDateString(); // returns full date
+}
+
+export default function ({ date }: { date: Date }) {
+	return <p>{prettyDate(new Date(date))}</p>;
 }

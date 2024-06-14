@@ -43,7 +43,6 @@ export default function ({ params }: { params: { groupname: string } }) {
 				groupname: params.groupname,
 			});
 			if (response) setMembers(response);
-			console.log(response);
 		}
 
 		handleFetch();

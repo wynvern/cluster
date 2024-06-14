@@ -1,7 +1,6 @@
 import type { Server, Socket } from "socket.io";
 import { db } from "./db";
 import { compressImage } from "./image";
-import { put } from "@vercel/blob";
 import { sendNotification } from "./notification";
 import { postBlob } from "./blob";
 

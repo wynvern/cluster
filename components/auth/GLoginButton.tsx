@@ -9,7 +9,7 @@ export default function GoogleLoginButton() {
 	const [loadingGoogle, setLoadingGoogle] = useState(false);
 
 	function signInGoogle() {
-		signIn("google", { callbackUrl: process.env.NEXTAUTH_URL });
+		signIn("google");
 	}
 
 	return (

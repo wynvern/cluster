@@ -8,7 +8,6 @@ import {
 } from "@heroicons/react/24/outline";
 import {
 	Chip,
-	Image,
 	Link,
 	Popover,
 	PopoverContent,
@@ -18,10 +17,10 @@ import {
 import PostDropdown from "../post/PostDropdown";
 import BookmarkPost from "../post/BookmarkPost";
 import UserAvatar from "../user/UserAvatar";
-import prettyDate from "@/util/prettyDate";
 import UserPopover from "../user/UserPopover";
 import { useState } from "react";
 import MediaDisplayPost from "../post/MediaDisplayPost";
+import PrettyDate from "../general/PrettyDate";
 
 export default function PostCard({
 	post,
@@ -34,7 +33,6 @@ export default function PostCard({
 	isUserPage?: boolean;
 	disableLink?: boolean;
 }) {
-	console.log(post.author.groups[0].group.members[0].joinedAt);
 	const [mediaIndex, setMediaIndex] = useState(0);
 
 	return (
@@ -61,9 +59,7 @@ export default function PostCard({
 									post.createdAt
 								).toLocaleString()}
 							>
-								<p className="text-neutral-400 ml-4">
-									{prettyDate(post.createdAt)}
-								</p>
+								<PrettyDate date={post.createdAt} />
 							</Tooltip>
 							{post.pinned && !isUserPage && (
 								<Chip className="ml-4 bg-success">

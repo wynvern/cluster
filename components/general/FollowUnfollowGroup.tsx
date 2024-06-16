@@ -14,7 +14,6 @@ export default function ({ groupname }: { groupname: string }) {
 	const [userRole, setUserRole] = useState<string | null>(null);
 	const session = useSession();
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function checkFollowingStatus() {
 			if (!session.data) return false;
@@ -26,6 +25,7 @@ export default function ({ groupname }: { groupname: string }) {
 				"member"
 			);
 			const settings = await fetchGroupSettings({ groupname });
+			console.log(settings);
 
 			setUserRole(userRole);
 			setIsLoading(false);
@@ -34,7 +34,7 @@ export default function ({ groupname }: { groupname: string }) {
 		}
 
 		checkFollowingStatus();
-	}, [groupname]);
+	}, [session.data, groupname]);
 
 	const handleClick = async (e: React.MouseEvent) => {
 		e.preventDefault();

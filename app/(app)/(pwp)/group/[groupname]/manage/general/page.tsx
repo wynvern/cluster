@@ -24,7 +24,6 @@ export default function GeneralSettings({
 			const settings = await fetchGroupSettings({
 				groupname: params.groupname,
 			});
-			console.log(settings);
 			setGroupSettings(settings);
 		}
 
@@ -91,6 +90,26 @@ export default function GeneralSettings({
 								isSelected={
 									groupSettings?.memberJoining || false
 								}
+							/>
+						</div>
+					</div>
+					<div className="flex items-center justify-between bottom-border px-4 sm:px-10 py-4">
+						<div>
+							<h2>Membros podem utilizar o Chat</h2>
+							<p className="font-normal">
+								Esta configuração permite que membros possam
+								utilizar o chat do grupo.
+							</p>
+						</div>
+						<div>
+							<Switch
+								onValueChange={(selected: boolean) => {
+									setGroupSettings({
+										...groupSettings,
+										chatEnabled: selected,
+									});
+								}}
+								isSelected={groupSettings?.chatEnabled || false}
 							/>
 						</div>
 					</div>

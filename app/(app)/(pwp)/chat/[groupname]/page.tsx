@@ -52,7 +52,6 @@ export default function ChatPage({
 			([entry]) => {
 				// If the element is in the viewport, entry.isIntersecting will be true
 				// If not, it will be false
-				console.log(entry.isIntersecting);
 				setIsAtBottom(entry.isIntersecting);
 			},
 			{
@@ -88,8 +87,8 @@ export default function ChatPage({
 		socket.emit("joinGroup", retreivedGroup?.GroupChat?.id);
 	}
 
-	function scrollDown() {
-		if (endOfMessagesRef?.current) {
+	function scrollDown({ onlyIfAtBottom = false }) {
+		if (endOfMessagesRef?.current && (!onlyIfAtBottom || isAtBottom)) {
 			endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
 		}
 	}
@@ -114,7 +113,7 @@ export default function ChatPage({
 				socket.on("receiveMessage", (message: MessageProps) => {
 					setMessages((prevMessages) => [...prevMessages, message]);
 					console.log(message);
-					if (isAtBottom) scrollDown();
+					if (isAtBottom) scrollDown({ onlyIfAtBottom: true });
 				});
 			}
 
@@ -132,6 +131,7 @@ export default function ChatPage({
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		if (isSending) return false;
+		console.log(endOfMessagesRef);
 
 		setIsSending(true);
 		const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -186,15 +186,12 @@ export default function ChatPage({
 
 		switch (retreivedMessages) {
 			case "no-session":
-				alert("sem sessão");
 				return false;
 			case "no-more-messages":
-				alert("sem mais mensagens");
 				return false;
 		}
 		if (overwrite) {
 			setMessages(retreivedMessages);
-			scrollDown();
 		} else {
 			setMessages((prevMessages) => [
 				...retreivedMessages,
@@ -202,6 +199,7 @@ export default function ChatPage({
 			]);
 			setBatchIndex((prev) => prev + 1);
 		}
+		scrollDown({ onlyIfAtBottom: false });
 	}
 
 	return (
@@ -213,12 +211,17 @@ export default function ChatPage({
 					onScroll={handleMessageLoadScroll}
 				>
 					<ListMessages messages={messages} ref={endOfMessagesRef} />
+					<div ref={endOfMessagesRef} className="opacity-0">
+						abc
+					</div>
 				</ScrollShadow>
 				{!isAtBottom && (
 					<div className="absolute bottom-40 right-10">
 						<Button
 							isIconOnly={true}
-							onClick={scrollDown}
+							onClick={() =>
+								scrollDown({ onlyIfAtBottom: false })
+							}
 							color="secondary"
 							className="default-border"
 						>

@@ -21,9 +21,8 @@ export async function memberHasPermission(
 	});
 
 	if (!role) return false;
-
 	const userRoleIndex = roles.indexOf(role.role);
 	const requiredRoleIndex = roles.indexOf(permission);
 
-	return userRoleIndex <= requiredRoleIndex;
+	return userRoleIndex >= requiredRoleIndex;
 }

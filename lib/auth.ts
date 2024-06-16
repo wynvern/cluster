@@ -91,6 +91,7 @@ export const authOptions: NextAuthOptions = {
 			return token;
 		},
 		async session({ session, token }) {
+			console.log(session);
 			if (session.user) {
 				// Transfer custom params from token to user in session
 				session.user.role = token.role;

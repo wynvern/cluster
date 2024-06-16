@@ -243,11 +243,13 @@ model Group {
 }
 
 model GroupSetting {
-   id            String   @id @default(cuid())
-   groupId       String   @map("group_id")
-   memberPosting Boolean  @default(false) @map("member_posting")
-   memberJoining Boolean  @default(false) @map("member_joining")
-   createdAt     DateTime @default(now()) @map("created_at")
+   id            String  @id @default(cuid())
+   groupId       String  @map("group_id")
+   memberPosting Boolean @default(false) @map("member_posting")
+   memberJoining Boolean @default(false) @map("member_joining")
+   chatEnabled   Boolean @default(false) @map("chat_enabled")
+
+   createdAt DateTime @default(now()) @map("created_at")
 
    group Group @relation(fields: [groupId], references: [id])
 

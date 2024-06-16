@@ -63,12 +63,6 @@ export default function UserActions({ user }: { user: User }) {
 			isDanger: true,
 			onConfirm: async () => {
 				const response = await blockUser(user.id);
-
-				if (response === "ok") {
-					alert("Usuário bloqueado com sucesso!");
-				} else {
-					alert("Erro ao bloquear usuário.");
-				}
 			},
 			description: `Tem certaza que deseja bloquear o usuário ${user.username}?`,
 			title: "Bloquear Usuário",

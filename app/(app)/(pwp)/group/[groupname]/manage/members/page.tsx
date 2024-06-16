@@ -18,7 +18,13 @@ import {
 	NoSymbolIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { getGroupMembers, promoteMember } from "@/lib/db/group/groupMember";
+import {
+	banMember,
+	getGroupMembers,
+	getMemberRole,
+	kickMember,
+	promoteMember,
+} from "@/lib/db/group/groupMember";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 
 interface Member {
@@ -35,6 +41,7 @@ interface Member {
 export default function ({ params }: { params: { groupname: string } }) {
 	const [members, setMembers] = useState<Member[] | null>(null);
 	const { confirm } = useConfirmationModal();
+	const [role, setRole] = useState<string | null>(null);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -43,6 +50,11 @@ export default function ({ params }: { params: { groupname: string } }) {
 				groupname: params.groupname,
 			});
 			if (response) setMembers(response);
+
+			const userRole = await getMemberRole({
+				groupname: params.groupname,
+			});
+			if (userRole) setRole(userRole);
 		}
 
 		handleFetch();
@@ -61,6 +73,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 					groupname: params.groupname,
 					userId: member.user.id,
 				});
+				console.log(response, members);
 				if (response && members) {
 					const newMembers = members;
 					setMembers(newMembers);
@@ -68,6 +81,45 @@ export default function ({ params }: { params: { groupname: string } }) {
 			},
 			title: "Promover membro",
 			description: `Tem certeza que deseja promover ${member.user.id} a moderador?`,
+			onCancel: () => {},
+		});
+	}
+
+	async function handleBanMemeber(member: Member) {
+		await confirm({
+			onConfirm: async () => {
+				const response = await banMember({
+					groupname: params.groupname,
+					userId: member.user.id,
+					reason: "em desenvolvimento", // TODO: ask for a reason.
+				});
+				console.log(response, members);
+				if (response && members) {
+					const newMembers = members;
+					setMembers(newMembers);
+				}
+			},
+			title: "Banir membro",
+			description: `Tem certeza que deseja banir ${member.user.id}?`,
+			onCancel: () => {},
+		});
+	}
+
+	async function handleKickMember(member: Member) {
+		await confirm({
+			onConfirm: async () => {
+				const response = await kickMember({
+					groupname: params.groupname,
+					userId: member.user.id,
+				});
+				console.log(response, members);
+				if (response && members) {
+					const newMembers = members;
+					setMembers(newMembers);
+				}
+			},
+			title: "Expulsar membro",
+			description: `Tem certeza que deseja expulsar ${member.user.id}?`,
 			onCancel: () => {},
 		});
 	}
@@ -94,25 +146,47 @@ export default function ({ params }: { params: { groupname: string } }) {
 										{rolesDictionary[member.role]}
 									</TableCell>
 									<TableCell>
-										{prettyDate(member.joinedAt)}
+										{prettyDate({ date: member.joinedAt })}
 									</TableCell>
 									<TableCell>
 										<div className="flex gap-x-2">
 											<Button
 												isIconOnly={true}
 												color="danger"
+												isDisabled={
+													member.role === "owner" ||
+													(member.role ===
+														"moderator" &&
+														role !== "owner")
+												}
+												onClick={() =>
+													handleBanMemeber(member)
+												}
 											>
 												<NoSymbolIcon className="h-6" />
 											</Button>
 											<Button
 												isIconOnly={true}
 												color="danger"
+												isDisabled={
+													member.role === "owner" ||
+													(member.role ===
+														"moderator" &&
+														role !== "owner")
+												}
+												onClick={() =>
+													handleKickMember(member)
+												}
 											>
 												<XMarkIcon className="h-6" />
 											</Button>
 											<Button
 												isIconOnly={true}
 												color="success"
+												isDisabled={
+													member.role === "owner" ||
+													role !== "owner"
+												}
 												onClick={() =>
 													handlePromoteMember(member)
 												}

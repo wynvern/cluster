@@ -59,21 +59,18 @@ export default function GroupActions({ group }: { group: Group }) {
 		},
 	];
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const handleHasPermission = async () => {
-			if (!session.data?.user) return;
-
+			if (!session.data?.user.username) return;
 			const permission = await memberHasPermission(
-				session.data?.user.id,
+				session.data.user.id,
 				group.groupname,
 				"moderator"
 			);
-			alert(permission);
 			setHasGroupPermission(permission);
 		};
 		handleHasPermission();
-	}, [group.groupname]);
+	}, [group.groupname, session.data?.user]);
 
 	return (
 		<>

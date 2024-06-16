@@ -47,6 +47,7 @@ export interface GroupSettings {
 	groupId: string;
 	memberPosting: boolean;
 	memberJoining: boolean;
+	chatEnabled: boolean;
 	createdAt: Date;
 }
 
@@ -80,4 +81,15 @@ export interface MessageProps {
 	chatId: string;
 	attachments?: string[];
 	media?: string[];
+}
+
+export interface BannedMember {
+	user: {
+		id: string;
+		name: string | null;
+		image: string | null;
+		username: string | null;
+	};
+	bannedAt: Date;
+	reason: string | null;
 }

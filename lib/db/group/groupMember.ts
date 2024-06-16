@@ -47,11 +47,11 @@ export async function promoteMember({
 	groupname: string;
 	userId: string;
 }) {
-	if (!(await memberHasPermission(userId, groupname, "moderator")))
-		return "no-permission";
 	const session = await getServerSession(authOptions);
-
 	if (!session) return "no-session";
+
+	if (!(await memberHasPermission(session.user.id, groupname, "owner")))
+		return "no-permission";
 
 	const group = await db.group.findUnique({
 		where: { groupname },
@@ -192,4 +192,77 @@ export async function getGroupMembers({ groupname }: { groupname: string }) {
 	});
 
 	return [...members];
+}
+
+// gets the banned group members
+export async function getBannedGroupMembers({
+	groupname,
+}: {
+	groupname: string;
+}) {
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return;
+
+	const bannedMembers = await db.bannedGroupUser.findMany({
+		where: { groupId: group.id },
+		select: {
+			user: {
+				select: {
+					name: true,
+					image: true,
+					username: true,
+					id: true,
+				},
+			},
+			reason: true,
+			bannedAt: true,
+		},
+	});
+
+	return [...bannedMembers];
+}
+
+// Unbans a member from a group
+export async function unbanMember({
+	groupname,
+	userId,
+}: {
+	groupname: string;
+	userId: string;
+}) {
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	await db.bannedGroupUser.delete({
+		where: { groupId_userId: { groupId: group.id, userId } },
+	});
+
+	return "ok";
+}
+
+// Kicks a member
+export async function kickMember({
+	groupname,
+	userId,
+}: {
+	groupname: string;
+	userId: string;
+}) {
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	await db.groupMember.delete({
+		where: { groupId_userId: { groupId: group.id, userId } },
+	});
+
+	return "ok";
 }

@@ -27,15 +27,12 @@ export function ListMessages({
 				return (
 					<div
 						key={message.id}
-						className={`message-action-container ${
-							i === messages.length - 2 ? "bg-red-500" : ""
-						}`}
-						ref={i === messages.length - 2 ? ref : null}
+						className={"message-action-container"}
 					>
 						<div className="w-full flex justify-center">
 							{isNewDay && (
 								<div className="my-8 text-neutral-600 ">
-									{prettyDate(message.createdAt)}
+									{prettyDate({ date: message.createdAt })}
 								</div>
 							)}
 						</div>

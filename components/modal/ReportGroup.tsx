@@ -52,10 +52,8 @@ export default function ReportGroup({
 				setSuccess(true);
 				break;
 			case "no-session":
-				alert("Sessão inválida");
 				break;
 			case "no-group":
-				alert("Grupo não encontrado");
 				break;
 		}
 

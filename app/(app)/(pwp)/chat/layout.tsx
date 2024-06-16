@@ -112,11 +112,12 @@ export default function LayoutChat({
 														}
 													</p>
 													<p>
-														{prettyDate(
-															group.GroupChat
+														{prettyDate({
+															date: group
+																.GroupChat
 																.messages[0]
-																.createdAt
-														)}
+																.createdAt,
+														})}
 													</p>
 												</div>
 											)}

@@ -27,7 +27,10 @@ export default async function fetchGroup(
 		: { groupname: params.groupname };
 
 	const query = await db.group.findUnique({
-		where: params,
+		where: {
+			...params,
+			bannedUsers: { none: { userId: session.user.id } },
+		},
 		select: {
 			id: true,
 			name: true,
@@ -76,9 +79,6 @@ export async function createGroup(
 ) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
-
-	if (!(await memberHasPermission(session.user.id, groupname, "owner")))
-		return "no-permission";
 
 	if (!groupname) return "no-data";
 
@@ -224,9 +224,6 @@ export async function reportGroup(
 export async function fetchGroupSettings({ groupname }: { groupname: string }) {
 	const session = await getServerSession(authOptions);
 	if (!session) return null;
-
-	if (!(await memberHasPermission(session.user.id, groupname, "moderator")))
-		return null;
 
 	const groupSettings = await db.groupSetting.findFirst({
 		where: { group: { groupname } },

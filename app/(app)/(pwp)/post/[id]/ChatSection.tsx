@@ -67,7 +67,7 @@ function RenderCommentLevel({
 	return (
 		<div className="w-full">
 			{comments.map((comment) => (
-				<div key={comment.id} className={`pl-[${level * 10}px]`}>
+				<div key={comment.id} style={{ paddingLeft: `${level * 3}em` }}>
 					<PostComment
 						comment={comment}
 						setReplyActive={() => setReplyActive(!replyActive)}

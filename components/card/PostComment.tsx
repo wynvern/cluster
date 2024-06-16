@@ -76,7 +76,13 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 					""
 				)}
 				{/* Image */}
-				{comment.media && comment.media.length > 0 ? <div></div> : ""}
+				{comment.media && comment.media.length > 0 ? (
+					<div>
+						<p>temp</p>
+					</div>
+				) : (
+					""
+				)}
 			</div>
 		</div>
 	);

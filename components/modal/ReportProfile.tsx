@@ -52,13 +52,10 @@ export default function ReportProfile({
 				setSuccess(true);
 				break;
 			case "no-session":
-				alert("Sessão inválida");
 				break;
 			case "no-user":
-				alert("Usuário não encontrado");
 				break;
 			case "error":
-				alert("Erro ao reportar usuário");
 				break;
 		}
 

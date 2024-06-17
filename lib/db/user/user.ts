@@ -18,12 +18,13 @@ export async function createUser(
 
 	try {
 		const hashedPassword = await hash(password, 10);
-		await db.user.create({
+		const newUser = await db.user.create({
 			data: {
 				email: email,
 				password: hashedPassword,
 			},
 		});
+		await db.userSettings.create({ data: { userId: newUser.id } });
 	} catch (e) {
 		return "error";
 	}

@@ -146,8 +146,10 @@ export default function ChatPage({
 					username: session.data?.user?.username || "",
 					image: session.data?.user?.image || "",
 				},
+
 				chatId: group?.GroupChat?.id,
 				media: [selectedImage?.base64 || ""],
+				replyToId: replyToMessageContent?.id,
 				createdAt: new Date(),
 			} as MessageProps;
 			socket.emit("sendMessage", messageToSend);

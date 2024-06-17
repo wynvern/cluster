@@ -9,6 +9,7 @@ interface MessageData {
 	chatId: string;
 	userId: string;
 	media?: string[];
+	replyToId?: string;
 }
 
 interface User {
@@ -29,6 +30,9 @@ async function createMessage(data: MessageData) {
 	const newMessage = await db.message.create({
 		data: {
 			content: data.content,
+			replyTo: data.replyToId
+				? { connect: { id: data.replyToId } }
+				: undefined,
 			media: mediaUrl,
 			chat: {
 				connect: {

@@ -1,6 +1,7 @@
 import type User from "@/lib/db/user/type";
 import { Image } from "@nextui-org/react";
 import UserActions from "./UserActions";
+import ScrollBanner from "@/components/general/ScrollBanner";
 
 interface UserProfileProps {
 	user: User;
@@ -14,11 +15,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				className={`w-full relative ${user ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<Image
-					className="absolute w-full h-full rounded-none object-cover z-1 max-w-[1000px] max-h-[400px]"
-					src={user ? (user.banner as string) : ""}
-					removeWrapper={true}
-				/>
+				<ScrollBanner imageURL={user ? (user.banner as string) : ""} />
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
 						src={

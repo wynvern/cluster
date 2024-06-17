@@ -39,8 +39,32 @@ model User {
    Reaction       Reaction[]
    viewedMessages MessageView[]
    PostReport     PostReport[]
+   userSettings   UserSettings?
 
    @@map("user")
+}
+
+enum Theme {
+   light
+   dark
+}
+
+model UserSettings {
+   id        String   @id @default(cuid())
+   userId    String   @map("user_id")
+   createdAt DateTime @default(now()) @map("created_at")
+   user      User     @relation(fields: [userId], references: [id])
+
+   privateProfile   Boolean @default(false) @map("private_profile")
+   privateBookmarks Boolean @default(false) @map("private_bookmarks")
+   privateGroups    Boolean @default(false) @map("private_groups")
+
+   disableNotifications Boolean @default(false) @map("disable_notifications")
+
+   theme Theme @default(light)
+
+   @@unique([userId])
+   @@map("user_settings")
 }
 
 model Subscription {

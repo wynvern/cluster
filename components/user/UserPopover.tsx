@@ -66,7 +66,9 @@ export default function UserPopover({
 				<p>{user.bio}</p>
 				<p>
 					Membro desde{" "}
-					{prettyDate(user.groups[0].group.members[0].joinedAt)}
+					{prettyDate({
+						date: user.groups[0].group.members[0].joinedAt,
+					})}
 				</p>
 				{hasGroupModeration && (
 					<div className="mt-3 flex gap-x-2">

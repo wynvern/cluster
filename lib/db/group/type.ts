@@ -81,6 +81,7 @@ export interface MessageProps {
 	chatId: string;
 	attachments?: string[];
 	media?: string[];
+	replyToId?: string;
 }
 
 export interface BannedMember {

@@ -143,7 +143,9 @@ export default function Notifications({
 																{`${
 																	i.title
 																} • ${prettyDate(
-																	i.createdAt
+																	{
+																		date: i.createdAt,
+																	}
 																)}`}
 															</p>
 														</div>

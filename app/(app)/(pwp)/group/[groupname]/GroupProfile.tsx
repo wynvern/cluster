@@ -1,6 +1,7 @@
 import { Chip, Image } from "@nextui-org/react";
 import type Group from "@/lib/db/group/type";
 import GroupActions from "./GroupActions";
+import ScrollBanner from "@/components/general/ScrollBanner";
 
 export default async function GroupProfile({ group }: { group: Group }) {
 	return (
@@ -10,10 +11,8 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				className={`w-full relative ${group ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<Image
-					className="absolute w-full h-full rounded-none object-cover z-1 max-w-[1000px] max-h-[400px]"
-					src={group ? (group.banner as string) : ""}
-					removeWrapper={true}
+				<ScrollBanner
+					imageURL={group ? (group.banner as string) : ""}
 				/>
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image

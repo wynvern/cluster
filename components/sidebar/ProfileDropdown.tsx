@@ -32,6 +32,9 @@ export default function ProfileDropdown() {
 					</Link>
 				</DropdownTrigger>
 				<DropdownMenu aria-label="Static Actions">
+					<DropdownItem>
+						Logado como <b>@{session.data?.user.username}</b>
+					</DropdownItem>
 					<DropdownItem
 						description="Veja seu perfil"
 						startContent={

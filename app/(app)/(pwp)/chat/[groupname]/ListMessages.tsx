@@ -1,5 +1,4 @@
 import UserAvatar from "@/components/user/UserAvatar";
-import prettyDate from "@/util/prettyDate";
 import { Link, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
@@ -32,7 +31,9 @@ export function ListMessages({
 						<div className="w-full flex justify-center">
 							{isNewDay && (
 								<div className="my-8 text-neutral-600 ">
-									{prettyDate({ date: message.createdAt })}
+									{new Date(
+										message.createdAt
+									).toLocaleDateString()}
 								</div>
 							)}
 						</div>

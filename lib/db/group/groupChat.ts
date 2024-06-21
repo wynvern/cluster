@@ -3,6 +3,7 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
+import { memberHasPermission } from "./groupUtils";
 
 export async function fetchUserChats() {
 	const session = await getServerSession(authOptions);
@@ -41,6 +42,48 @@ export async function fetchUserChats() {
 	});
 
 	return groups.map((group) => group.group);
+}
+
+export async function deleteMessage(messageId: string) {
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+
+	const message = await db.message.findFirst({
+		where: {
+			id: messageId,
+			userId: session.user.id,
+		},
+		include: {
+			chat: {
+				select: {
+					group: {
+						select: {
+							groupname: true,
+						},
+					},
+				},
+			},
+		},
+	});
+
+	const groupPermission = await memberHasPermission(
+		session.user.id,
+		message?.chat.group.groupname || "",
+		"moderator"
+	);
+
+	if (message?.userId !== session.user.id && !groupPermission)
+		return "not-authorized";
+
+	if (!message) return "not-found";
+
+	await db.message.delete({
+		where: {
+			id: messageId,
+		},
+	});
+
+	return "ok";
 }
 
 export async function createMessage(message: string, groupChatId: string) {
@@ -109,6 +152,15 @@ export async function fetchMessages(groupId: string, batchIndex: number) {
 					id: true,
 					username: true,
 					image: true,
+				},
+			},
+			chat: {
+				select: {
+					group: {
+						select: {
+							groupname: true,
+						},
+					},
 				},
 			},
 		},

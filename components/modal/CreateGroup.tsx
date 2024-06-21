@@ -59,7 +59,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			throwErrors.groupname = "Nome do grupo é obrigatório";
 		}
 
-		if (categories.length < 1) {
+		if (categories.length === 0) {
 			throwErrors.categories = "Adicione pelo menos uma categoria";
 		}
 

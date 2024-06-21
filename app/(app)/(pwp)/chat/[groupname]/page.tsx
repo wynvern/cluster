@@ -87,8 +87,8 @@ export default function ChatPage({
 		socket.emit("joinGroup", retreivedGroup?.GroupChat?.id);
 	}
 
-	function scrollDown({ onlyIfAtBottom = false }) {
-		if (endOfMessagesRef?.current && (!onlyIfAtBottom || isAtBottom)) {
+	function scrollDown() {
+		if (endOfMessagesRef?.current) {
 			endOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
 		}
 	}
@@ -112,8 +112,6 @@ export default function ChatPage({
 
 				socket.on("receiveMessage", (message: MessageProps) => {
 					setMessages((prevMessages) => [...prevMessages, message]);
-					console.log(message);
-					if (isAtBottom) scrollDown({ onlyIfAtBottom: true });
 				});
 			}
 
@@ -131,7 +129,6 @@ export default function ChatPage({
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		if (isSending) return false;
-		console.log(endOfMessagesRef);
 
 		setIsSending(true);
 		const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -201,8 +198,15 @@ export default function ChatPage({
 			]);
 			setBatchIndex((prev) => prev + 1);
 		}
-		scrollDown({ onlyIfAtBottom: false });
+		scrollDown();
 	}
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (isAtBottom) {
+			scrollDown();
+		}
+	}, [messages]);
 
 	return (
 		<div className="w-full max-h-[calc(100vh)] h-full flex flex-col overflow-hidden">
@@ -221,9 +225,7 @@ export default function ChatPage({
 					<div className="absolute bottom-40 right-10">
 						<Button
 							isIconOnly={true}
-							onClick={() =>
-								scrollDown({ onlyIfAtBottom: false })
-							}
+							onClick={() => scrollDown()}
 							color="secondary"
 							className="default-border"
 						>

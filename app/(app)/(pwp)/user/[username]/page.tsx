@@ -15,20 +15,46 @@ export default async function UserPage({
 }: UserPageProps) {
 	const userData = await fetchUser({ username });
 
+	function renderInnerContent() {
+		console.log(userData);
+		if (typeof userData === "string") {
+			switch (userData) {
+				case "private-profile":
+					return (
+						<div className="w-full h-full flex items-center justify-center">
+							<NoPosts message="O perfil do usuário é privado." />
+						</div>
+					);
+				case "no-match":
+					return (
+						<div className="w-full h-full flex items-center justify-center">
+							<NoPosts message="O usuário não existe" />
+						</div>
+					);
+			}
+		}
+		if (typeof userData !== "string") {
+			return (
+				<>
+					<UserProfile user={userData} />
+					<UserContent user={userData} />
+				</>
+			);
+		}
+		if (!userData) {
+			return (
+				<div className="w-full h-full flex items-center justify-center">
+					<NoPosts message="O usuário não foi encontrado." />
+				</div>
+			);
+		}
+	}
+
 	return (
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[1000px] h-full relative">
 				<UserHeader user={userData} />
-				{userData ? (
-					<>
-						<UserProfile user={userData} />
-						<UserContent user={userData} />
-					</>
-				) : (
-					<div className="w-full h-full flex items-center justify-center">
-						<NoPosts message="Usuário não encontrado." />
-					</div>
-				)}
+				{renderInnerContent()}
 			</div>
 		</div>
 	);

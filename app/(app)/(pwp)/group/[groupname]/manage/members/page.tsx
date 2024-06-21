@@ -73,7 +73,6 @@ export default function ({ params }: { params: { groupname: string } }) {
 					groupname: params.groupname,
 					userId: member.user.id,
 				});
-				console.log(response, members);
 				if (response && members) {
 					const newMembers = members;
 					setMembers(newMembers);
@@ -93,7 +92,6 @@ export default function ({ params }: { params: { groupname: string } }) {
 					userId: member.user.id,
 					reason: "em desenvolvimento", // TODO: ask for a reason.
 				});
-				console.log(response, members);
 				if (response && members) {
 					const newMembers = members;
 					setMembers(newMembers);
@@ -112,7 +110,6 @@ export default function ({ params }: { params: { groupname: string } }) {
 					groupname: params.groupname,
 					userId: member.user.id,
 				});
-				console.log(response, members);
 				if (response && members) {
 					const newMembers = members;
 					setMembers(newMembers);

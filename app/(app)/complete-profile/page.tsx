@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import words from "../../../public/nameGenerator.json";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import completeProfile from "@/lib/db/user/userUtils";
+import { useLoading } from "@/providers/LoadingProvider";
 
 export default function Finish() {
 	const { update } = useSession();

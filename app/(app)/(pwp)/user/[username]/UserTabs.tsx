@@ -12,9 +12,9 @@ import { Tabs, Tab } from "@nextui-org/react";
 import { useState } from "react";
 
 interface UserTabsProps {
-	initialBookmarks: Post[] | null;
+	initialBookmarks: Post[] | null | string;
 	initialPosts: Post[] | null;
-	initialGroups: GroupCard[] | null;
+	initialGroups: GroupCard[] | null | string;
 	user: User;
 }
 
@@ -67,8 +67,16 @@ function UserBookmarksTab({
 	initialBookmarks,
 }: {
 	user: User;
-	initialBookmarks: Post[] | null;
+	initialBookmarks: Post[] | null | string;
 }) {
+	if (typeof initialBookmarks === "string") {
+		return (
+			<div className="my-6">
+				<NoPosts message="Os salvos desse usuário são privados." />
+			</div>
+		);
+	}
+
 	const [posts, setPosts] = useState<Post[] | null>(initialBookmarks);
 	const [loading, setLoading] = useState(false);
 	const [noMoreData, setNoMoreData] = useState(false);
@@ -76,6 +84,8 @@ function UserBookmarksTab({
 	async function fetchMorePosts(skip: number, take: number) {
 		setLoading(true);
 		const data = await fetchUserBookmarks(user.id, { skip, take });
+		if (typeof data === "string") return;
+
 		if (data.length === 0) {
 			setNoMoreData(true);
 			setLoading(false);
@@ -112,7 +122,9 @@ export default function UserTabs({
 	initialGroups,
 	user,
 }: UserTabsProps) {
-	const [groups, setGroups] = useState<GroupCard[] | null>(initialGroups);
+	const [groups, setGroups] = useState<GroupCard[] | null | string>(
+		initialGroups
+	);
 
 	return (
 		<Tabs
@@ -135,10 +147,16 @@ export default function UserTabs({
 				title={<h3 className="p-2">Grupos</h3>}
 				className="px-0 w-full"
 			>
-				<GroupList
-					groups={groups}
-					noGroups="O usuário não está em nenhum grupo"
-				/>
+				{typeof groups === "string" ? (
+					<div className="my-6">
+						<NoPosts message="Os grupos que o usuário participa são privados." />
+					</div>
+				) : (
+					<GroupList
+						groups={groups}
+						noGroups="O usuário não está em nenhum grupo"
+					/>
+				)}
 			</Tab>
 		</Tabs>
 	);

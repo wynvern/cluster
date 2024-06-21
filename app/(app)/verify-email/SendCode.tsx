@@ -48,7 +48,7 @@ export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
 				<div className="flex items-center justify-between">
 					<p>
 						<Link onClick={() => onCodeSent()}>
-							Possuí um código?
+							Possui um código?
 						</Link>
 					</p>
 					<Button

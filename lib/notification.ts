@@ -19,12 +19,17 @@ export default async function registerSubscription({
 	const session = await getServerSession(authOptions);
 	if (!session?.user.id || !session.user) return false;
 
-	await db.subscription.create({
-		data: {
-			subscription: subscription,
-			userId: session?.user?.id,
-		},
-	});
+	try {
+		await db.subscription.create({
+			data: {
+				subscription: subscription,
+				userId: session?.user?.id,
+			},
+		});
+	} catch (e) {
+		console.error(e);
+		return "error";
+	}
 
 	return "ok";
 }
@@ -54,6 +59,8 @@ export async function sendNotification({
 			image: message.image,
 		},
 	});
+
+	console.log(subscriptions);
 
 	for (const sub of subscriptions) {
 		const pushSubscription: webPush.PushSubscription =

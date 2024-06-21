@@ -6,7 +6,7 @@ import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-export default function UserHeader({ user }: { user: User | null }) {
+export default function UserHeader({ user }: { user: User | null | string }) {
 	const router = useRouter();
 	const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -37,7 +37,7 @@ export default function UserHeader({ user }: { user: User | null }) {
 					>
 						<ArrowLeftIcon className="h-6" />
 					</Button>
-					{hasScrolled && user && (
+					{hasScrolled && user && typeof user !== "string" && (
 						<div className="ml-4">
 							<h3>{user.username}</h3>
 						</div>

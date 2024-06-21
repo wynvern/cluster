@@ -11,8 +11,9 @@ import {
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import { Button, Input, Link } from "@nextui-org/react";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function SignUp() {
 	const [loading, setLoading] = useState(false);
@@ -21,7 +22,9 @@ export default function SignUp() {
 		password: "",
 		repeatPassword: "",
 	});
+	const router = useRouter();
 	const [success, setSucess] = useState(false);
+	const session = useSession();
 
 	function validateInputs(
 		email: string,
@@ -100,7 +103,14 @@ export default function SignUp() {
 				redirect: false,
 			});
 		}
+		setLoading(false);
 	}
+
+	useEffect(() => {
+		if (session.data?.user.id) {
+			router.push("/");
+		}
+	}, [session]);
 
 	return (
 		<AuthModalWrapper title="Criar conta">
@@ -111,7 +121,6 @@ export default function SignUp() {
 					name="email"
 					isInvalid={Boolean(inputError.email)}
 					errorMessage={inputError.email}
-					classNames={{ inputWrapper: "h-14" }}
 					startContent={
 						<EnvelopeIcon className="h-6 text-neutral-500" />
 					}
@@ -125,7 +134,6 @@ export default function SignUp() {
 					name="password"
 					isInvalid={Boolean(inputError.password)}
 					errorMessage={inputError.password}
-					classNames={{ inputWrapper: "h-14" }}
 					startContent={<KeyIcon className="h-6 text-neutral-500" />}
 					variant="bordered"
 					onValueChange={() => {
@@ -135,7 +143,6 @@ export default function SignUp() {
 				<PasswordInput
 					placeholder="Senha novamente"
 					name="repeat-password"
-					classNames={{ inputWrapper: "h-14" }}
 					variant="bordered"
 					startContent={<KeyIcon className="h-6 text-neutral-500" />}
 					isInvalid={Boolean(inputError.repeatPassword)}
@@ -164,7 +171,6 @@ export default function SignUp() {
 						type="submit"
 						color={success ? "success" : "primary"}
 						isLoading={loading}
-						className="h-14"
 						isDisabled={loading || success}
 						startContent={
 							loading ? (

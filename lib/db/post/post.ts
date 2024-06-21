@@ -91,7 +91,7 @@ export async function fetchUserPosts(
 export async function fetchUserBookmarks(
 	userId: string,
 	pagination?: { skip: number; take: number }
-): Promise<Post[]> {
+): Promise<Post[] | string> {
 	const session = await getServerSession(authOptions);
 	if (!session) return [];
 
@@ -100,8 +100,17 @@ export async function fetchUserBookmarks(
 		select: {
 			id: true,
 			username: true,
+			userSettings: {
+				select: {
+					privateBookmarks: true,
+				},
+			},
 		},
 	});
+
+	if (user?.userSettings?.privateBookmarks) {
+		return "private-bookmarks";
+	}
 
 	if (!user) return [];
 

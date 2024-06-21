@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../../style/global.css";
 import Providers from "@/components/Providers";
-
+import Initializer from "@/components/general/Initializer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 	],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
@@ -31,6 +31,7 @@ export default function RootLayout({
 	return (
 		<html lang="pt-BR">
 			<body className={`${inter.className}`}>
+				<Initializer />
 				<Providers>{children}</Providers>
 			</body>
 		</html>

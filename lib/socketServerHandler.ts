@@ -52,6 +52,15 @@ async function createMessage(data: MessageData) {
 			createdAt: true,
 			chatId: true,
 			userId: true,
+			chat: {
+				select: {
+					group: {
+						select: {
+							groupname: true,
+						},
+					},
+				},
+			},
 			user: {
 				select: {
 					id: true,
@@ -150,6 +159,10 @@ export default async function socketHandlers(io: Server, socket: Socket) {
 	socket.on("joinGroup", (data: string) => {
 		// TODO: Authenticate if the user is present at that group
 		socket.join(data);
+	});
+
+	socket.on("deleteMessage", async (messageId: string) => {
+		// TODO Delete the message
 	});
 
 	socket.on("sendMessage", (data: MessageData) => {

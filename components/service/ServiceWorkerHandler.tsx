@@ -2,11 +2,14 @@
 
 import { useEffect } from "react";
 import registerSubscription from "@/lib/notification";
+import { useSession } from "next-auth/react";
 
 export default function ServiceWorkerHandler() {
+	const session = useSession();
+
 	// TODO: Will be here, but for now, it's just a placeholder and will need validation
 	useEffect(() => {
-		if ("serviceWorker" in navigator && "Notification" in window) {
+		if ("Notification" in window && session.data?.user.username) {
 			Notification.requestPermission().then((permission) => {
 				if (permission === "granted") {
 					navigator.serviceWorker
@@ -29,7 +32,7 @@ export default function ServiceWorkerHandler() {
 				}
 			});
 		}
-	}, []);
+	}, [session]);
 
 	return null;
 }

@@ -5,6 +5,7 @@ import type User from "./type";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { hash } from "bcrypt";
+import { user } from "@nextui-org/react";
 
 type UserId = { id: string; username?: string };
 type UserName = { id?: string; username: string };
@@ -34,9 +35,9 @@ export async function createUser(
 
 export default async function fetchUser(
 	params: UserId | UserName
-): Promise<User | null> {
+): Promise<User | string> {
 	const session = await getServerSession(authOptions);
-	if (!session) return null;
+	if (!session) return "no-session";
 
 	const searchBy = params.id
 		? { id: params.id }
@@ -66,10 +67,19 @@ export default async function fetchUser(
 					groups: { where: { user: { ...searchBy } } },
 				},
 			},
+			userSettings: {
+				select: {
+					privateProfile: true,
+				},
+			},
 		},
 	});
 
-	if (!query) return null;
+	if (query?.userSettings?.privateProfile) {
+		return "private-profile";
+	}
+
+	if (!query) return "no-match";
 
 	return query;
 }
@@ -114,6 +124,24 @@ export async function fetchUserGroups(
 	userId: string,
 	options?: { groupChatId?: boolean }
 ) {
+	const user = await db.user.findFirst({
+		where: { id: userId },
+		select: {
+			userSettings: {
+				select: {
+					privateGroups: true,
+				},
+			},
+		},
+	});
+
+	if (!user) {
+		return "user-not-found";
+	}
+	if (user?.userSettings?.privateGroups) {
+		return "private-user-groups";
+	}
+
 	const queryOptions = {
 		where: { members: { some: { userId: userId } } },
 		include: {},
@@ -252,6 +280,71 @@ export async function cleanUserNotifications() {
 
 	await db.notification.deleteMany({
 		where: { viewed: true, userId: session.user.id },
+	});
+
+	return "ok";
+}
+
+export async function fetchBlockedUsers() {
+	const session = await getServerSession(authOptions);
+	if (!session) return [];
+
+	const blockedUsers = await db.blockedUser.findMany({
+		where: { userId: session.user.id },
+		select: {
+			blocked: {
+				select: {
+					id: true,
+					name: true,
+					username: true,
+					image: true,
+					bio: true,
+				},
+			},
+		},
+	});
+
+	return blockedUsers.map((user) => user.blocked);
+}
+
+export async function fetchUserSettings() {
+	const session = await getServerSession(authOptions);
+	if (!session) return null;
+
+	const settings = await db.userSettings.findUnique({
+		where: { userId: session.user.id },
+	});
+
+	return settings;
+}
+
+export async function updateUserSettings({
+	privateProfile,
+	privateBookmarks,
+	privateGroups,
+	disableNotifications,
+	theme,
+}: {
+	privateProfile?: boolean;
+	privateBookmarks?: boolean;
+	privateGroups?: boolean;
+	disableNotifications?: boolean;
+	theme?: "light" | "dark"; // Make theme optional as well
+}) {
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+
+	const updateData = {
+		...(privateProfile !== undefined && { privateProfile }),
+		...(privateBookmarks !== undefined && { privateBookmarks }),
+		...(privateGroups !== undefined && { privateGroups }),
+		...(disableNotifications !== undefined && { disableNotifications }),
+		...(theme !== undefined && { theme }),
+	};
+
+	await db.userSettings.update({
+		where: { userId: session.user.id },
+		data: updateData,
 	});
 
 	return "ok";

@@ -105,11 +105,10 @@ export default function LayoutChat({
 														}
 													</b>
 													<p>
-														{
-															group.GroupChat
-																.messages[0]
-																.content
-														}
+														{group.GroupChat.messages[0].content.slice(
+															0,
+															20
+														)}
 													</p>
 													<p>
 														{prettyDate({

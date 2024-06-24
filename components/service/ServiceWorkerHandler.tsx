@@ -28,7 +28,7 @@ export default function ServiceWorkerHandler() {
 							);
 						});
 				} else {
-					console.log("Permission not granted for Notification");
+					console.warn("Permission not granted for Notification");
 				}
 			});
 		}

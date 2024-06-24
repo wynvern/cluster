@@ -18,7 +18,6 @@ export default function ManageSettings({ children }: { children: ReactNode }) {
 	const path = usePathname();
 	const isSmallScreen = useMediaQuery({ query: "(max-width: 1000px)" }); // adjust the value as per your requirement
 	const router = useRouter();
-	console.log(isSmallScreen);
 
 	return (
 		<div className="flex justify-center w-full h-full">

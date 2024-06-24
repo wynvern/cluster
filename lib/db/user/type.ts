@@ -12,4 +12,5 @@ export default interface User {
 	image: string | null;
 	banner: string | null;
 	_count: Count;
+	createdAt: Date;
 }

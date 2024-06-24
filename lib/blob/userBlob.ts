@@ -34,7 +34,7 @@ export async function uploadUserAvatar(file: string, fileType: string) {
 		data: { image: blob.urlToMedia },
 	});
 
-	return "ok";
+	return { url: blob.urlToMedia };
 }
 
 export async function uploadUserBanner(file: string, fileType: string) {

@@ -121,6 +121,7 @@ export default function SignUp() {
 					name="email"
 					isInvalid={Boolean(inputError.email)}
 					errorMessage={inputError.email}
+					classNames={{ inputWrapper: "h-12" }}
 					startContent={
 						<EnvelopeIcon className="h-6 text-neutral-500" />
 					}
@@ -136,6 +137,7 @@ export default function SignUp() {
 					errorMessage={inputError.password}
 					startContent={<KeyIcon className="h-6 text-neutral-500" />}
 					variant="bordered"
+					classNames={{ inputWrapper: "h-12" }}
 					onValueChange={() => {
 						setInputError({ ...inputError, password: "" });
 					}}
@@ -144,6 +146,7 @@ export default function SignUp() {
 					placeholder="Senha novamente"
 					name="repeat-password"
 					variant="bordered"
+					classNames={{ inputWrapper: "h-12" }}
 					startContent={<KeyIcon className="h-6 text-neutral-500" />}
 					isInvalid={Boolean(inputError.repeatPassword)}
 					errorMessage={inputError.repeatPassword}
@@ -171,6 +174,7 @@ export default function SignUp() {
 						type="submit"
 						color={success ? "success" : "primary"}
 						isLoading={loading}
+						classNames={{ inputWrapper: "h-12" }}
 						isDisabled={loading || success}
 						startContent={
 							loading ? (

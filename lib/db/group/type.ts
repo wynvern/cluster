@@ -15,6 +15,7 @@ export default interface Group {
 	GroupChat: {
 		id: string;
 	} | null;
+	createdAt: Date;
 }
 
 export interface UserGroupInfo {

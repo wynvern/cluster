@@ -18,7 +18,7 @@ export default function GoogleLoginButton() {
 				setLoadingGoogle(true);
 				signInGoogle();
 			}}
-			className="max-w-fit h-14"
+			className="max-w-fit h-12"
 			variant="bordered"
 			isLoading={loadingGoogle}
 			startContent={

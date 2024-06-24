@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import words from "../../../public/nameGenerator.json";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import completeProfile from "@/lib/db/user/userUtils";
-import { useLoading } from "@/providers/LoadingProvider";
 
 export default function Finish() {
 	const { update } = useSession();
@@ -135,13 +134,12 @@ export default function Finish() {
 
 				<div className="flex items-center justify-between">
 					<div>
-						<Button
-							onClick={assignRandomUsername}
-							isDisabled={isLoading || success}
-							color="secondary"
+						<Link
+							onClick={() => { !success && !isLoading && assignRandomUsername()}}
+							
 						>
 							Nome aleatório
-						</Button>
+						</Link>
 					</div>
 					<Button
 						type="submit"

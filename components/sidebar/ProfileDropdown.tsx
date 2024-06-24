@@ -1,15 +1,13 @@
 "use client";
 
 import {
-	Button,
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
 	DropdownTrigger,
 	Link,
-	Image,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SignOut from "../modal/SignOut";
 import {
 	ArrowLeftEndOnRectangleIcon,
@@ -38,7 +36,7 @@ export default function ProfileDropdown() {
 					<DropdownItem
 						description="Veja seu perfil"
 						startContent={
-							<UserIcon className="h-8" aria-label="Sign Out" />
+							<UserIcon className="h-6" aria-label="Sign Out" />
 						}
 						aria-label="View profile"
 						href={`/user/${session.data?.user.username}`}
@@ -49,7 +47,7 @@ export default function ProfileDropdown() {
 						description="Configure o aplicativo"
 						startContent={
 							<Cog6ToothIcon
-								className="h-8"
+								className="h-6"
 								aria-label="Sign Out"
 							/>
 						}
@@ -66,7 +64,7 @@ export default function ProfileDropdown() {
 						}}
 						startContent={
 							<ArrowLeftEndOnRectangleIcon
-								className="h-8"
+								className="h-6"
 								aria-label="Sign Out"
 							/>
 						}

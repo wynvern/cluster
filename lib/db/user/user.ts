@@ -60,6 +60,7 @@ export default async function fetchUser(
 			banner: true,
 			username: true,
 			bio: true,
+			createdAt: true,
 			_count: {
 				select: {
 					posts: { where: { author: { ...searchBy } } },

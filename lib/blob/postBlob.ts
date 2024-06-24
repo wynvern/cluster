@@ -2,7 +2,7 @@
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
-import { compressImage, squareImage } from "../image";
+import { compressImage } from "../image";
 import { db } from "../db";
 import { postBlob } from "../blob";
 import supportedFormats from "../../public/supportedFormats.json";

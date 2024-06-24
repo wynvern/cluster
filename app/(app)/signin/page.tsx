@@ -133,7 +133,7 @@ export default function Login() {
 					name="email"
 					color="default"
 					variant="bordered"
-					classNames={{ inputWrapper: "h-14" }}
+					classNames={{ inputWrapper: "h-12" }}
 					startContent={
 						<EnvelopeIcon className="h-6 text-neutral-500" />
 					}
@@ -152,7 +152,7 @@ export default function Login() {
 					color="default"
 					variant="bordered"
 					name="password"
-					classNames={{ inputWrapper: "h-14" }}
+					classNames={{ inputWrapper: "h-12" }}
 					startContent={<KeyIcon className="h-6 text-neutral-500" />}
 					isInvalid={inputPasswordVal.active}
 					errorMessage={inputPasswordVal.message}
@@ -194,7 +194,7 @@ export default function Login() {
 						color={success ? "success" : "primary"}
 						isDisabled={loading || success}
 						isLoading={loading}
-						className="h-14"
+						className="h-12"
 						startContent={
 							loading ? (
 								""

@@ -50,6 +50,7 @@ export default async function fetchGroup(
 					members: { where: { group: { ...searchBy } } },
 				},
 			},
+			createdAt: true,
 		},
 	});
 

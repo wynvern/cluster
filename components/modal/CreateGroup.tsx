@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import Draggable from "../general/Draggable";
 import { image } from "@/public/supportedFormats.json";
 import { createGroup } from "@/lib/db/group/groupManagement";
+import supportedCategories from '@/public/categories.json';
 
 interface CreateGroupProps {
 	active: boolean;
@@ -47,6 +48,56 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		},
 	});
 
+	function matchCategory(e: string) {
+		const category = supportedCategories.find((i) => i.toLowerCase() == e.toLowerCase());
+		return category ? true : false;
+	}
+
+	function handleAddCategory(e: string) {
+		setErrors((prev) => ({
+			...prev,
+			categories: "",
+		}));
+
+		if (!e.includes(' ')) {
+			setCategory(e);
+			return;
+		};
+
+		if (categories.length > 4) {
+			setErrors((prev) => ({
+				...prev,
+				categories: "Limite de categorias atingido",
+			}));
+			setTimeout(() => {
+				setErrors((prev) => ({
+					...prev,
+					categories: "",
+				}));
+			}, 3000);
+
+			return false;
+		}
+
+		if (categories.includes(e.trim())) {
+			setCategory('');
+			return;
+		}
+
+		if (matchCategory(e.trim())) {
+			setCategories([
+				...categories,
+				e.trim(),
+			]);
+			setCategory('')
+		} else {
+			setErrors((prev) => ({
+				...prev,
+				categories: "Categoria inválida",
+			}));
+		}
+	}
+
 	function validateInputs(groupname: string, categories: string[]) {
 		const throwErrors = {
 			name: "",
@@ -66,9 +117,9 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		// Update the state with the errors
 		setErrors(throwErrors);
 
-		// Check if there are any errors
-		const isValid = !Object.values(errors).some((error) => error !== "");
-		return isValid;
+		// Check if there are any errors by looking for non-empty error messages in throwErrors
+		const hasErrors = Object.values(throwErrors).some(error => error !== "");
+		return !hasErrors; // Return true if there are no errors, false otherwise
 	}
 
 	async function handleUpdateProfile(e: React.FormEvent<HTMLFormElement>) {
@@ -308,6 +359,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 									}));
 								}}
 							/>
+							{ /* Categories system made by a furry */}
 							<Input
 								placeholder="Categorias"
 								variant="bordered"
@@ -319,37 +371,11 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								isInvalid={errors.categories !== ""}
 								max={20}
 								value={category}
-								onValueChange={(e: string) => {
-									if (e.includes(" ")) {
-										if (categories.length > 4) {
-											setErrors((prev) => ({
-												...prev,
-												categories:
-													"Limite de categorias atingido",
-											}));
-											setTimeout(() => {
-												setErrors((prev) => ({
-													...prev,
-													categories: "",
-												}));
-											}, 3000);
-
-											return false;
-										}
-
-										setCategories([
-											...categories,
-											e.trim(),
-										]);
-
-										setErrors((prev) => ({
-											...prev,
-											categories: "",
-										}));
-
-										setCategory("");
-									} else setCategory(e);
-								}}
+								onValueChange={(e: string) => handleAddCategory(e)}
+								onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+									if (e.key === "Enter") {
+										e.preventDefault()
+									}}}
 							/>
 							{categories.length >= 1 ? (
 								<div className="flex gap-y-2 gap-x-2 overflow-x-auto">

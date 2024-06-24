@@ -5,7 +5,6 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import ServiceWorkerHandler from "./service/ServiceWorkerHandler";
 import { ConfirmationModalProvider } from "@/providers/ConfirmationModal";
-import { LoadingModalProvider } from "@/providers/LoadingProvider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
@@ -17,9 +16,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 							attribute="class"
 							defaultTheme="light"
 						>
-							<LoadingModalProvider>
 								{children}
-							</LoadingModalProvider>
 							<ServiceWorkerHandler />
 						</NextThemesProvider>
 					</ConfirmationModalProvider>

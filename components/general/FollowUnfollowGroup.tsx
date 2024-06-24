@@ -25,7 +25,6 @@ export default function ({ groupname }: { groupname: string }) {
 				"member"
 			);
 			const settings = await fetchGroupSettings({ groupname });
-			console.log(settings);
 
 			setUserRole(userRole);
 			setIsLoading(false);

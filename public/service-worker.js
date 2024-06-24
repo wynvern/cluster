@@ -21,7 +21,6 @@ const urlBase64ToUint8Array = (base64String) => {
 const activateEvent = () => {
 	self.addEventListener("activate", async (event) => {
 		event.waitUntil(clients.claim());
-		console.log("service worker activated");
 
 		const subscription = await self.registration.pushManager.subscribe({
 			userVisibleOnly: true,

@@ -1,7 +1,7 @@
 import { Chip, Image } from "@nextui-org/react";
 import type Group from "@/lib/db/group/type";
 import GroupActions from "./GroupActions";
-import ScrollBanner from "@/components/general/ScrollBanner";
+import prettyDate from "@/util/prettyDate";
 
 export default async function GroupProfile({ group }: { group: Group }) {
 	return (
@@ -11,14 +11,12 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				className={`w-full relative ${group ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<ScrollBanner
-					imageURL={group ? (group.banner as string) : ""}
-				/>
+				<Image src={group ? (group.banner as string) + '?size=550' : ""} removeWrapper={true} />
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
 						src={
 							group?.image
-								? group.image
+								? group.image + '?size=400'
 								: "/brand/default-group.svg"
 						}
 						removeWrapper={true}
@@ -56,6 +54,9 @@ export default async function GroupProfile({ group }: { group: Group }) {
 							<p>{i}</p>
 						</Chip>
 					))}
+				</div>
+				<div>
+					<p>Criado em {prettyDate({ date: group.createdAt})}</p>
 				</div>
 			</div>
 			<div className="bottom-border w-full mt-10" />

@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ListMessages } from "./ListMessages";
 import type Group from "@/lib/db/group/type";
-import { socket } from "../../../../../lib/SocketClient";
+import { socket } from "../../../../../lib/socketClient";
 import ChatHeader from "./ChatHeader";
 import { useMessageAttr } from "@/hooks/ChatMessage";
 import type { MessageProps } from "@/lib/db/group/type";

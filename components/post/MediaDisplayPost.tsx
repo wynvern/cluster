@@ -13,8 +13,6 @@ export default function MediaDisplayPost({
 	const extension = media[index].split("/").slice(-2, -1)[0];
 	const currentMedia = media[index];
 
-	console.log(currentMedia);
-
 	const renderMedia = () => {
 		switch (extension) {
 			case "png":
@@ -23,7 +21,7 @@ export default function MediaDisplayPost({
 			case "jpeg":
 				return (
 					<img
-						src={currentMedia}
+						src={currentMedia + '?size=300'}
 						className={"h-full w-full rounded-large object-cover"}
 						alt=""
 					/>

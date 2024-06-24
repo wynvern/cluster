@@ -1,7 +1,7 @@
 import type User from "@/lib/db/user/type";
 import { Image } from "@nextui-org/react";
 import UserActions from "./UserActions";
-import ScrollBanner from "@/components/general/ScrollBanner";
+import prettyDate from "@/util/prettyDate";
 
 interface UserProfileProps {
 	user: User;
@@ -15,12 +15,12 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				className={`w-full relative ${user ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<ScrollBanner imageURL={user ? (user.banner as string) : ""} />
+				<Image src={user ? (user.banner as string) + '?size=550' : ""} removeWrapper={true} className='rounded-none w-full object-cover' style={{aspectRatio: '1000 / 400'}}/>
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
 						src={
 							user?.image
-								? user.image
+								? user.image + '?size=400'
 								: "/brand/default-avatar.svg"
 						}
 						removeWrapper={true}
@@ -54,6 +54,9 @@ export default async function UserProfile({ user }: UserProfileProps) {
 					<p>
 						Grupos <b>{user._count.groups}</b>
 					</p>
+				</div>
+				<div>
+					<p>Entrou em <b>{prettyDate({ date: user.createdAt})}</b></p>
 				</div>
 			</div>
 		</div>

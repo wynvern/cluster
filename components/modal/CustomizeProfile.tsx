@@ -13,6 +13,7 @@ import { uploadUserAvatar, uploadUserBanner } from "@/lib/blob/userBlob";
 import type User from "@/lib/db/user/type";
 import getFileBase64 from "@/util/getFile";
 import Draggable from "../general/Draggable";
+import { useSession } from "next-auth/react";
 
 interface CustomizeProfileProps {
 	active: boolean;
@@ -29,6 +30,7 @@ export default function CustomizeProfile({
 }: CustomizeProfileProps) {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
+	const { update } = useSession();
 
 	const [selectedImages, setSelectedImages] = useState({
 		avatar: {
@@ -54,10 +56,13 @@ export default function CustomizeProfile({
 		const bio = form.get("bio") as string;
 
 		if (selectedImages.avatar.base64) {
-			await uploadUserAvatar(
+			const response = await uploadUserAvatar(
 				selectedImages.avatar.base64,
 				selectedImages.avatar.fileType
 			);
+			if (typeof response !== "string") {
+				update({ image: response.url });
+			}
 		}
 		if (selectedImages.banner.base64) {
 			await uploadUserBanner(
@@ -69,7 +74,7 @@ export default function CustomizeProfile({
 		const data = await updateUser(name, bio);
 
 		if (!data) {
-			// handle error
+			// TODO: handle error
 		}
 
 		setLoading(false);

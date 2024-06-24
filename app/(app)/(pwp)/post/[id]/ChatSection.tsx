@@ -35,7 +35,7 @@ function CommentCreator({
 			<UserAvatar avatarURL={session.data?.user.image} />
 			<Textarea
 				value={newComment.text}
-				onChange={(e) => setNewComment({ text: e.target.value })}
+				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewComment({ text: e.target.value })}
 				placeholder="Escreva seu comentário..."
 				variant="bordered"
 			/>
@@ -89,7 +89,6 @@ function RenderCommentLevel({
 }
 
 export default function ({ post, comments }: ChatSectionProps) {
-	console.log(comments);
 
 	return (
 		<div className="pl-16 w-full flex gap-x-4 items-start flex-col">

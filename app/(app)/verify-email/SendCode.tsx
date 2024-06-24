@@ -22,9 +22,7 @@ export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
 		switch (data) {
 			case "code-sent":
 				setSuccess(true);
-				setTimeout(() => {
-					onCodeSent();
-				}, 3000);
+				onCodeSent();
 				break;
 			case "no-session":
 				setInputError("No session");

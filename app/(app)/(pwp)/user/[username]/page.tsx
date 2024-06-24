@@ -16,7 +16,6 @@ export default async function UserPage({
 	const userData = await fetchUser({ username });
 
 	function renderInnerContent() {
-		console.log(userData);
 		if (typeof userData === "string") {
 			switch (userData) {
 				case "private-profile":

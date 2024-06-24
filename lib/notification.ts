@@ -60,8 +60,6 @@ export async function sendNotification({
 		},
 	});
 
-	console.log(subscriptions);
-
 	for (const sub of subscriptions) {
 		const pushSubscription: webPush.PushSubscription =
 			sub.subscription as unknown as webPush.PushSubscription; // Cast necessary due to not knowing the type

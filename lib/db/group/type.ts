@@ -69,8 +69,7 @@ export interface UserGroupChats {
 	} | null;
 }
 
-export interface MessageProps {
-	id: string;
+export class MessageProps {
 	content: string;
 	userId: string;
 	user: {
@@ -78,16 +77,43 @@ export interface MessageProps {
 		username: string | null;
 		image: string | null;
 	};
-	createdAt: Date;
 	chatId: string;
-	attachments?: string[];
-	media?: string[];
-	replyToId?: string;
+	media: string[];
+	replyToId: string;
+	createdAt: Date;
 	chat: {
 		group: {
 			groupname: string;
 		};
 	};
+
+	constructor(
+		content: string,
+		userId: string,
+		user: {
+			id: string;
+			username: string | null;
+			image: string | null;
+		},
+		chatId: string,
+		media: string[],
+		replyToId: string,
+		createdAt: Date,
+		chat: {
+			group: {
+				groupname: string;
+			};
+		}
+	) {
+		this.content = content;
+		this.userId = userId;
+		this.user = user;
+		this.chatId = chatId;
+		this.media = media;
+		this.replyToId = replyToId;
+		this.createdAt = createdAt;
+		this.chat = chat;
+	}
 }
 
 export interface BannedMember {

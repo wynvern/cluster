@@ -6,10 +6,8 @@ import type { MessageProps } from "@/lib/db/group/type";
 
 export function ListMessages({
 	messages,
-	ref,
 }: {
 	messages: MessageProps[];
-	ref: React.RefObject<HTMLDivElement>;
 }) {
 	const session = useSession();
 

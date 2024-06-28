@@ -1,3 +1,5 @@
+"use client";
+
 export default function prettyDate({ date }: { date: Date }) {
 	const now = new Date();
 	const sameDay =
@@ -10,10 +12,10 @@ export default function prettyDate({ date }: { date: Date }) {
 		return date.toLocaleTimeString([], {
 			hour: "2-digit",
 			minute: "2-digit",
-		}); // returns hour and minute
+		});
 	}
 	if (sameYear) {
-		return date.toLocaleDateString([], { month: "short", day: "numeric" }); // returns month and day
+		return date.toLocaleDateString([], { month: "short", day: "numeric" });
 	}
-	return date.toLocaleDateString(); // returns full date
+	return date.toLocaleDateString();
 }

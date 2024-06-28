@@ -38,7 +38,7 @@ export default function LayoutChat({
 	useEffect(() => {
 		// Trigger a resize event on initial render
 		window.dispatchEvent(new Event("resize"));
-	}, [window]);
+	}, []);
 
 	return (
 		<div className="flex justify-center w-full h-full">
@@ -91,7 +91,6 @@ export default function LayoutChat({
 											<div className="flex gap-x-1">
 												<h2>{group.name}</h2>
 												<p>
-													<g />
 													{group.groupname}
 												</p>
 											</div>

@@ -11,7 +11,7 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				className={`w-full relative ${group ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<Image src={group ? (group.banner as string) + '?size=550' : ""} removeWrapper={true} />
+				<Image src={group ? (group.banner as string) + '?size=550' : ""} removeWrapper={true} className="rounded-none w-full h-full object-cover"/>
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
 						src={

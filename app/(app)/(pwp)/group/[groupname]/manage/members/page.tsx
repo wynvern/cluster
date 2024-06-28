@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import prettyDate from "@/util/prettyDate";
 import {
+	ChevronDownIcon,
 	ChevronUpIcon,
 	NoSymbolIcon,
 	XMarkIcon,
@@ -24,6 +25,7 @@ import {
 	getMemberRole,
 	kickMember,
 	promoteMember,
+	unpromoteMember,
 } from "@/lib/db/group/groupMember";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 
@@ -75,11 +77,15 @@ export default function ({ params }: { params: { groupname: string } }) {
 				});
 				if (response && members) {
 					const newMembers = members;
+					const index = members.findIndex(
+						(m) => m.user.id === member.user.id
+					);
+					newMembers[index].role = "moderator";
 					setMembers(newMembers);
 				}
 			},
 			title: "Promover membro",
-			description: `Tem certeza que deseja promover ${member.user.id} a moderador?`,
+			description: `Tem certeza que deseja promover ${member.user.username} a moderador?`,
 			onCancel: () => {},
 		});
 	}
@@ -92,13 +98,14 @@ export default function ({ params }: { params: { groupname: string } }) {
 					userId: member.user.id,
 					reason: "em desenvolvimento", // TODO: ask for a reason.
 				});
+				alert(response);
 				if (response && members) {
 					const newMembers = members;
 					setMembers(newMembers);
 				}
 			},
 			title: "Banir membro",
-			description: `Tem certeza que deseja banir ${member.user.id}?`,
+			description: `Tem certeza que deseja banir ${member.user.username}?`,
 			onCancel: () => {},
 		});
 	}
@@ -117,6 +124,28 @@ export default function ({ params }: { params: { groupname: string } }) {
 			},
 			title: "Expulsar membro",
 			description: `Tem certeza que deseja expulsar ${member.user.id}?`,
+			onCancel: () => {},
+		});
+	}
+
+	async function handleUnpromoteMember(member: Member) {
+		await confirm({
+			onConfirm: async () => {
+				const response = await unpromoteMember({
+					groupname: params.groupname,
+					userId: member.user.id,
+				});
+				if (response && members) {
+					const index = members.findIndex(
+						(m) => m.user.id === member.user.id
+					);
+					const newMembers = members;
+					newMembers[index].role = "member";
+					setMembers(newMembers);
+				}
+			},
+			title: "Despromover membro",
+			description: `Tem certeza que deseja despromover ${member.user.username}?`,
 			onCancel: () => {},
 		});
 	}
@@ -177,19 +206,34 @@ export default function ({ params }: { params: { groupname: string } }) {
 											>
 												<XMarkIcon className="h-6" />
 											</Button>
-											<Button
-												isIconOnly={true}
-												color="success"
-												isDisabled={
-													member.role === "owner" ||
-													role !== "owner"
-												}
-												onClick={() =>
-													handlePromoteMember(member)
-												}
-											>
-												<ChevronUpIcon className="h-6" />
-											</Button>
+											{member.role === "member" ? (
+												<Button
+													isIconOnly={true}
+													color="success"
+													onClick={() =>
+														handlePromoteMember(
+															member
+														)
+													}
+												>
+													<ChevronUpIcon className="h-6" />
+												</Button>
+											) : (
+												<Button
+													isIconOnly={true}
+													color="success"
+													isDisabled={
+														member.role === "owner"
+													}
+													onClick={() =>
+														handleUnpromoteMember(
+															member
+														)
+													}
+												>
+													<ChevronDownIcon className="h-6" />
+												</Button>
+											)}
 										</div>
 									</TableCell>
 								</TableRow>
@@ -197,7 +241,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 						</TableBody>
 					</Table>
 				) : (
-					<div>
+					<div className="flex w-full h-40 items-center justify-center">
 						<CircularProgress />
 					</div>
 				)}

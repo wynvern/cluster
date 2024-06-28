@@ -57,7 +57,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 				}
 			},
 			title: "Desbanir membro",
-			description: `Tem certeza que deseja desbanir ${member.user.id}?`,
+			description: `Tem certeza que deseja desbanir ${member.user.username}?`,
 			onCancel: () => {},
 		});
 	}

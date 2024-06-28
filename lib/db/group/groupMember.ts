@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { memberHasPermission } from "./groupUtils";
+import { sendNotification } from "@/lib/notification";
 
 // Bans a member from a group
 export async function banMember({
@@ -15,7 +16,9 @@ export async function banMember({
 	userId: string;
 	reason: string;
 }) {
-	if (!(await memberHasPermission(userId, groupname, "moderator")))
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+	if (!(await memberHasPermission(session.user.id, groupname, "moderator")))
 		return "no-permission";
 
 	const group = await db.group.findUnique({
@@ -33,6 +36,14 @@ export async function banMember({
 			groupId: group.id,
 			userId,
 			reason,
+		},
+	});
+
+	await sendNotification({
+		receiverUserId: userId,
+		message: {
+			title: `Você foi banido do grupo ${groupname}`,
+			body: `Motivo: ${reason}`,
 		},
 	});
 
@@ -233,6 +244,11 @@ export async function unbanMember({
 	groupname: string;
 	userId: string;
 }) {
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+	if (!(await memberHasPermission(session.user.id, groupname, "moderator")))
+		return "no-permission";
+
 	const group = await db.group.findUnique({
 		where: { groupname },
 	});
@@ -262,6 +278,40 @@ export async function kickMember({
 
 	await db.groupMember.delete({
 		where: { groupId_userId: { groupId: group.id, userId } },
+	});
+
+	return "ok";
+}
+
+// Unpromote member
+export async function unpromoteMember({
+	groupname,
+	userId,
+}: {
+	groupname: string;
+	userId: string;
+}) {
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+
+	if (!(await memberHasPermission(session.user.id, groupname, "owner")))
+		return "no-permission";
+
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return "group-not-found";
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId: userId },
+	});
+
+	if (!member) return "not-member";
+
+	await db.groupMember.update({
+		where: { groupId_userId: { groupId: group.id, userId } },
+		data: { role: "member" },
 	});
 
 	return "ok";

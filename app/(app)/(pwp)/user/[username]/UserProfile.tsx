@@ -2,6 +2,7 @@ import type User from "@/lib/db/user/type";
 import { Image } from "@nextui-org/react";
 import UserActions from "./UserActions";
 import prettyDate from "@/util/prettyDate";
+import DateFormat from "@/util/dateFormat";
 
 interface UserProfileProps {
 	user: User;
@@ -56,7 +57,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 					</p>
 				</div>
 				<div>
-					<p>Entrou em <b>{prettyDate({ date: user.createdAt})}</b></p>
+					<p>Entrou em <b><DateFormat date={user.createdAt} /></b></p>
 				</div>
 			</div>
 		</div>

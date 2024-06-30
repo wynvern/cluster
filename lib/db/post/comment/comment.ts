@@ -75,5 +75,15 @@ export async function createComment({
 			media,
 			document,
 		},
+		include: {
+			author: {
+				select: {
+					id: true,
+					image: true,
+					username: true,
+					name: true,
+				},
+			},
+		},
 	});
 }

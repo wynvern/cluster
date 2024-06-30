@@ -24,22 +24,13 @@ interface FileBase64Info {
 	file?: File;
 }
 
-// Debounce function
-const debounce = (func, wait) => {
-  let timeout;
-
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-};
-
-export default function ChatPage({ group, token }: { group: Group, token: string}) {
+export default function ChatPage({
+	group,
+	token,
+}: {
+	group: Group;
+	token: string;
+}) {
 	const [isSending, setIsSending] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<FileBase64Info | null>(
 		null
@@ -48,14 +39,16 @@ export default function ChatPage({ group, token }: { group: Group, token: string
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
 	const [batchIndex, setBatchIndex] = useState(1);
-	const replyToMessageContent = useMessageAttr((state) => state.replyToMessage);
+	const replyToMessageContent = useMessageAttr(
+		(state) => state.replyToMessage
+	);
 	const setReplyToMessageContent = useMessageAttr(
 		(state) => state.setReplyToMessageContent
 	);
 	const [isAtBottom, setIsAtBottom] = useState(true);
-	const [userTyping, setUserTyping] = useState<{userId: string; username: string}[]>([
-
-	]);
+	const [userTyping, setUserTyping] = useState<
+		{ userId: string; username: string }[]
+	>([]);
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
@@ -86,25 +79,27 @@ export default function ChatPage({ group, token }: { group: Group, token: string
 
 	useEffect(() => {
 		if (socket.connected) {
-			onConnect()
+			onConnect();
 		}
 
 		function onConnect() {
 			console.warn("connected to socket server");
-			socket.emit("auth", {token, chatId: group?.GroupChat?.id});
+			socket.emit("auth", { token, chatId: group?.GroupChat?.id });
 		}
 
 		socket.on("receiveMessage", (message: MessageProps) => {
 			setMessages((prevMessages) => [...prevMessages, message]);
 		});
 
-		socket.on('typing', (data: {userId: string, username: string}) => {
-			console.log(data)
+		socket.on("typing", (data: { userId: string; username: string }) => {
+			console.log(data);
 			setUserTyping((prev) => [...prev, data]);
 			setTimeout(() => {
-				setUserTyping((prev) => prev.filter((user) => user.userId !== data.userId));
+				setUserTyping((prev) =>
+					prev.filter((user) => user.userId !== data.userId)
+				);
 			}, 2000);
-		})
+		});
 
 		socket.on("connect", () => onConnect());
 
@@ -184,7 +179,10 @@ export default function ChatPage({ group, token }: { group: Group, token: string
 		if (overwrite) {
 			setMessages(retreivedMessages);
 		} else {
-			setMessages((prevMessages) => [...retreivedMessages, ...prevMessages]);
+			setMessages((prevMessages) => [
+				...retreivedMessages,
+				...prevMessages,
+			]);
 			setBatchIndex((prev) => prev + 1);
 		}
 		scrollDown();
@@ -244,7 +242,10 @@ export default function ChatPage({ group, token }: { group: Group, token: string
 								<XMarkIcon className="h-6" />
 							</Button>
 							<div className="flex gap-x-1 text-tiny">
-								<b>Respondendo {replyToMessageContent?.authorUsername}: </b>
+								<b>
+									Respondendo{" "}
+									{replyToMessageContent?.authorUsername}:{" "}
+								</b>
 
 								<p>{replyToMessageContent?.content}</p>
 							</div>
@@ -257,11 +258,6 @@ export default function ChatPage({ group, token }: { group: Group, token: string
 						isDisabled={isSending}
 						classNames={{ inputWrapper: "border-none" }}
 						max={1000}
-						onChange={(e: string) => {
-							debounce(() => {
-								socket.emit('setTyping', {userId: session.data?.user?.id, username: session.data?.user?.username, chatId: group?.GroupChat?.id})
-							}, 2000)
-						}}
 					/>
 					{selectedImage && (
 						<div className="relative">
@@ -281,7 +277,12 @@ export default function ChatPage({ group, token }: { group: Group, token: string
 							/>
 						</div>
 					)}
-					{userTyping.length > 0 && userTyping.map((user) => <div><p>{user.username} está digitando...</p></div>)}
+					{userTyping.length > 0 &&
+						userTyping.map((user) => (
+							<div>
+								<p>{user.username} está digitando...</p>
+							</div>
+						))}
 				</div>
 				<Button
 					isIconOnly={true}

@@ -1,6 +1,7 @@
 "use client";
 
 import NoPosts from "@/components/card/NoPosts";
+import PageHeader from "@/components/general/PageHeader";
 import { fetchUserChats } from "@/lib/db/group/groupChat";
 import type { UserGroupChats } from "@/lib/db/group/type";
 import prettyDate from "@/util/prettyDate";
@@ -34,7 +35,6 @@ export default function LayoutChat({
 
 	const isSmallScreen = useMediaQuery({ maxWidth: 1000 });
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		// Trigger a resize event on initial render
 		window.dispatchEvent(new Event("resize"));
@@ -50,7 +50,7 @@ export default function LayoutChat({
 						isSmallScreen && !path.endsWith("chat") ? "hidden" : ""
 					}`}
 				>
-					<h2 className="pt-10 pb-6 px-4">Chat</h2>
+					<PageHeader title="Chat" />
 					<div className="px-4 pb-10 bottom-border">
 						<Input
 							placeholder="Pesquisar grupos"
@@ -88,37 +88,12 @@ export default function LayoutChat({
 											/>
 										</div>
 										<div className="flex flex-col">
-											<div className="flex gap-x-1">
-												<h2>{group.name}</h2>
-												<p>
-													{group.groupname}
-												</p>
+											<div className="flex gap-x-1 flex-col">
+												<h3 className="font-semibold">
+													{group.name}
+												</h3>
+												<p>{group.groupname}</p>
 											</div>
-											{group.GroupChat?.messages[0] && (
-												<div className="flex gap-x-1">
-													<b>
-														{
-															group.GroupChat
-																.messages[0]
-																.user.username
-														}
-													</b>
-													<p>
-														{group.GroupChat.messages[0].content.slice(
-															0,
-															20
-														)}
-													</p>
-													<p>
-														{prettyDate({
-															date: group
-																.GroupChat
-																.messages[0]
-																.createdAt,
-														})}
-													</p>
-												</div>
-											)}
 										</div>
 									</div>
 								</Link>

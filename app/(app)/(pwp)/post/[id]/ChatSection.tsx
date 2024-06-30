@@ -19,23 +19,35 @@ interface ChatSectionProps {
 function CommentCreator({
 	parentId,
 	postId,
+	addNewComment,
 }: {
 	parentId?: string;
 	postId: string;
+	addNewComment: (newComment: RecursiveComments, parentId?: string) => void;
 }) {
 	const [newComment, setNewComment] = useState({ text: "" });
 	const session = useSession();
 
 	async function handleCreatePost() {
-		await createComment({ text: newComment.text, postId, parentId });
+		const createdComment = await createComment({
+			text: newComment.text,
+			postId,
+			parentId,
+		});
+		if (typeof createdComment === "string") {
+			return;
+		}
+
+		// Step 3: Call addNewComment after successfully creating a comment
+		addNewComment(createdComment, parentId);
 	}
 
 	return (
-		<div className="flex gap-x-4 items-start w-full">
+		<div className="flex gap-x-4 items-start w-full mt-6">
 			<UserAvatar avatarURL={session.data?.user.image} />
 			<Textarea
 				value={newComment.text}
-				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewComment({ text: e.target.value })}
+				onChange={(e) => setNewComment({ text: e.target.value })}
 				placeholder="Escreva seu comentário..."
 				variant="bordered"
 			/>
@@ -57,29 +69,51 @@ function RenderCommentLevel({
 	level,
 	comments,
 	postId,
+	addNewComment,
 }: {
 	level: number;
 	comments: RecursiveComments[];
 	postId: string;
+	addNewComment: (newComment: RecursiveComments, parentId?: string) => void;
 }) {
-	const [replyActive, setReplyActive] = useState(false);
+	// Change to use an object to track active replies by comment ID
+	const [activeReplies, setActiveReplies] = useState<{
+		[key: string]: boolean;
+	}>({});
+
+	// Toggle reply active state for a specific comment
+	const toggleReplyActive = (commentId: string) => {
+		setActiveReplies((prevActiveReplies) => ({
+			...prevActiveReplies,
+			[commentId]: !prevActiveReplies[commentId],
+		}));
+	};
 
 	return (
-		<div className="w-full">
+		<div className="w-full relative">
 			{comments.map((comment) => (
-				<div key={comment.id} style={{ paddingLeft: `${level * 3}em` }}>
+				<div
+					key={comment.id}
+					style={{ paddingLeft: `${level + 1}em` }}
+					className="mt-6"
+				>
 					<PostComment
 						comment={comment}
-						setReplyActive={() => setReplyActive(!replyActive)}
+						setReplyActive={() => toggleReplyActive(comment.id)}
 					/>
-					{replyActive && (
-						<CommentCreator parentId={comment.id} postId={postId} />
+					{activeReplies[comment.id] && (
+						<CommentCreator
+							parentId={comment.id}
+							postId={postId}
+							addNewComment={addNewComment}
+						/>
 					)}
 					{comment.children && comment.children.length > 0 && (
 						<RenderCommentLevel
 							level={level + 1}
 							comments={comment.children}
 							postId={postId}
+							addNewComment={addNewComment}
 						/>
 					)}
 				</div>
@@ -88,22 +122,66 @@ function RenderCommentLevel({
 	);
 }
 
-export default function ({ post, comments }: ChatSectionProps) {
+export default function ChatSection({
+	post,
+	comments: initialComments,
+}: ChatSectionProps) {
+	// Step 1: Define a new state to hold all comments
+	const [comments, setComments] =
+		useState<RecursiveComments[]>(initialComments);
+
+	// Function to add a new comment to the state
+	const addNewComment = (
+		newComment: RecursiveComments,
+		parentId?: string
+	) => {
+		setComments((prevComments) => {
+			const updateCommentsRecursively = (
+				comments: RecursiveComments[]
+			): RecursiveComments[] => {
+				return comments.map((comment) => {
+					if (comment.id === parentId) {
+						return {
+							...comment,
+							children: [...(comment.children || []), newComment],
+						};
+					}
+					if (comment.children) {
+						return {
+							...comment,
+							children: updateCommentsRecursively(
+								comment.children
+							),
+						};
+					}
+					return comment;
+				});
+			};
+
+			if (parentId) {
+				return updateCommentsRecursively(prevComments);
+			}
+			return [...prevComments, newComment];
+		});
+	};
 
 	return (
-		<div className="pl-16 w-full flex gap-x-4 items-start flex-col">
-			<CommentCreator postId={post.id} />
+		<div className="w-full flex gap-x-4 items-start flex-col px-6">
+			<CommentCreator postId={post.id} addNewComment={addNewComment} />
 			<div className="w-full">
 				{comments.length > 0 ? (
-					<div>
+					<div className="mt-6 ml-12">
 						<RenderCommentLevel
 							level={0}
 							comments={comments}
 							postId={post.id}
+							addNewComment={addNewComment}
 						/>
 					</div>
 				) : (
-					<NoPosts message="Sem comentários." />
+					<div className="mt-12">
+						<NoPosts message="Sem comentários." />
+					</div>
 				)}
 			</div>
 		</div>

@@ -9,9 +9,15 @@ export default async function HomePage() {
 	return (
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[1000px] h-full relative">
-				<div className="px-10">
+				<div>
 					{posts.map((post) => (
-						<PostCard post={post} key={post.id} />
+						<div key={post.id}>
+							<div className="w-full bottom-border my-6" />
+
+							<div className="px-10">
+								<PostCard post={post} />
+							</div>
+						</div>
 					))}
 				</div>
 			</div>

@@ -5,6 +5,7 @@ import GoBack from "./GoBack";
 import ChatSection from "./ChatSection";
 import NoPosts from "@/components/card/NoPosts";
 import { fetchPostComments } from "@/lib/db/post/comment/comment";
+import PageHeader from "@/components/general/PageHeader";
 
 interface PostPageProps {
 	params: {
@@ -22,23 +23,35 @@ export default async function ({ params }: PostPageProps) {
 	const comments = await fetchPostComments(params.id);
 
 	return (
-		<div className="w-full h-full flex">
-			<div className="h-full w-1/2 sidebar-border">
-				<div className="p-10 w-full">
-					<div className="mb-10">
-						<GoBack />
-					</div>
+		<div
+			className={`w-full h-full flex ${
+				post.media.length < 1 && "justify-center"
+			}`}
+		>
+			<div
+				className={`h-full ${
+					post.media.length < 1
+						? "w-full max-w-[1000px] side-borders"
+						: "w-1/2 sidebar-border"
+				}`}
+			>
+				<div className="w-full">
+					<PageHeader title="Post" showBackButton={true} />
+					<div className="bottom-border w-full mb-6" />
 					<PostCard
 						post={post}
 						disableLink={true}
 						disableImages={true}
 					/>
+					<div className="bottom-border w-full" />
 					<ChatSection post={post} comments={comments} />
 				</div>
 			</div>
-			<div className="h-full w-1/2 flex items-center justify-center">
-				{post.media && <ImageViewer media={post?.media} />}
-			</div>
+			{post.media && post.media.length > 0 && (
+				<div className="h-full w-1/2 flex items-center justify-center">
+					<ImageViewer media={post?.media} />
+				</div>
+			)}
 		</div>
 	);
 }

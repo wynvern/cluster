@@ -29,7 +29,11 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 										comment.createdAt
 									).toLocaleString()}
 								>
-									<PrettyDate date={comment.createdAt} />
+									<p>
+										{new Date(
+											comment.createdAt
+										).toLocaleString()}
+									</p>
 								</Tooltip>
 							</p>
 						</div>
@@ -42,6 +46,7 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 					<Button
 						isIconOnly={true}
 						onClick={() => setReplyActive(true)}
+						variant="bordered"
 					>
 						<ChatBubbleBottomCenterIcon className="h-6" />
 					</Button>

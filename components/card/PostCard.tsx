@@ -23,6 +23,7 @@ import { useState } from "react";
 import MediaDisplayPost from "../post/MediaDisplayPost";
 import PrettyDate from "../general/PrettyDate";
 import prettyDate from "@/util/prettyDate";
+import { useImageCarousel } from "@/providers/ImageDisplay";
 
 export default function PostCard({
 	post,
@@ -36,6 +37,7 @@ export default function PostCard({
 	disableLink?: boolean;
 }) {
 	const [mediaIndex, setMediaIndex] = useState(0);
+	const { openCarousel } = useImageCarousel();
 
 	return (
 		<div className="w-full flex flex-col gap-y-4 px-6">
@@ -89,7 +91,7 @@ export default function PostCard({
 								startContent={
 									<Image
 										removeWrapper={true}
-										src={post.group.image + "?size=50"}
+										src={`${post.group.image}?size=50`}
 										className="w-6 h-6"
 									/>
 								}
@@ -110,20 +112,34 @@ export default function PostCard({
 			<div className="ml-16 flex flex-col gap-y-4 mb-10">
 				{/* Content */}
 				{disableLink ? (
-					<div>
-						<h2>{post.title}</h2>
+					<div className="max-w-[100%]">
+						<h2
+							style={{ wordWrap: "break-word" }}
+							className="max-w-[100%]"
+						>
+							{post.title}
+						</h2>
 						<div
 							dangerouslySetInnerHTML={{ __html: post.content }}
+							style={{ wordWrap: "break-word" }}
+							className="max-w-[100%]"
 						/>
 					</div>
 				) : (
 					<Link href={`/post/${post.id}`}>
-						<div>
-							<h2>{post.title}</h2>
+						<div className="max-w-[100%]">
+							<h2
+								style={{ wordWrap: "break-word" }}
+								className="max-w-[100%]"
+							>
+								{post.title}
+							</h2>
 							<div
 								dangerouslySetInnerHTML={{
 									__html: post.content,
 								}}
+								style={{ wordWrap: "break-word" }}
+								className="max-w-[100%]"
 							/>
 						</div>
 					</Link>
@@ -157,13 +173,19 @@ export default function PostCard({
 				)}
 				{/* Image */}
 				{post.media && !disableImages && post.media.length > 0 ? (
-					<div>
-						<MediaDisplayPost
-							setIndex={(i) => setMediaIndex(i)}
-							media={post.media}
-							index={mediaIndex}
-						/>
-					</div>
+					<Link
+						onClick={() => {
+							openCarousel(post.media);
+						}}
+					>
+						<div>
+							<MediaDisplayPost
+								setIndex={(i) => setMediaIndex(i)}
+								media={post.media}
+								index={mediaIndex}
+							/>
+						</div>
+					</Link>
 				) : (
 					""
 				)}

@@ -12,7 +12,10 @@
 		"pptx",
 		"csv",
 		"xml",
-		"json"
+		"json",
+		"markdown",
+		"html",
+		"htm"
 	],
 	"image": ["png", "jpg", "jpeg", "webp", "bmp", "gif"],
 	"video": ["mp4"],

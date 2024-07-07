@@ -16,6 +16,7 @@ export default interface Group {
 		id: string;
 	} | null;
 	createdAt: Date;
+	isUserMember?: boolean;
 }
 
 export interface UserGroupInfo {

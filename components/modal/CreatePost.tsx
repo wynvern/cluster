@@ -22,7 +22,10 @@ import BaseModal from "./BaseModal";
 import type Group from "@/lib/db/group/type";
 import ErrorBox from "../general/ErrorBox";
 import supportedFormats from "@/public/supportedFormats.json";
-import getFileBase64, { type FileBase64Info } from "@/util/getFile";
+import getFileBase64, {
+	getFilesBase64,
+	type FileBase64Info,
+} from "@/util/getFile";
 import { createPost } from "@/lib/db/post/post";
 import Draggable from "../general/Draggable";
 import MarkdownIt from "markdown-it";
@@ -131,15 +134,14 @@ export default function CreatePost({
 
 	async function handleSelectMedia() {
 		try {
-			const file = await getFileBase64([
-				"png",
-				"jpg",
-				"jpeg",
-				"webp",
-				"gif",
-				"mp4",
-			]);
-			setSelectedMedia((prev) => [...prev, file]);
+			const file = await getFilesBase64(
+				["png", "jpg", "jpeg", "webp", "gif", "mp4"],
+				4.5
+			);
+			if (file.length > 6) {
+				return;
+			}
+			setSelectedMedia((prev) => [...prev, ...file]);
 		} catch (error) {
 			console.error("Error while selecting media:", error);
 		}
@@ -335,7 +337,7 @@ export default function CreatePost({
 									{/* Upload image */}
 									<Draggable
 										onFileDrag={(file) => {
-											if (selectedMedia.length >= 6) {
+											if (selectedMedia.length > 6) {
 												setErrors({
 													...errors,
 													media: "Você atingiu o limite de 6 imagens.",
@@ -439,7 +441,7 @@ export default function CreatePost({
 									{/* Upload image */}
 									<Draggable
 										onFileDrag={(file) => {
-											if (selectedDocuments.length >= 6) {
+											if (selectedDocuments.length > 6) {
 												setErrors({
 													...errors,
 													document:
@@ -502,7 +504,7 @@ export default function CreatePost({
 											(item, index) => (
 												<div
 													key={item.file?.name}
-													className="bg-neutral-800 relative rounded-large w-full flex p-3 justify-between flex items-center"
+													className="default-border relative rounded-large w-full flex p-3 justify-between flex items-center"
 												>
 													<div className="flex gap-x-4">
 														<DocumentIcon className="h-6 w-6" />

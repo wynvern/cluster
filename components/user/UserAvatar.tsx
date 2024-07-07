@@ -7,7 +7,11 @@ export default function UserAvatar({
 }) {
 	return (
 		<Image
-			src={avatarURL + '?size=100' || "/brand/default-avatar.svg"}
+			src={
+				avatarURL
+					? `${avatarURL}?size=100`
+					: "/brand/default-avatar.svg"
+			}
 			className="h-10 w-10 sm:w-12 sm:h-12 rounded-large"
 			alt="user-image"
 			removeWrapper={true}

@@ -1,9 +1,11 @@
+"use server";
+
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { postSelection } from "../prismaSelections";
 
-export async function fetchUserFeed() {
+export async function fetchUserFeed(offset: number) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
@@ -13,6 +15,8 @@ export async function fetchUserFeed() {
 		orderBy: {
 			createdAt: "desc",
 		},
+		skip: offset,
+		take: 10,
 	});
 
 	return posts;

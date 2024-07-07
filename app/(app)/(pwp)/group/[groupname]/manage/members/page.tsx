@@ -5,6 +5,7 @@ import CategoryHeader from "../CategoryHeader";
 import {
 	Button,
 	CircularProgress,
+	Link,
 	Table,
 	TableBody,
 	TableCell,
@@ -166,7 +167,11 @@ export default function ({ params }: { params: { groupname: string } }) {
 							{members.map((member) => (
 								<TableRow key={member.user.id}>
 									<TableCell>
-										{member.user.username}
+										<Link
+											href={`/user/${member.user.username}`}
+										>
+											{member.user.username}
+										</Link>
 									</TableCell>
 									<TableCell>
 										{rolesDictionary[member.role]}

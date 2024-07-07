@@ -16,18 +16,21 @@ export default function BaseModal({
 	body,
 	footer,
 	size,
+	extraProps,
 }: {
 	active: boolean;
 	setActive: React.Dispatch<React.SetStateAction<boolean>>;
 	title: ReactNode;
 	body: ReactNode;
 	footer?: ReactNode;
-	size?: "sm" | "md" | "lg" | "xl" | "2xl";
+	size?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+	extraProps?: any;
 }) {
 	return (
 		<Modal
 			size={size || "sm"}
 			isOpen={active}
+			backdrop="blur"
 			className="text-foreground py-2 sm:py-4 default-border px-3 sm:px-6"
 			placement="center"
 			motionProps={{
@@ -51,6 +54,7 @@ export default function BaseModal({
 			onOpenChange={() => {
 				setActive(false);
 			}}
+			{...extraProps}
 		>
 			<ModalContent>
 				{() => (

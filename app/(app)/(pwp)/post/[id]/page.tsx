@@ -6,6 +6,8 @@ import ChatSection from "./ChatSection";
 import NoPosts from "@/components/card/NoPosts";
 import { fetchPostComments } from "@/lib/db/post/comment/comment";
 import PageHeader from "@/components/general/PageHeader";
+import { useImageCarousel } from "@/providers/ImageDisplay";
+import { Link } from "@nextui-org/react";
 
 interface PostPageProps {
 	params: {
@@ -15,7 +17,6 @@ interface PostPageProps {
 
 export default async function ({ params }: PostPageProps) {
 	const post = await fetchPostById(params.id);
-
 	if (!post) {
 		return "no post";
 	}

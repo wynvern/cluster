@@ -13,6 +13,7 @@ import {
 	DropdownMenu,
 	DropdownItem,
 	Button,
+	Link,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import type Group from "@/lib/db/group/type";
@@ -74,14 +75,15 @@ export default function GroupActions({ group }: { group: Group }) {
 
 	return (
 		<>
-			<Button
-				isIconOnly={true}
-				color="primary"
-				href={`/chat/${group.groupname}`}
-			>
-				<ChatBubbleBottomCenterTextIcon className="h-6" />
-			</Button>
-			<FollowUnfollowGroup groupname={group.groupname} />
+			<Link href={`/chat/${group.groupname}`}>
+				<Button isIconOnly={true} color="primary">
+					<ChatBubbleBottomCenterTextIcon className="h-6" />
+				</Button>
+			</Link>
+			<FollowUnfollowGroup
+				groupname={group.groupname}
+				isDefaultFollowing={group.isUserMember || false}
+			/>
 			<Dropdown
 				className="default-border shadow-none"
 				placement="bottom-end"

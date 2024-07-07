@@ -47,3 +47,46 @@ export function postSelection(userId: string) {
 		},
 	};
 }
+
+export function userSelection() {
+	return {
+		id: true,
+		name: true,
+		image: true,
+		banner: true,
+		username: true,
+		bio: true,
+		createdAt: true,
+		_count: {
+			select: {
+				posts: true,
+				bookmarks: true,
+				groups: true,
+			},
+		},
+		userSettings: {
+			select: {
+				privateProfile: true,
+			},
+		},
+	};
+}
+
+export function groupSelection() {
+	return {
+		id: true,
+		name: true,
+		categories: true,
+		image: true,
+		banner: true,
+		groupname: true,
+		description: true,
+		_count: true,
+		GroupChat: {
+			select: {
+				id: true,
+			},
+		},
+		createdAt: true,
+	};
+}

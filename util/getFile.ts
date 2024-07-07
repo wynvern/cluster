@@ -26,6 +26,8 @@ export default function getFileBase64(
 				fileType.includes(type)
 			);
 
+			console.log(fileType, acceptedTypes);
+
 			if (file.size > maxSize * 1024 * 1024) {
 				reject(new Error("file-too-large"));
 				return;
@@ -59,5 +61,82 @@ export default function getFileBase64(
 		});
 
 		fileInput.click();
+	});
+}
+
+export function getFilesBase64(
+	acceptedTypes: string[],
+	maxSize = 5
+): Promise<FileBase64Info[]> {
+	return new Promise((resolve, reject) => {
+		const fileInput = document.createElement("input");
+		fileInput.type = "file";
+		fileInput.multiple = true; // Allow multiple file selection
+		fileInput.accept = acceptedTypes.map((type) => `.${type}`).join(",");
+
+		fileInput.addEventListener("change", async (event) => {
+			const files = (event.target as HTMLInputElement).files;
+			if (!files || files.length === 0) {
+				reject(new Error("no-files-selected"));
+				return;
+			}
+
+			const fileBase64Infos: FileBase64Info[] = [];
+			for (const file of files) {
+				const fileType = file.type;
+				const isAcceptedType = acceptedTypes.some((type) =>
+					fileType.includes(type)
+				);
+
+				if (file.size > maxSize * 1024 * 1024) {
+					reject(new Error("file-too-large"));
+					return;
+				}
+
+				if (!isAcceptedType) {
+					reject(new Error("invalid-file-type"));
+					return;
+				}
+
+				try {
+					const fileBase64Info = await readFileAsBase64(file);
+					fileBase64Infos.push(fileBase64Info);
+				} catch (error) {
+					reject(error);
+					return;
+				}
+			}
+
+			resolve(fileBase64Infos);
+		});
+
+		fileInput.click();
+	});
+}
+
+function readFileAsBase64(file: File): Promise<FileBase64Info> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => {
+			if (typeof reader.result === "string") {
+				const [, base64] = reader.result.split(",");
+
+				const preview = URL.createObjectURL(file);
+				const fileType = file.type;
+
+				resolve({
+					base64,
+					preview,
+					fileType,
+					file,
+				});
+			} else {
+				reject(new Error("cant-read-base64"));
+			}
+		};
+
+		reader.onerror = () => reject(new Error("file-read-error"));
+
+		reader.readAsDataURL(file);
 	});
 }

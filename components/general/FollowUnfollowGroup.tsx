@@ -7,13 +7,19 @@ import { useSession } from "next-auth/react";
 import type React from "react";
 import { useEffect, useState } from "react";
 
-export default function ({ groupname }: { groupname: string }) {
-	const [isLoading, setIsLoading] = useState(true);
-	const [isFollowing, setIsFollowing] = useState(false);
+export default function ({
+	groupname,
+	isDefaultFollowing,
+}: {
+	groupname: string;
+	isDefaultFollowing: boolean;
+}) {
+	const [isFollowing, setIsFollowing] = useState(isDefaultFollowing);
 	const [isJoiningDisabled, setIsJoiningDisabled] = useState(false);
 	const [userRole, setUserRole] = useState<string | null>(null);
 	const session = useSession();
 
+	// TODO: Optimize
 	useEffect(() => {
 		async function checkFollowingStatus() {
 			if (!session.data) return false;
@@ -27,7 +33,6 @@ export default function ({ groupname }: { groupname: string }) {
 			const settings = await fetchGroupSettings({ groupname });
 
 			setUserRole(userRole);
-			setIsLoading(false);
 			setIsFollowing(role);
 			setIsJoiningDisabled(!settings?.memberJoining);
 		}
@@ -53,7 +58,9 @@ export default function ({ groupname }: { groupname: string }) {
 			color="primary"
 			onClick={handleClick}
 			isDisabled={
-				userRole === "owner" || (isJoiningDisabled && !isFollowing)
+				userRole === "owner" ||
+				(isJoiningDisabled && !isFollowing) ||
+				!userRole
 			}
 		>
 			{isFollowing ? "Seguindo" : "Seguir"}

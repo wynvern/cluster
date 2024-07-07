@@ -56,6 +56,13 @@ export default async function fetchGroup(
 
 	if (!query) return null;
 
+	const isUserMember = await db.groupMember.findFirst({
+		where: {
+			groupId: query.id,
+			userId: session.user.id,
+		},
+	});
+
 	// Add view to group_views
 	await db.groupView.upsert({
 		where: {
@@ -68,7 +75,7 @@ export default async function fetchGroup(
 		update: { viewedAt: new Date() },
 	});
 
-	return query;
+	return { ...query, isUserMember: !!isUserMember };
 }
 
 // Creates a new group

@@ -48,7 +48,7 @@ export default async function ({ params }: PostPageProps) {
 				</div>
 			</div>
 			{post.media && post.media.length > 0 && (
-				<div className="h-full w-1/2 flex items-center justify-center">
+				<div className="h-dvh w-1/2 flex items-center justify-center">
 					<ImageViewer media={post?.media} />
 				</div>
 			)}

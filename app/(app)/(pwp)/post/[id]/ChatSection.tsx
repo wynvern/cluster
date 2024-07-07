@@ -29,6 +29,8 @@ function CommentCreator({
 	const session = useSession();
 
 	async function handleCreatePost() {
+		if (!newComment.text) return;
+
 		const createdComment = await createComment({
 			text: newComment.text,
 			postId,
@@ -37,9 +39,8 @@ function CommentCreator({
 		if (typeof createdComment === "string") {
 			return;
 		}
-
-		// Step 3: Call addNewComment after successfully creating a comment
 		addNewComment(createdComment, parentId);
+		setNewComment({ text: "" });
 	}
 
 	return (
@@ -58,6 +59,7 @@ function CommentCreator({
 				isIconOnly={true}
 				variant="bordered"
 				onClick={() => handleCreatePost()}
+				disabled={newComment.text === ''}
 			>
 				<PaperAirplaneIcon className="h-6" />
 			</Button>

@@ -68,8 +68,9 @@ export function ImageCarouselProvider({ children }: { children: ReactNode }) {
 								</Button>
 							</div>
 							<div>
+								{/* TODO: Fix image height not being correctly placed */}
 								<Image
-									className="rounded-none"
+									className="rounded-none max-h-[30vh] max-w-[80vw]"
 									removeWrapper={true}
 									src={images[index]}
 									alt="Image"

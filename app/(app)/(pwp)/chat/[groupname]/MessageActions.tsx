@@ -71,6 +71,10 @@ export default function ({ message }: { message: MessageProps }) {
 		handleHasPermission();
 	}, [session.data?.user]);
 
+	// const DropdownMenuWrapper = ({ children }: { children: React.ReactNode }) => {
+	// 	return <DropdownMenu>{children}</DropdownMenu>;
+	// };
+
 	return (
 		<div className="flex items-center gap-x-4 message-actions">
 			<Link onClick={setReplyTo}>
@@ -82,7 +86,8 @@ export default function ({ message }: { message: MessageProps }) {
 						<EllipsisHorizontalIcon className="h-6" />
 					</Link>
 				</DropdownTrigger>
-				<DropdownMenu>
+				{/* TODO: FIX WHY IS THIS THROWING ERROR AT COMPILE DUE TO INCOMPATIBLE TYPES */}
+				{/* <DropdownMenuWrapper>
 					{DropdownItems.filter(
 						(item) =>
 							(session.data?.user.id === message.userId &&
@@ -91,7 +96,8 @@ export default function ({ message }: { message: MessageProps }) {
 					).map((item) => (
 						<DropdownItem key={item.title} {...item} />
 					))}
-				</DropdownMenu>
+				</DropdownMenuWrapper> */}
+				<DropdownMenu/>
 			</Dropdown>
 		</div>
 	);

@@ -10,10 +10,10 @@ import {
 import {
 	Dropdown,
 	DropdownTrigger,
-	DropdownMenu,
 	DropdownItem,
 	Button,
 	Link,
+	DropdownMenu,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import type Group from "@/lib/db/group/type";
@@ -42,9 +42,7 @@ export default function GroupActions({ group }: { group: Group }) {
 		{
 			modRequired: true,
 			description: "Gerenciar o grupo",
-			icon: (
-				<Cog6ToothIcon className="h-8" aria-label="gerenciar-grupo" />
-			),
+			icon: <Cog6ToothIcon className="h-8" aria-label="gerenciar-grupo" />,
 			ariaLabel: "manage group",
 			onClick: () => router.push(`/group/${group.groupname}/manage`),
 			text: "Gerenciar Grupo",
@@ -86,7 +84,7 @@ export default function GroupActions({ group }: { group: Group }) {
 			/>
 			<Dropdown
 				className="default-border shadow-none"
-				placement="bottom-end"
+				// placement="bottom-end"
 			>
 				<DropdownTrigger>
 					<Button isIconOnly={true} variant="bordered">
@@ -94,24 +92,26 @@ export default function GroupActions({ group }: { group: Group }) {
 					</Button>
 				</DropdownTrigger>
 				<DropdownMenu aria-label="Static Actions">
-					{dropdownItems
-						.filter(
-							(item) =>
-								(item.modRequired && hasGroupPermission) ||
-								(!item.modRequired && !hasGroupPermission)
-						)
-						.map((item) => (
-							<DropdownItem
-								key={item.ariaLabel}
-								description={item.description}
-								startContent={item.icon}
-								aria-label={item.ariaLabel}
-								onClick={item.onClick}
-								className={item.className}
-							>
-								{item.text}
-							</DropdownItem>
-						))}
+					<>
+						{dropdownItems
+							.filter(
+								(item) =>
+									(item.modRequired && hasGroupPermission) ||
+									(!item.modRequired && !hasGroupPermission)
+							)
+							.map((item) => (
+								<DropdownItem
+									key={item.ariaLabel}
+									description={item.description}
+									startContent={item.icon}
+									aria-label={item.ariaLabel}
+									onClick={item.onClick}
+									className={item.className}
+								>
+									{item.text}
+								</DropdownItem>
+							))}
+					</>
 				</DropdownMenu>
 			</Dropdown>
 

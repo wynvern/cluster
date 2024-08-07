@@ -1,0 +1,50 @@
+{
+	"version": "2.0.0",
+	"presentation": {
+		"echo": false,
+		"reveal": "always",
+		"focus": false,
+		"panel": "dedicated",
+		"showReuseMessage": true
+	},
+	"tasks": [
+		{
+			"label": "Create terminals",
+			"dependsOn": ["Cluster", "Blob", "Socket"],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Cluster",
+			"type": "shell",
+			"command": "yarn dev",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"group": "my-group"
+			}
+		},
+		{
+			"label": "Blob",
+			"type": "shell",
+			"command": "cd /home/wynvern/Documents/projects/git/cluster_blob && yarn start",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"group": "my-group"
+			}
+		},
+		{
+			"label": "Socket",
+			"type": "shell",
+			"command": "cd /home/wynvern/Documents/projects/git/cluster_socket &&yarn start",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"group": "my-group"
+			}
+		}
+	]
+}

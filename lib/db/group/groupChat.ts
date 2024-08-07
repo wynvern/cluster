@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { memberHasPermission } from "./groupUtils";
+import { MessageProps } from "./type";
 
 export async function fetchUserChats() {
 	const session = await getServerSession(authOptions);
@@ -107,7 +108,10 @@ export async function createMessage(message: string, groupChatId: string) {
 	return "ok";
 }
 
-export async function fetchMessages(groupId: string, batchIndex: number) {
+export async function fetchMessages(
+	groupId: string,
+	batchIndex: number
+): Promise<MessageProps[] | string> {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 

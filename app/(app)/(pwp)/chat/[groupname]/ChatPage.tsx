@@ -169,13 +169,8 @@ export default function ChatPage({
 			groupId,
 			batchIndex + (overwrite ? 0 : 1)
 		);
+		if (typeof retreivedMessages === "string") return
 
-		switch (retreivedMessages) {
-			case "no-session":
-				return false;
-			case "no-more-messages":
-				return false;
-		}
 		if (overwrite) {
 			setMessages(retreivedMessages);
 		} else {

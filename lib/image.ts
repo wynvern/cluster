@@ -6,8 +6,8 @@ export async function squareImage(buffer: Buffer): Promise<Buffer> {
 
 		if (metadata.width && metadata.height) {
 			const processedImage = await sharp(buffer)
-				.png({ compressionLevel: 9 }) // Convert to PNG format
-				.withMetadata() // Keep image metadata (e.g., orientation)
+				.png({ compressionLevel: 9 })
+				.withMetadata()
 				.resize({
 					width: 500,
 					height: 500,
@@ -31,8 +31,8 @@ export async function compressImage(buffer: Buffer): Promise<Buffer> {
 
 		if (metadata.width && metadata.height) {
 			const processedImage = await sharp(buffer)
-				.png({ compressionLevel: 9 }) // Convert to PNG format
-				.withMetadata() // Keep image metadata (e.g., orientation)
+				.png({ compressionLevel: 9 })
+				.withMetadata()
 				.toBuffer();
 
 			return processedImage;

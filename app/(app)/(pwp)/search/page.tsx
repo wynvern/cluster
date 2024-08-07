@@ -17,10 +17,10 @@ import {
 } from "@nextui-org/react";
 import { useState } from "react";
 
-function debounce(func, wait) {
-	let timeout;
+function debounce(func: any, wait: number) {
+	let timeout: string | number | NodeJS.Timeout | undefined;
 
-	return function executedFunction(...args) {
+	return function executedFunction(...args: any[]) {
 		const later = () => {
 			clearTimeout(timeout);
 			func(...args);

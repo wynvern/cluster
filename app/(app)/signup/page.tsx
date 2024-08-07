@@ -174,7 +174,6 @@ export default function SignUp() {
 						type="submit"
 						color={success ? "success" : "primary"}
 						isLoading={loading}
-						classNames={{ inputWrapper: "h-12" }}
 						isDisabled={loading || success}
 						startContent={
 							loading ? (

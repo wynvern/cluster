@@ -147,6 +147,7 @@ export async function fetchMessages(groupId: string, batchIndex: number) {
 			userId: true,
 			media: true,
 			attachments: true,
+			replyToId: true,
 			user: {
 				select: {
 					id: true,

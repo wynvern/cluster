@@ -71,6 +71,7 @@ export interface UserGroupChats {
 }
 
 export class MessageProps {
+	id: string;
 	content: string;
 	userId: string;
 	user: {
@@ -80,7 +81,7 @@ export class MessageProps {
 	};
 	chatId: string;
 	media: string[];
-	replyToId: string;
+	replyToId: string | null;
 	createdAt: Date;
 	chat: {
 		group: {
@@ -89,6 +90,7 @@ export class MessageProps {
 	};
 
 	constructor(
+		id: string,
 		content: string,
 		userId: string,
 		user: {
@@ -106,6 +108,7 @@ export class MessageProps {
 			};
 		}
 	) {
+		this.id = id;
 		this.content = content;
 		this.userId = userId;
 		this.user = user;

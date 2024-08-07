@@ -54,7 +54,10 @@ export default function GeneralSettings({
 					<div className="flex items-center justify-between bottom-border px-4 sm:px-10 py-4">
 						<div>
 							<h2>Membros podem postar</h2>
-							<p className="font-normal">Esta configuração</p>
+							<p className="font-normal">
+								Esta configuração permite que membros possam
+								criar posts dentro do grupo.
+							</p>
 						</div>
 						<div>
 							<Switch

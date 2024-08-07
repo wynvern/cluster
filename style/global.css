@@ -2,7 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import url("./clash-display.css");
+
+* {
+	font-family: "Inter";
+}
 
 .dark {
 	--border: #292929;

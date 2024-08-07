@@ -127,7 +127,9 @@ export async function sendCode(): Promise<string> {
 		`
             <h1>Confirmar seu email.</h1>
             <p>Utilize o código abaixo para verficar o seu email.</p>
-            <a>Seu código de verificação: ${newCode}</a>
+            <div style={{ marginTop: '12px', padding: '12px', fontSize: 'larger', borderRadius: '4px', backgroundColor: '#333' }}>
+  <a style={{ color: 'white' }}>Seu código de verificação: ${newCode}</a>
+</div>
          `
 	);
 

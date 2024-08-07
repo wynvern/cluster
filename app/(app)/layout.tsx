@@ -30,7 +30,7 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="pt-BR">
-			<body className={`${inter.className}`}>
+			<body>
 				<Initializer />
 				<Providers>{children}</Providers>
 			</body>

@@ -17,7 +17,7 @@ function generateToken(userId: string, expirationTime = 3600000) {
 	const token = {
 		userId,
 		expiresAt: Date.now() + expirationTime,
-		random: randomBytes(16).toString("hex"), // Add randomness
+		random: randomBytes(16).toString("hex"),
 	};
 	return JSON.stringify(token);
 }

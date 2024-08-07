@@ -24,7 +24,10 @@ export default function GroupCard({ group }: { group: GroupCardType }) {
 				</div>
 				<div className="h-10 w-full px-4 py-4 flex justify-between">
 					<div />
-					<FollowUnfollowGroup groupname={group.groupname} />
+					<FollowUnfollowGroup
+						isDefaultFollowing={false}
+						groupname={group.groupname}
+					/>
 				</div>
 				<div className="w-full h-20 px-4">
 					<h2>{group.name}</h2>

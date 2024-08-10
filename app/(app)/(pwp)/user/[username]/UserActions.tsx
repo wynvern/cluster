@@ -21,6 +21,7 @@ import {
 	Button,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function UserActions({ user }: { user: User }) {
@@ -114,7 +115,7 @@ export default function UserActions({ user }: { user: User }) {
 			</Dropdown>
 
 			<CustomizeProfile
-				onUpdate={() => console.log("not implemented")}
+				onUpdate={() => window.location.reload()}
 				active={customizeProfileActive}
 				setActive={setCustomizeProfileActive}
 				user={user}

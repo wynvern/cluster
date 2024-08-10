@@ -3,6 +3,22 @@ import { db } from "@/lib/db";
 import { compressImage } from "@/lib/image";
 import { NextResponse } from "next/server";
 
+async function getUserIdsFromChat(chatId: string): Promise<string[]> {
+	const groupId = await db.groupChat.findUnique({
+		where: { id: chatId },
+		select: { groupId: true },
+	});
+
+	if (!groupId) return [];
+	console.log(groupId, "groupId");
+	const users = await db.groupMember.findMany({
+		where: { groupId: groupId.groupId },
+		select: { userId: true },
+	});
+
+	return users.map((user) => user.userId);
+}
+
 export async function POST(req: Request) {
 	const body = await req.json();
 	const mediaUrl = [];
@@ -49,7 +65,10 @@ export async function POST(req: Request) {
 			const buffer = Buffer.from(media, "base64");
 			const processedImage = await compressImage(buffer);
 
-			const blob = await postBlob(processedImage.toString("base64"), "png");
+			const blob = await postBlob(
+				processedImage.toString("base64"),
+				"png"
+			);
 
 			console.log(blob.urlToMedia);
 			mediaUrl.push(blob.urlToMedia);
@@ -67,7 +86,13 @@ export async function POST(req: Request) {
 		newMessage.media = mediaUrl;
 	}
 
-	return NextResponse.json({ ...newMessage });
+	const groupUsers = await getUserIdsFromChat(body.chatId);
+	console.log(groupUsers, "groupUsers");
+
+	return NextResponse.json({
+		message: newMessage,
+		groupUsers,
+	});
 }
 
 export async function GET(req: Request) {

@@ -21,7 +21,6 @@ import UserAvatar from "../user/UserAvatar";
 import UserPopover from "../user/UserPopover";
 import { useState } from "react";
 import MediaDisplayPost from "../post/MediaDisplayPost";
-import PrettyDate from "../general/PrettyDate";
 import prettyDate from "@/util/prettyDate";
 import { useImageCarousel } from "@/providers/ImageDisplay";
 
@@ -91,7 +90,11 @@ export default function PostCard({
 								startContent={
 									<Image
 										removeWrapper={true}
-										src={`${post.group.image}?size=50`}
+										src={
+											post.group.image
+												? `${post.group.image}?size=50`
+												: "/brand/default-group.svg"
+										}
 										className="w-6 h-6"
 									/>
 								}

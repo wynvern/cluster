@@ -12,11 +12,11 @@ import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ListMessages } from "./ListMessages";
 import type Group from "@/lib/db/group/type";
-import { socket } from "../../../../../lib/socketClient";
 import ChatHeader from "./ChatHeader";
 import { useMessageAttr } from "@/hooks/ChatMessage";
-import { MessageProps } from "@/lib/db/group/type";
+import type { MessageProps } from "@/lib/db/group/type";
 import { fetchMessages } from "@/lib/db/group/groupChat";
+import { useSocket } from "@/providers/Socket";
 
 interface FileBase64Info {
 	base64: string;
@@ -24,13 +24,7 @@ interface FileBase64Info {
 	file?: File;
 }
 
-export default function ChatPage({
-	group,
-	token,
-}: {
-	group: Group;
-	token: string;
-}) {
+export default function ChatPage({ group }: { group: Group }) {
 	const [isSending, setIsSending] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<FileBase64Info | null>(
 		null
@@ -49,6 +43,7 @@ export default function ChatPage({
 	const [userTyping, setUserTyping] = useState<
 		{ userId: string; username: string }[]
 	>([]);
+	const socket = useSocket();
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
@@ -77,14 +72,15 @@ export default function ChatPage({
 		}
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		if (socket.connected) {
-			onConnect();
-		}
+		if (!socket) return;
 
 		function onConnect() {
+			if (!socket) return;
+
 			console.warn("connected to socket server");
-			socket.emit("auth", { token, chatId: group?.GroupChat?.id });
+			socket.emit("joinRoom", { chatId: group?.GroupChat?.id });
 		}
 
 		socket.on("receiveMessage", (message: MessageProps) => {
@@ -101,21 +97,21 @@ export default function ChatPage({
 			}, 2000);
 		});
 
-		socket.on("connect", () => onConnect());
-
-		socket.on("disconnect", () => console.log("disconnected"));
+		if (socket.connected) {
+			onConnect();
+			console.log("executed");
+		}
 
 		return () => {
 			socket.off("receiveMessage");
-			socket.off("connect", onConnect);
-			socket.off("disconnect");
 			socket.off("typing");
 		};
-	}, []);
+	}, [socket?.connected]);
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		if (isSending) return false;
+		if (!socket) return;
 
 		setIsSending(true);
 		const formData = new FormData(e.currentTarget as HTMLFormElement);
@@ -169,7 +165,7 @@ export default function ChatPage({
 			groupId,
 			batchIndex + (overwrite ? 0 : 1)
 		);
-		if (typeof retreivedMessages === "string") return
+		if (typeof retreivedMessages === "string") return;
 
 		if (overwrite) {
 			setMessages(retreivedMessages);
@@ -274,7 +270,7 @@ export default function ChatPage({
 					)}
 					{userTyping.length > 0 &&
 						userTyping.map((user) => (
-							<div>
+							<div key={user.userId}>
 								<p>{user.username} está digitando...</p>
 							</div>
 						))}

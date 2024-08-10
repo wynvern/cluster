@@ -29,7 +29,7 @@
 		{
 			"label": "Blob",
 			"type": "shell",
-			"command": "cd /home/wynvern/Documents/projects/git/cluster_blob && yarn start",
+			"command": "cd /home/wynvern/Documents/projects/git-projects/cluster_blob && yarn start",
 			"isBackground": true,
 			"problemMatcher": [],
 			"presentation": {
@@ -39,7 +39,7 @@
 		{
 			"label": "Socket",
 			"type": "shell",
-			"command": "cd /home/wynvern/Documents/projects/git/cluster_socket &&yarn start",
+			"command": "cd /home/wynvern/Documents/projects/git-projects/culster_socket &&yarn start",
 			"isBackground": true,
 			"problemMatcher": [],
 			"presentation": {

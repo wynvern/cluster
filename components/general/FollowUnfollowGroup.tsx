@@ -58,9 +58,9 @@ export default function ({
 			color="primary"
 			onClick={handleClick}
 			isDisabled={
-				userRole === "owner" ||
-				(isJoiningDisabled && !isFollowing) ||
-				!userRole
+				userRole === "owner" //||
+				//(isJoiningDisabled && !isFollowing) ||
+				//!userRole
 			}
 		>
 			{isFollowing ? "Seguindo" : "Seguir"}

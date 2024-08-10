@@ -163,6 +163,7 @@ export default function Notifications({
 			}
 			footer={
 				<Button
+					isDisabled={Object.values(notifications).length === 0}
 					isIconOnly={true}
 					variant={"bordered"}
 					onClick={handleCleanNotifications}

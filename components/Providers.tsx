@@ -6,6 +6,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import ServiceWorkerHandler from "./service/ServiceWorkerHandler";
 import { ConfirmationModalProvider } from "@/providers/ConfirmationModal";
 import { ImageCarouselProvider } from "@/providers/ImageDisplay";
+import { SocketProvider } from "@/providers/Socket";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
@@ -18,7 +19,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 							defaultTheme="light"
 						>
 							<ImageCarouselProvider>
-								{children}
+								<SocketProvider>{children}</SocketProvider>
 							</ImageCarouselProvider>
 							<ServiceWorkerHandler />
 						</NextThemesProvider>

@@ -7,6 +7,7 @@ import ServiceWorkerHandler from "./service/ServiceWorkerHandler";
 import { ConfirmationModalProvider } from "@/providers/ConfirmationModal";
 import { ImageCarouselProvider } from "@/providers/ImageDisplay";
 import { SocketProvider } from "@/providers/Socket";
+import { ToastProvider } from "@/providers/Toast";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
@@ -19,7 +20,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 							defaultTheme="light"
 						>
 							<ImageCarouselProvider>
-								<SocketProvider>{children}</SocketProvider>
+								<ToastProvider>
+									<SocketProvider>{children}</SocketProvider>
+								</ToastProvider>
 							</ImageCarouselProvider>
 							<ServiceWorkerHandler />
 						</NextThemesProvider>

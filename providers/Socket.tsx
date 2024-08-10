@@ -7,11 +7,13 @@ import React, {
 	useState,
 } from "react";
 import io, { type Socket } from "socket.io-client";
+import { useToast } from "./Toast";
 
 const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
 	const [socket, setSocket] = useState<Socket | null>(null);
+	const { showToast } = useToast();
 
 	useEffect(() => {
 		const socketInstance = io("http://localhost:3002");
@@ -27,7 +29,8 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 		});
 
 		socketInstance.on("notificationMessage", (data) => {
-			alert(data.message);
+			showToast(data.message);
+			alert("spearmaster");
 		});
 
 		return () => {

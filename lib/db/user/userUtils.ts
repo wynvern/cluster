@@ -105,10 +105,18 @@ export async function sendCode(): Promise<string> {
 		where: { email },
 	});
 
-	if (existingCode) {
-		return "request-already-pending";
-	}
+	console.log(existingCode);
 
+	if (existingCode) {
+		const expiryDate = new Date(existingCode.expiry);
+		const currentDate = new Date();
+
+		if (expiryDate.getTime() > currentDate.getTime()) {
+			return "request-already-pending";
+		}
+		// If the existing code is expired, delete it
+		await db.codeVerifyAccount.delete({ where: { id: existingCode.id } });
+	}
 	const newCode = generateRandomString(5);
 
 	const expiryTime = new Date().getTime() + 5 * 60 * 1000; // 5 minutes from now
@@ -123,14 +131,17 @@ export async function sendCode(): Promise<string> {
 
 	sendMail(
 		email,
-		"Confirmar seu email.",
+		"Confirmar seu email",
 		`
-            <h1>Confirmar seu email.</h1>
-            <p>Utilize o código abaixo para verficar o seu email.</p>
-            <div style={{ marginTop: '12px', padding: '12px', fontSize: 'larger', borderRadius: '4px', backgroundColor: '#333' }}>
-  <a style={{ color: 'white' }}>Seu código de verificação: ${newCode}</a>
-</div>
-         `
+          <h1>Confirme seu email.</h1>
+          <p>
+          Utilize o código abaixo para verificar o seu email.<br><br>
+          <div style="display: flex; gap: 10px;">
+              <div style="background-color: #131313; width: fit-content; color: white; padding-left: 20px; padding-right: 20px; border-radius: 10px;">
+                  <h1 style="user-select: none;">${newCode}</h1>
+              </div>
+          </div>
+      `
 	);
 
 	return "code-sent";

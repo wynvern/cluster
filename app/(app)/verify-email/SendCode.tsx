@@ -25,7 +25,7 @@ export default function SendCode({ onCodeSent }: { onCodeSent: () => void }) {
 				onCodeSent();
 				break;
 			case "no-session":
-				setInputError("No session");
+				setInputError("Sem sessão iniciada.");
 				break;
 			case "request-already-pending":
 				onCodeSent();

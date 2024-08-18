@@ -43,7 +43,7 @@ export default async function middleware(req: NextRequest) {
 		{
 			location: "/verify-email",
 			redirection: {
-				condition: Boolean(session) && Boolean(session?.emailVerified),
+				condition: !session && !session?.emailVerified,
 				to: "/",
 			},
 		},

@@ -54,10 +54,18 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 		}
 	}, [session]);
 
+	function privateEmail(email: string) {
+		return email.replace(/(.{3})(.*)(@.*)/, (_, a, b, c) => {
+			return a + "*".repeat(b.length - b.length > 4 ? 4 : 2) + c;
+		});
+	}
+
 	return (
 		<AuthModalWrapper
 			title="Verificar email"
-			subtitle="Digite o código enviado por email."
+			subtitle={`Digite o código enviado para o email ${privateEmail(
+				session.data?.user?.email || ""
+			)}`}
 		>
 			<form className="gap-y-6 flex flex-col" onSubmit={handleVerifyCode}>
 				<Input
@@ -71,7 +79,12 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 					variant="bordered"
 				/>
 				<div className="flex items-center justify-between">
-					<Link onClick={() => onReturn()}>Voltar</Link>
+					<Link
+						onClick={() => signOut()}
+						className="w-full text-center"
+					>
+						Sair
+					</Link>{" "}
 					<Button
 						type="submit"
 						color={success ? "success" : "primary"}
@@ -90,9 +103,6 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 					</Button>
 				</div>
 			</form>
-			<Link onClick={() => signOut()} className="w-full text-center">
-				Sair
-			</Link>
 		</AuthModalWrapper>
 	);
 }

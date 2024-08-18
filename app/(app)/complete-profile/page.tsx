@@ -96,7 +96,10 @@ export default function Finish() {
 	}, [session]);
 
 	return (
-		<AuthModalWrapper title="Complete seu perfil">
+		<AuthModalWrapper
+			title="Complete seu perfil"
+			subtitle="Escolha um nome de usuário que será exibido para outros usuários. Esse nome não poderá ser alterado."
+		>
 			<form className="gap-y-6 flex flex-col" onSubmit={handleComplete}>
 				<Input
 					placeholder="Nome de usuário"
@@ -135,8 +138,11 @@ export default function Finish() {
 				<div className="flex items-center justify-between">
 					<div>
 						<Link
-							onClick={() => { !success && !isLoading && assignRandomUsername()}}
-							
+							onClick={() => {
+								!success &&
+									!isLoading &&
+									assignRandomUsername();
+							}}
 						>
 							Nome aleatório
 						</Link>

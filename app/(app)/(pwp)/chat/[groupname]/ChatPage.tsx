@@ -81,6 +81,7 @@ export default function ChatPage({ group }: { group: Group }) {
 
 			console.warn("connected to socket server");
 			socket.emit("joinRoom", { chatId: group?.GroupChat?.id });
+			loadMessageBatch(group?.id || "", true);
 		}
 
 		socket.on("receiveMessage", (message: MessageProps) => {

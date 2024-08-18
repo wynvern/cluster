@@ -23,6 +23,8 @@ import FollowUnfollowGroup from "@/components/general/FollowUnfollowGroup";
 import { useRouter } from "next/navigation";
 import { memberHasPermission } from "@/lib/db/group/groupUtils";
 import { useSession } from "next-auth/react";
+import ModeratorGroupActions from "./_actions/ModeratorsGroupActions";
+import UserGroupActions from "./_actions/UserGroupActions";
 
 export default function GroupActions({ group }: { group: Group }) {
 	const [customizeGroup, setCustomizeGroupActive] = useState(false);
@@ -42,7 +44,9 @@ export default function GroupActions({ group }: { group: Group }) {
 		{
 			modRequired: true,
 			description: "Gerenciar o grupo",
-			icon: <Cog6ToothIcon className="h-8" aria-label="gerenciar-grupo" />,
+			icon: (
+				<Cog6ToothIcon className="h-8" aria-label="gerenciar-grupo" />
+			),
 			ariaLabel: "manage group",
 			onClick: () => router.push(`/group/${group.groupname}/manage`),
 			text: "Gerenciar Grupo",
@@ -82,38 +86,15 @@ export default function GroupActions({ group }: { group: Group }) {
 				groupname={group.groupname}
 				isDefaultFollowing={group.isUserMember || false}
 			/>
-			<Dropdown
-				className="default-border shadow-none"
-				// placement="bottom-end"
-			>
-				<DropdownTrigger>
-					<Button isIconOnly={true} variant="bordered">
-						<EllipsisHorizontalIcon className="h-8" />
-					</Button>
-				</DropdownTrigger>
-				<DropdownMenu aria-label="Static Actions">
-					<>
-						{dropdownItems
-							.filter(
-								(item) =>
-									(item.modRequired && hasGroupPermission) ||
-									(!item.modRequired && !hasGroupPermission)
-							)
-							.map((item) => (
-								<DropdownItem
-									key={item.ariaLabel}
-									description={item.description}
-									startContent={item.icon}
-									aria-label={item.ariaLabel}
-									onClick={item.onClick}
-									className={item.className}
-								>
-									{item.text}
-								</DropdownItem>
-							))}
-					</>
-				</DropdownMenu>
-			</Dropdown>
+			{hasGroupPermission ? (
+				<ModeratorGroupActions
+					setCustomizeGroupActive={setCustomizeGroupActive}
+					router={router}
+					group={group}
+				/>
+			) : (
+				<UserGroupActions setReportGroup={setReportGroup} />
+			)}
 
 			<CustomizeGroup
 				group={group}

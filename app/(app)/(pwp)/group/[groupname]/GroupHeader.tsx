@@ -1,7 +1,7 @@
 "use client";
 
 import type Group from "@/lib/db/group/type";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -24,7 +24,7 @@ export default function GroupHeader({ group }: { group: Group | null }) {
 	return (
 		<div className="sticky relative top-0 z-50 w-full">
 			<div
-				className={`absolute h-20 w-full transition-background duration-200 ${
+				className={`absolute py-3 w-full transition-background duration-200 ${
 					hasScrolled ? "bg-background bottom-border" : ""
 				}`}
 			>
@@ -32,14 +32,16 @@ export default function GroupHeader({ group }: { group: Group | null }) {
 					<Button
 						isIconOnly={true}
 						color="secondary"
-						className="ml-4 sm:ml-10 border-default"
+						className="ml-4 border-default"
 						onClick={() => router.back()}
 					>
-						<ArrowLeftIcon className="h-6" />
+						<ChevronLeftIcon className="h-6" />
 					</Button>
 					{hasScrolled && group && (
 						<div className="ml-4">
-							<h3>{group.groupname}</h3>
+							<h3>
+								<b>g/{group.groupname}</b>
+							</h3>
 						</div>
 					)}
 				</div>

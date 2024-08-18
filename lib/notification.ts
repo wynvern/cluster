@@ -34,6 +34,8 @@ export default async function registerSubscription({
 	return "ok";
 }
 
+// This function creates a notification on the database and sends it to the user's subscriptions
+// It sends a socket message to the user's client to update the notifications
 export async function sendNotification({
 	receiverUserId,
 	message,
@@ -66,4 +68,29 @@ export async function sendNotification({
 
 		webPush.sendNotification(pushSubscription, JSON.stringify(message));
 	}
+
+	await sendLiveSocketNotification({
+		receiverUserId,
+		message,
+	});
+}
+
+async function sendLiveSocketNotification({
+	receiverUserId,
+	message,
+}: {
+	receiverUserId: string;
+	message: {
+		title: string;
+		body: string;
+		image?: string;
+	};
+}) {
+	const io = require("socket.io-client");
+	const socket = io("http://localhost:3002");
+
+	socket.emit("serverForwardNotification", {
+		receiverUserId,
+		message,
+	});
 }

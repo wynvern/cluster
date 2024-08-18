@@ -6,8 +6,9 @@ import {
 	PencilIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { reportUser } from "@/lib/db/user/user";
+import { toast } from "react-toastify";
 
 export default function ReportProfile({
 	username,
@@ -36,6 +37,8 @@ export default function ReportProfile({
 				...prev,
 				title: "Título é obrigatório",
 			}));
+			setLoading(false);
+			return;
 		}
 
 		if (!reason) {
@@ -43,6 +46,8 @@ export default function ReportProfile({
 				...prev,
 				reason: "Razão é obrigatória",
 			}));
+			setLoading(false);
+			return;
 		}
 
 		const response = await reportUser(username, title, reason);
@@ -50,6 +55,7 @@ export default function ReportProfile({
 		switch (response) {
 			case "ok":
 				setSuccess(true);
+				setTimeout(() => setActive(false), 2000);
 				break;
 			case "no-session":
 				break;
@@ -57,11 +63,24 @@ export default function ReportProfile({
 				break;
 			case "error":
 				break;
+			case "already-reported":
+				toast.error("Você já reportou este usuário", {
+					autoClose: 3000,
+				});
+				break;
 		}
 
 		setLoading(false);
-		setTimeout(() => setActive(false), 2000);
 	}
+
+	// clean everything
+	useEffect(() => {
+		if (!active) {
+			setInputError({ title: "", reason: "" });
+			setSuccess(false);
+			setLoading(false);
+		}
+	}, [active]);
 
 	return (
 		<div>
@@ -79,30 +98,32 @@ export default function ReportProfile({
 						>
 							<Input
 								name="title"
-								placeholder="Título"
+								label="Título"
 								variant="bordered"
 								classNames={{ inputWrapper: "h-14" }}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
 								max={100}
 								errorMessage={inputError.title}
 								isInvalid={inputError.title !== ""}
+								onValueChange={() => {
+									setInputError((prev) => ({
+										...prev,
+										title: "",
+									}));
+								}}
 							/>
 							<Textarea
 								variant="bordered"
-								placeholder="Razão"
+								label="Razão"
 								name="reason"
-								classNames={{
-									innerWrapper: "py-[9px]",
-									input: "mt-[2px]",
-								}}
 								max={500}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
 								errorMessage={inputError.reason}
 								isInvalid={inputError.reason !== ""}
+								onValueChange={() => {
+									setInputError((prev) => ({
+										...prev,
+										reason: "",
+									}));
+								}}
 							/>
 						</form>
 					</>

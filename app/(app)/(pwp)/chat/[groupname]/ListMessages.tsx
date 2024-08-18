@@ -3,13 +3,11 @@ import { Link, Image } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
 import type { MessageProps } from "@/lib/db/group/type";
+import { useImageCarousel } from "@/providers/ImageDisplay";
 
-export function ListMessages({
-	messages,
-}: {
-	messages: MessageProps[];
-}) {
+export function ListMessages({ messages }: { messages: MessageProps[] }) {
 	const session = useSession();
+	const { openCarousel } = useImageCarousel();
 
 	return (
 		<>
@@ -96,6 +94,9 @@ export function ListMessages({
 									<Image
 										src={message.media[0]}
 										removeWrapper={true}
+										onClick={() =>
+											openCarousel(message.media)
+										}
 									/>
 								</div>
 								<div />

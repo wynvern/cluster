@@ -1,8 +1,6 @@
 import type User from "@/lib/db/user/type";
 import { Image } from "@nextui-org/react";
 import UserActions from "./UserActions";
-import prettyDate from "@/util/prettyDate";
-import DateFormat from "@/util/dateFormat";
 
 interface UserProfileProps {
 	user: User;
@@ -41,7 +39,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 					<UserActions user={user} />
 				</div>
 				<div>
-					<h1>{user.name}</h1>
+					<h1 style={{ lineHeight: "40px" }}>{user.name}</h1>
 					<p>
 						<b>u/</b>
 						{user.username}
@@ -59,14 +57,6 @@ export default async function UserProfile({ user }: UserProfileProps) {
 					</p>
 					<p>
 						Grupos <b>{user._count.groups}</b>
-					</p>
-				</div>
-				<div>
-					<p>
-						Entrou em{" "}
-						<b>
-							<DateFormat date={user.createdAt} />
-						</b>
 					</p>
 				</div>
 			</div>

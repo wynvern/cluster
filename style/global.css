@@ -4,13 +4,24 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import url("./clash-display.css");
+@import url("./toast.css");
+@import url("./sidebar.css");
+
+:root {
+	--second-foreground: #3f3f3f;
+}
 
 * {
 	font-family: "Inter", sans-serif;
 }
 
+.second-foreground {
+	color: var(--second-foreground);
+}
+
 .dark {
 	--border: #292929;
+	--second-foreground: #7a7a7a;
 }
 
 .light {
@@ -19,6 +30,16 @@
 
 .light .invert-image {
 	filter: invert(1);
+}
+
+.border-for-sidebar {
+	border-right: 1px solid var(--border);
+}
+
+@media screen and (max-width: 1090px) {
+	.border-for-sidebar {
+		border-right: none;
+	}
 }
 
 html {
@@ -61,6 +82,11 @@ a[role="menuitem"]:hover {
 /* Heading Styles */
 h1 {
 	font-size: 2.4em;
+	font-weight: 600;
+	font-family: "ClashDisplay-Semibold";
+}
+
+.main-text {
 	font-weight: 600;
 	font-family: "ClashDisplay-Semibold";
 }

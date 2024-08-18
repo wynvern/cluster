@@ -261,6 +261,12 @@ export async function reportUser(
 
 	if (!user) return "no-user";
 
+	const alreadyReported = await db.userReport.findFirst({
+		where: { reportedUserId: user.id, creatorId: session.user.id },
+	});
+
+	if (alreadyReported) return "already-reported";
+
 	const report = await db.userReport.create({
 		data: {
 			title: title,

@@ -22,27 +22,27 @@ const config: Config = {
 							foreground: "#000000",
 						},
 						secondary: {
-							DEFAULT: "#131313",
+							DEFAULT: "#0a0a0a",
 							foreground: "#FAF9F6",
 						},
 						content1: {
-							DEFAULT: "#131313",
+							DEFAULT: "#0a0a0a",
 							foreground: "#FAF9F6",
 						},
 						content2: {
-							DEFAULT: "#131313",
+							DEFAULT: "#0a0a0a",
 							foreground: "#FAF9F6",
 						},
 						content3: {
-							DEFAULT: "#131313",
+							DEFAULT: "#0a0a0a",
 							foreground: "#FAF9F6",
 						},
 						content4: {
-							DEFAULT: "#131313",
+							DEFAULT: "#0a0a0a",
 							foreground: "#FAF9F6",
 						},
 						background: {
-							DEFAULT: "#131313",
+							DEFAULT: "#0a0a0a",
 							foreground: "#FAF9F6",
 						},
 					},
@@ -61,27 +61,27 @@ const config: Config = {
 						},
 						secondary: {
 							DEFAULT: "#FAF9F6",
-							foreground: "#131313",
+							foreground: "#0a0a0a",
 						},
 						content1: {
 							DEFAULT: "#FAF9F6",
-							foreground: "#131313",
+							foreground: "#0a0a0a",
 						},
 						content2: {
 							DEFAULT: "#FAF9F6",
-							foreground: "#131313",
+							foreground: "#0a0a0a",
 						},
 						content3: {
 							DEFAULT: "#FAF9F6",
-							foreground: "#131313",
+							foreground: "#0a0a0a",
 						},
 						content4: {
 							DEFAULT: "#FAF9F6",
-							foreground: "#131313",
+							foreground: "#0a0a0a",
 						},
 						background: {
 							DEFAULT: "#FAF9F6",
-							foreground: "#131313",
+							foreground: "#0a0a0a",
 						},
 					},
 					layout: {

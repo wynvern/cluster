@@ -12,6 +12,7 @@ import SignOut from "../modal/SignOut";
 import {
 	ArrowLeftEndOnRectangleIcon,
 	Cog6ToothIcon,
+	EllipsisHorizontalIcon,
 	UserIcon,
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
@@ -23,57 +24,77 @@ export default function ProfileDropdown() {
 
 	return (
 		<>
-			<Dropdown className="default-border shadow-none" placement="right">
-				<DropdownTrigger>
-					<Link className="p-4 transition-all duration-200">
-						<UserAvatar avatarURL={session.data?.user.image} />
-					</Link>
-				</DropdownTrigger>
-				<DropdownMenu aria-label="Static Actions">
-					<DropdownItem>
-						Logado como <b>@{session.data?.user.username}</b>
-					</DropdownItem>
-					<DropdownItem
-						description="Veja seu perfil"
-						startContent={
-							<UserIcon className="h-6" aria-label="Sign Out" />
-						}
-						aria-label="View profile"
-						href={`/user/${session.data?.user.username}`}
+			<div className="flex w-full justify-between items-center pr-4">
+				<div className="flex gap-x-4 items-center">
+					<UserAvatar avatarURL={session.data?.user.image} />
+					<div className="flex flex-col">
+						<b className=" sidebar-inside">
+							{session.data?.user.username}
+						</b>
+						<p className=" sidebar-inside">abc</p>
+					</div>
+				</div>
+				<div className="sidebar-inside">
+					<Dropdown
+						className="default-border shadow-none"
+						placement="left"
 					>
-						Perfil
-					</DropdownItem>
-					<DropdownItem
-						description="Configure o aplicativo"
-						startContent={
-							<Cog6ToothIcon
-								className="h-6"
+						<DropdownTrigger>
+							<Link className="transition-all duration-200">
+								<EllipsisHorizontalIcon className="h-6" />
+							</Link>
+						</DropdownTrigger>
+						<DropdownMenu aria-label="Static Actions">
+							<DropdownItem>
+								Logado como{" "}
+								<b>@{session.data?.user.username}</b>
+							</DropdownItem>
+							<DropdownItem
+								description="Veja seu perfil"
+								startContent={
+									<UserIcon
+										className="h-6"
+										aria-label="Sign Out"
+									/>
+								}
+								aria-label="View profile"
+								href={`/user/${session.data?.user.username}`}
+							>
+								Perfil
+							</DropdownItem>
+							<DropdownItem
+								description="Configure o aplicativo"
+								startContent={
+									<Cog6ToothIcon
+										className="h-6"
+										aria-label="Sign Out"
+									/>
+								}
+								href="/settings"
+								aria-label="View profile"
+							>
+								Configurações
+							</DropdownItem>
+							<DropdownItem
+								description="Desconecte-se de sua conta"
+								className="text-danger"
+								onClick={() => {
+									setSignOutModal(true);
+								}}
+								startContent={
+									<ArrowLeftEndOnRectangleIcon
+										className="h-6"
+										aria-label="Sign Out"
+									/>
+								}
 								aria-label="Sign Out"
-							/>
-						}
-						href="/settings"
-						aria-label="View profile"
-					>
-						Configurações
-					</DropdownItem>
-					<DropdownItem
-						description="Desconecte-se de sua conta"
-						className="text-danger"
-						onClick={() => {
-							setSignOutModal(true);
-						}}
-						startContent={
-							<ArrowLeftEndOnRectangleIcon
-								className="h-6"
-								aria-label="Sign Out"
-							/>
-						}
-						aria-label="Sign Out"
-					>
-						Sair
-					</DropdownItem>
-				</DropdownMenu>
-			</Dropdown>
+							>
+								Sair
+							</DropdownItem>
+						</DropdownMenu>
+					</Dropdown>
+				</div>
+			</div>
 
 			<SignOut setIsActive={setSignOutModal} isActive={signOutModal} />
 		</>

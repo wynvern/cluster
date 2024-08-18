@@ -2,6 +2,7 @@
 
 import PostCard from "@/components/card/PostCard";
 import ScrollPagination from "@/components/general/ScrollPagination";
+import PostList from "@/components/post/PostsList";
 import { fetchUserFeed } from "@/lib/db/feed/feed";
 import type Post from "@/lib/db/post/type";
 import { useState } from "react";
@@ -38,15 +39,7 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 			onBottomReached={fetchMorePosts}
 		>
 			<div>
-				{posts.map((post) => (
-					<div key={post.id}>
-						<div className="w-full bottom-border my-6" />
-
-						<div className="px-10">
-							<PostCard post={post} />
-						</div>
-					</div>
-				))}
+				<PostList posts={posts} />
 			</div>
 		</ScrollPagination>
 	);

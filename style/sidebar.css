@@ -1,0 +1,21 @@
+.sidebar-container {
+	width: 80px;
+	transition: width 200ms ease-in-out;
+}
+
+.sidebar-container:hover {
+	width: 300px;
+}
+
+.sidebar-container:hover .sidebar-inside {
+	display: block;
+}
+
+.sidebar-inside {
+	display: none;
+	transition: all 100ms ease-in-out;
+}
+
+.sidebar-wrapper {
+	padding-left: 15.5px;
+}

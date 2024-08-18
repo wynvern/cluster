@@ -48,7 +48,7 @@ export default function ScrollPagination({
 			{/* Div to check if needs to load more */}
 			<div ref={bottomRef} />
 			{loading && (
-				<div className="w-full flex items-center justify-center my-6">
+				<div className="w-full flex items-center justify-center">
 					<CircularProgress />
 				</div>
 			)}

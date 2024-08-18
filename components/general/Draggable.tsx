@@ -3,9 +3,11 @@ import { cloneElement, isValidElement, useState, useEffect } from "react";
 
 interface DraggableProps {
 	children: React.ReactNode;
-	onFileDrag: (file: FileBase64Info) => void;
+	onFileDrag: (file: FileBase64Info | FileBase64Info[]) => void;
 	acceptedTypes: string[];
 	maxSize?: number;
+	onError?: (message: string) => void;
+	bulk?: boolean;
 }
 
 interface DraggableElementProps {
@@ -21,6 +23,8 @@ export default function Draggable({
 	onFileDrag,
 	acceptedTypes,
 	maxSize = 4.5,
+	onError,
+	bulk = false,
 }: DraggableProps) {
 	const [dragging, setDragging] = useState(false);
 	const [error, setError] = useState(false);
@@ -39,45 +43,54 @@ export default function Draggable({
 		event.preventDefault();
 		setDragging(false);
 
-		const files = Array.from(event.dataTransfer.files).filter((file) =>
-			acceptedTypes.includes(file.type.split("/")[1])
-		);
+		const files = Array.from(event.dataTransfer.files).filter((file) => {
+			return acceptedTypes.includes(file.name.split(".").pop() || "");
+		});
 
 		if (files.some((file) => file.size > maxSize * 1024 * 1024)) {
 			setError(true);
+			onError?.(`Arquivo muito grande. Tamanho máximo: ${maxSize}MB`);
 			return;
 		}
 
 		if (files.length > 0) {
-			const imagePreview = await toImagePreview(files);
-			onFileDrag(imagePreview);
+			const imagePreviews = await toImagePreviews(files);
+			onFileDrag(bulk ? imagePreviews : imagePreviews[0]);
 		} else {
 			setError(true);
+			onError?.("Tipo de arquivo não suportado");
 		}
 	}
 
 	useEffect(() => {
-		if (error) setTimeout(() => setError(false), 2000);
+		if (error) setTimeout(() => setError(false), 3000);
 	}, [error]);
 
-	function toImagePreview(files: File[]): Promise<FileBase64Info> {
-		return new Promise((resolve, reject) => {
-			const file = files[0];
-			const reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = () => {
-				resolve({
-					base64: reader.result as string,
-					fileType: file.type,
-					preview: URL.createObjectURL(file),
-					file: file,
+	function toImagePreviews(files: File[]): Promise<FileBase64Info[]> {
+		return Promise.all(
+			files.map((file) => {
+				return new Promise<FileBase64Info>((resolve, reject) => {
+					const reader = new FileReader();
+					reader.readAsDataURL(file);
+					reader.onload = () => {
+						if (typeof reader.result === "string") {
+							const [, base64] = reader.result.split(",");
+							const preview = URL.createObjectURL(file);
+							resolve({
+								base64,
+								preview,
+								fileType: file.type,
+								file,
+							});
+						} else {
+							reject(new Error("Failed to read file"));
+						}
+					};
+					reader.onerror = () =>
+						reject(new Error("Failed to read file"));
 				});
-			};
-			reader.onerror = (error) => {
-				setError(true);
-				reject(error);
-			};
-		});
+			})
+		);
 	}
 
 	if (isValidElement<DraggableElementProps>(children)) {
@@ -90,7 +103,7 @@ export default function Draggable({
 				? { outline: "4px solid #17C964", outlineOffset: "3px" }
 				: error
 				? { outline: "4px solid #FF0000", outlineOffset: "3px" }
-				: {},
+				: { outline: "0px solid #0000", outlineOffset: "3px" },
 		});
 
 		return <>{childWithProps}</>;

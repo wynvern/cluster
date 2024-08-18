@@ -4,7 +4,7 @@ import { Button, Image } from "@nextui-org/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 interface ImageCarouselContextType {
-	openCarousel: (images: string[]) => void;
+	openCarousel: (images: string[], currentIndex?: number) => void;
 }
 
 const ImageCarouselContext = createContext<
@@ -16,7 +16,8 @@ export function ImageCarouselProvider({ children }: { children: ReactNode }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [index, setIndex] = useState(0);
 
-	const openCarousel = (images: string[]) => {
+	const openCarousel = (images: string[], currentIndex?: number) => {
+		setIndex(currentIndex || 0);
 		setImages(images);
 		setIsOpen(true);
 	};
@@ -67,10 +68,10 @@ export function ImageCarouselProvider({ children }: { children: ReactNode }) {
 									<ChevronRightIcon className="h-6" />
 								</Button>
 							</div>
-							<div>
+							<div className="max-h-[40vh]">
 								{/* TODO: Fix image height not being correctly placed */}
 								<Image
-									className="rounded-none max-h-[30vh] max-w-[80vw]"
+									className="rounded-none h-full"
 									removeWrapper={true}
 									src={images[index]}
 									alt="Image"

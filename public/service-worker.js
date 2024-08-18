@@ -18,15 +18,20 @@ const urlBase64ToUint8Array = (base64String) => {
 	return outputArray;
 };
 
+const fetchVapid = async () => {
+	const response = await fetch("/api/vapid");
+	const vapidPublicKey = await response.json();
+	return vapidPublicKey.publicVAPID;
+};
+
 const activateEvent = () => {
 	self.addEventListener("activate", async (event) => {
 		event.waitUntil(clients.claim());
+		const vapid = await fetchVapid();
 
 		const subscription = await self.registration.pushManager.subscribe({
 			userVisibleOnly: true,
-			applicationServerKey: urlBase64ToUint8Array(
-				"BEDVVQFbCkcsYg88gOW1uWihBmEyiKe0rVZwA-c_PgYM4I2Zny_kxEPdUvlVY5zYSO7XhDNDuSTBwehxDHRwJBs"
-			),
+			applicationServerKey: urlBase64ToUint8Array(vapid),
 		});
 		self.clients.matchAll().then((clients) => {
 			for (const client of clients) {

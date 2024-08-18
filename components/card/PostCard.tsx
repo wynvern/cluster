@@ -39,12 +39,12 @@ export default function PostCard({
 	const { openCarousel } = useImageCarousel();
 
 	return (
-		<div className="w-full flex flex-col gap-y-4 px-6">
+		<div className="w-full flex flex-col gap-y-4 px-4 sm:px-10">
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-center">
 					<UserAvatar avatarURL={post.author.image} />
-					<div className="flex flex-col gap-y-2">
+					<div className="flex flex-col">
 						<div className="flex items-center gap-x-2">
 							<Popover className="default-border rounded-large">
 								<PopoverTrigger>
@@ -62,7 +62,9 @@ export default function PostCard({
 									post.createdAt
 								).toLocaleString()}
 							>
-								<p>{prettyDate({ date: post.createdAt })}</p>
+								<p className="second-foreground">
+									{prettyDate({ date: post.createdAt })}
+								</p>
 							</Tooltip>
 							{post.pinned && !isUserPage && (
 								<Chip className="bg-success">
@@ -99,7 +101,7 @@ export default function PostCard({
 									/>
 								}
 							>
-								<p>{post.group.groupname}</p>
+								<p className="pl-1">{post.group.groupname}</p>
 							</Chip>
 						</Link>
 					</div>
@@ -112,7 +114,7 @@ export default function PostCard({
 					<PostDropdown post={post} isUserPage={isUserPage} />
 				</div>
 			</div>
-			<div className="ml-16 flex flex-col gap-y-4 mb-10">
+			<div className="ml-14 flex flex-col gap-y-4">
 				{/* Content */}
 				{disableLink ? (
 					<div className="max-w-[100%]">
@@ -178,16 +180,14 @@ export default function PostCard({
 				{post.media && !disableImages && post.media.length > 0 ? (
 					<Link
 						onClick={() => {
-							openCarousel(post.media);
+							openCarousel(post.media, mediaIndex);
 						}}
 					>
-						<div>
-							<MediaDisplayPost
-								setIndex={(i) => setMediaIndex(i)}
-								media={post.media}
-								index={mediaIndex}
-							/>
-						</div>
+						<MediaDisplayPost
+							setIndex={(i) => setMediaIndex(i)}
+							media={post.media}
+							index={mediaIndex}
+						/>
 					</Link>
 				) : (
 					""

@@ -7,7 +7,8 @@ import ServiceWorkerHandler from "./service/ServiceWorkerHandler";
 import { ConfirmationModalProvider } from "@/providers/ConfirmationModal";
 import { ImageCarouselProvider } from "@/providers/ImageDisplay";
 import { SocketProvider } from "@/providers/Socket";
-import { ToastProvider } from "@/providers/Toast";
+import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
@@ -20,15 +21,22 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 							defaultTheme="light"
 						>
 							<ImageCarouselProvider>
-								<ToastProvider>
-									<SocketProvider>{children}</SocketProvider>
-								</ToastProvider>
+								<SocketProvider>{children}</SocketProvider>
 							</ImageCarouselProvider>
 							<ServiceWorkerHandler />
 						</NextThemesProvider>
 					</ConfirmationModalProvider>
 				</SessionProvider>
 			</NextUIProvider>
+
+			<ToastContainer
+				stacked={true}
+				newestOnTop={true}
+				position="bottom-center"
+				theme="dark"
+				transition={Slide}
+				limit={1}
+			/>
 		</>
 	);
 }

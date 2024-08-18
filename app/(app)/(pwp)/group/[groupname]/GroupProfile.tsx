@@ -1,7 +1,6 @@
 import { Chip, Image } from "@nextui-org/react";
 import type Group from "@/lib/db/group/type";
 import GroupActions from "./GroupActions";
-import prettyDate from "@/util/prettyDate";
 
 export default async function GroupProfile({ group }: { group: Group }) {
 	return (
@@ -11,12 +10,16 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				className={`w-full relative ${group ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<Image src={group ? (group.banner as string) + '?size=550' : ""} removeWrapper={true} className="rounded-none w-full h-full object-cover"/>
+				<Image
+					src={group ? `${group.banner as string}?size=550` : ""}
+					removeWrapper={true}
+					className="rounded-none w-full h-full object-cover"
+				/>
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
 						src={
 							group?.image
-								? group.image + '?size=400'
+								? `${group.image}?size=400`
 								: "/brand/default-group.svg"
 						}
 						removeWrapper={true}
@@ -31,7 +34,7 @@ export default async function GroupProfile({ group }: { group: Group }) {
 					<GroupActions group={group} />
 				</div>
 				<div>
-					<h1>{group.name}</h1>
+					<h1 style={{ lineHeight: "40px" }}>{group.name}</h1>
 					<p>
 						<b>g/</b>
 						{group.groupname}
@@ -54,9 +57,6 @@ export default async function GroupProfile({ group }: { group: Group }) {
 							<p>{i}</p>
 						</Chip>
 					))}
-				</div>
-				<div>
-					<p>Criado em {prettyDate({ date: group.createdAt})}</p>
 				</div>
 			</div>
 			<div className="bottom-border w-full mt-10" />

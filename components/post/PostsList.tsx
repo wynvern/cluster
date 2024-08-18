@@ -10,12 +10,12 @@ interface PostsListProps {
 
 export default function PostList({ posts, isUserPage = true }: PostsListProps) {
 	return (
-		<div className="mt-6 flex flex-col gap-y-10">
+		<div className="flex flex-col">
 			{posts === null ? (
 				<SkeletonPostCard />
 			) : (
 				posts.map((post) => (
-					<div key={post.id} className="bottom-border px-4 sm:px-10">
+					<div key={post.id} className="bottom-border py-4">
 						<PostCard post={post} isUserPage={isUserPage} />
 					</div>
 				))

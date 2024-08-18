@@ -14,6 +14,8 @@ import type User from "@/lib/db/user/type";
 import getFileBase64 from "@/util/getFile";
 import Draggable from "../general/Draggable";
 import { useSession } from "next-auth/react";
+import supportedFormats from "@/public/supportedFormats.json";
+import { toast } from "react-toastify";
 
 interface CustomizeProfileProps {
 	active: boolean;
@@ -84,13 +86,7 @@ export default function CustomizeProfile({
 
 	async function handleSelectBanner() {
 		try {
-			const data = await getFileBase64([
-				"jpg",
-				"jpeg",
-				"png",
-				"webp",
-				"gif",
-			]);
+			const data = await getFileBase64(supportedFormats.image);
 
 			if (!data) return false;
 
@@ -99,40 +95,27 @@ export default function CustomizeProfile({
 				banner: { ...data, error: "" },
 			}));
 		} catch (e) {
-			if ((e as { message: string }).message === "image-too-big") {
-				setSelectedImages((prev) => ({
-					banner: {
-						base64: "",
-						preview: "",
-						error: "image-too-big",
-						fileType: "",
-					},
-					avatar: prev.avatar,
-				}));
-				setTimeout(() => {
-					setSelectedImages((prev) => ({
-						banner: {
-							base64: "",
-							preview: "",
-							error: "",
-							fileType: "",
-						},
-						avatar: prev.avatar,
-					}));
-				}, 3000);
+			switch ((e as { message: string }).message) {
+				case "file-too-large":
+					toast.error("Imagem muito grande, máximo 4.5 Mb", {
+						autoClose: 3000,
+					});
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro desconhecido", { autoClose: 3000 });
+					break;
 			}
 		}
 	}
 
 	async function handleSelectAvatar() {
 		try {
-			const data = await getFileBase64([
-				"jpg",
-				"jpeg",
-				"png",
-				"webp",
-				"gif",
-			]);
+			const data = await getFileBase64(supportedFormats.image);
 
 			if (!data) return false;
 
@@ -141,27 +124,20 @@ export default function CustomizeProfile({
 				avatar: { ...data, error: "" },
 			}));
 		} catch (e) {
-			if ((e as { message: string }).message === "image-too-big") {
-				setSelectedImages((prev) => ({
-					avatar: {
-						base64: "",
-						preview: "",
-						error: "image-too-big",
-						fileType: "",
-					},
-					banner: prev.banner,
-				}));
-				setTimeout(() => {
-					setSelectedImages((prev) => ({
-						avatar: {
-							base64: "",
-							preview: "",
-							error: "",
-							fileType: "",
-						},
-						banner: prev.banner,
-					}));
-				}, 3000);
+			switch ((e as { message: string }).message) {
+				case "file-too-large":
+					toast.error("Imagem muito grande, máximo 4.5 Mb", {
+						autoClose: 3000,
+					});
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro desconhecido", { autoClose: 3000 });
+					break;
 			}
 		}
 	}
@@ -208,13 +184,19 @@ export default function CustomizeProfile({
 									avatar: prev.avatar,
 								}));
 							}}
-							acceptedTypes={[
-								"png",
-								"jpg",
-								"jpeg",
-								"webp",
-								"gif",
-							]}
+							onError={(error) => {
+								setSelectedImages((prev) => ({
+									banner: { ...prev.banner, error },
+									avatar: prev.avatar,
+								}));
+								setTimeout(() => {
+									setSelectedImages((prev) => ({
+										banner: { ...prev.banner, error: "" },
+										avatar: prev.avatar,
+									}));
+								}, 3000);
+							}}
+							acceptedTypes={supportedFormats.image}
 						>
 							<div className="w-full h-full absolute bg-neutral-500 ">
 								<Image
@@ -243,13 +225,19 @@ export default function CustomizeProfile({
 									avatar: { ...file, error: "" },
 								}));
 							}}
-							acceptedTypes={[
-								"png",
-								"jpg",
-								"jpeg",
-								"webp",
-								"gif",
-							]}
+							onError={(error) => {
+								setSelectedImages((prev) => ({
+									banner: { ...prev.banner, error },
+									avatar: prev.avatar,
+								}));
+								setTimeout(() => {
+									setSelectedImages((prev) => ({
+										banner: { ...prev.banner, error: "" },
+										avatar: prev.avatar,
+									}));
+								}, 3000);
+							}}
+							acceptedTypes={supportedFormats.image}
 						>
 							<div className="absolute -bottom-10 left-4 flex items-center justify-center">
 								<Button
@@ -282,35 +270,24 @@ export default function CustomizeProfile({
 								(selectedImages.banner.error && (
 									<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
 										<p className="text-danger">
-											Imagem selecionada muito grande,
-											máximo 4.5 Mb
+											{selectedImages.banner.error || ""}
 										</p>
 									</div>
 								))}
 							<Input
 								name="name"
-								placeholder="Nome"
+								label="Nome"
 								variant="bordered"
 								classNames={{ inputWrapper: "h-14" }}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
 								max={50}
 								defaultValue={user.name || ""}
 							/>
 							<Textarea
 								name="bio"
-								placeholder="Biografia"
+								label="Biografia"
 								variant="bordered"
-								classNames={{
-									innerWrapper: "py-[9px]",
-									input: "mt-[2px]",
-								}}
 								max={200}
 								defaultValue={user.bio || ""}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
 							/>
 						</form>
 					</div>

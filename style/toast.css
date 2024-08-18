@@ -1,0 +1,8 @@
+.Toastify__toast {
+	border-radius: 14px !important;
+	border: 1px solid var(--border);
+}
+
+.Toastify__toast div {
+	font-size: 14px;
+}

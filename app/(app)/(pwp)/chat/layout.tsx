@@ -4,7 +4,6 @@ import NoPosts from "@/components/card/NoPosts";
 import PageHeader from "@/components/general/PageHeader";
 import { fetchUserChats } from "@/lib/db/group/groupChat";
 import type { UserGroupChats } from "@/lib/db/group/type";
-import prettyDate from "@/util/prettyDate";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Input, Link, Image, CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";

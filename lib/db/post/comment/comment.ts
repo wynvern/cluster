@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import type RecursiveComments from "./type";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { sendNotification } from "@/lib/notification";
 
 async function recursiveFetchComments(
 	postId: string,
@@ -65,6 +66,23 @@ export async function createComment({
 }) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
+
+	if (!parentId) {
+		const postAuthor = await db.post.findUnique({
+			where: { id: postId },
+			select: { authorId: true },
+		});
+
+		if (postAuthor?.authorId && postAuthor.authorId !== session.user.id) {
+			sendNotification({
+				receiverUserId: postAuthor?.authorId,
+				message: {
+					title: "New comment",
+					body: "Someone commented on your post",
+				},
+			});
+		}
+	}
 
 	return await db.comment.create({
 		data: {

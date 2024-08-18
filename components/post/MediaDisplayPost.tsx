@@ -20,11 +20,26 @@ export default function MediaDisplayPost({
 			case "jpg":
 			case "jpeg":
 				return (
-					<img
-						src={currentMedia + '?size=300'}
-						className={"h-full w-full rounded-large object-cover"}
-						alt=""
-					/>
+					<>
+						<img
+							src={`${currentMedia}?size=200`}
+							className={
+								"h-full w-full object-cover absolute rounded-large"
+							}
+							alt=""
+							style={{ zIndex: 5, filter: "brightness(74%)" }}
+						/>
+						<div
+							className="absolute w-full h-full rounded-large"
+							style={{ zIndex: 6, backdropFilter: "blur(13px)" }}
+						/>
+						<img
+							src={`${currentMedia}?size=500`}
+							className={"max-h-full h-full object-contain"}
+							alt=""
+							style={{ zIndex: 7 }}
+						/>
+					</>
 				);
 			case "mp4":
 				return (
@@ -40,7 +55,7 @@ export default function MediaDisplayPost({
 	};
 
 	return (
-		<div className="relative w-full max-h-[50vh] aspect-square message-action-container">
+		<div className="relative w-full message-action-container">
 			<div className="absolute left-10 top-0 z-50 flex items-center h-full">
 				<Button
 					isIconOnly={true}
@@ -67,7 +82,12 @@ export default function MediaDisplayPost({
 					<ChevronRightIcon className="h-6" />
 				</Button>
 			</div>
-			{renderMedia()}
+			<div
+				className="w-full h-auto bg-red flex rounded-large items-center justify-center max-h-[500px]"
+				style={{ aspectRatio: "1000 / 600" }}
+			>
+				{renderMedia()}
+			</div>
 		</div>
 	);
 }

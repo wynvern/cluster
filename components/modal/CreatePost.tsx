@@ -30,6 +30,7 @@ import { createPost } from "@/lib/db/post/post";
 import Draggable from "../general/Draggable";
 import MarkdownIt from "markdown-it";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
+import { toast } from "react-toastify";
 
 interface CreatePostProps {
 	active: boolean;
@@ -134,16 +135,29 @@ export default function CreatePost({
 
 	async function handleSelectMedia() {
 		try {
-			const file = await getFilesBase64(
-				["png", "jpg", "jpeg", "webp", "gif", "mp4"],
-				4.5
-			);
-			if (file.length > 6) {
+			const file = await getFilesBase64(supportedFormats.image, 4.5);
+			if (file.length + selectedMedia.length > 6) {
 				return;
 			}
 			setSelectedMedia((prev) => [...prev, ...file]);
 		} catch (error) {
-			console.error("Error while selecting media:", error);
+			switch ((error as { message: string }).message) {
+				case "file-too-large":
+					toast.error("Arquivo muito grande. Máximo de 4.5MB.", {
+						autoClose: 3000,
+					});
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido.", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro ao adicionar imagem.", {
+						autoClose: 3000,
+					});
+					break;
+			}
 		}
 	}
 
@@ -173,30 +187,22 @@ export default function CreatePost({
 			if (!file.fileType) return false;
 			setSelectedDocuments((prev) => [...prev, file]);
 		} catch (error) {
-			if ((error as { message: string }).message === "file-too-large") {
-				setErrors({
-					...errors,
-					document: "Arquivo muito grande.",
-				});
-				setTimeout(() => {
-					setErrors({
-						...errors,
-						document: "",
+			switch ((error as { message: string }).message) {
+				case "file-too-large":
+					toast.error("Arquivo muito grande. Máximo de 4.5MB.", {
+						autoClose: 3000,
 					});
-				}, 3000);
-			} else if (
-				(error as { message: string }).message === "invalid-file-type"
-			) {
-				setErrors({
-					...errors,
-					document: "Tipo de arquivo inválido.",
-				});
-				setTimeout(() => {
-					setErrors({
-						...errors,
-						document: "",
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido.", {
+						autoClose: 3000,
 					});
-				}, 3000);
+					break;
+				default:
+					toast.error("Erro ao adicionar documento.", {
+						autoClose: 3000,
+					});
+					break;
 			}
 		}
 	}
@@ -266,13 +272,10 @@ export default function CreatePost({
 								<Input
 									name="title"
 									variant="bordered"
-									placeholder="Título"
+									label="Título"
 									classNames={{
 										inputWrapper: "h-14",
 									}}
-									startContent={
-										<PencilIcon className="h-6 text-neutral-500" />
-									}
 									maxLength={100}
 									value={title}
 									onValueChange={(e: string) => {
@@ -288,14 +291,11 @@ export default function CreatePost({
 								/>
 								<Textarea
 									name="content"
-									placeholder="Digite aqui"
+									label="Conteúdo"
 									variant="bordered"
 									classNames={{
-										innerWrapper: "py-2 min-h-80",
+										innerWrapper: "min-h-80",
 									}}
-									startContent={
-										<PencilIcon className="h-6 text-neutral-500" />
-									}
 									maxLength={1500} // TODO: See a good value
 									value={content}
 									isInvalid={Boolean(errors.content)}
@@ -309,9 +309,6 @@ export default function CreatePost({
 									}}
 									isDisabled={loading}
 								/>
-								<p className="text-tiny text-neutral-500">
-									Suporte a markdown
-								</p>
 								<div>
 									{content.length > 1000 ? (
 										<p className="text-neutral-500">
@@ -336,18 +333,35 @@ export default function CreatePost({
 								<ScrollShadow className="flex flex-col w-full relative px-3 pt-3">
 									{/* Upload image */}
 									<Draggable
+										bulk={true}
 										onFileDrag={(file) => {
-											if (selectedMedia.length > 6) {
-												setErrors({
-													...errors,
-													media: "Você atingiu o limite de 6 imagens.",
-												});
+											const filesArray = Array.isArray(
+												file
+											)
+												? file
+												: [file];
+
+											if (
+												selectedMedia.length +
+													filesArray.length >
+												6
+											) {
+												toast.error(
+													"Você atingiu o limite de 6 imagens.",
+													{ autoClose: 3000 }
+												);
+												return;
 											}
 
 											setSelectedMedia((prev) => [
 												...prev,
-												file,
+												...filesArray,
 											]);
+										}}
+										onError={(message) => {
+											toast.error(message, {
+												autoClose: 2000,
+											});
 										}}
 										acceptedTypes={supportedFormats.image}
 									>
@@ -361,20 +375,20 @@ export default function CreatePost({
 													<CloudArrowUpIcon className="h-20 w-20" />
 													<p>
 														Arraste ou{" "}
-														<Button
-															onClick={
-																handleSelectMedia
-															}
-															isDisabled={
-																loading ||
-																selectedMedia.length >=
-																	5
-															}
-															color="secondary"
+														<Link
+															onClick={() => {
+																if (
+																	!loading &&
+																	selectedMedia.length <
+																		5
+																) {
+																	handleSelectMedia();
+																}
+															}}
 															className="text-foreground"
 														>
 															<b>clique aqui</b>
-														</Button>{" "}
+														</Link>{" "}
 														para adicionar mídia.
 													</p>
 												</div>
@@ -438,21 +452,37 @@ export default function CreatePost({
 						>
 							<div className="flex h-80 w-full overflow-y-auto min-h-[370px]">
 								<ScrollShadow className="flex flex-col w-full relative px-3 pt-3">
-									{/* Upload image */}
+									{/* Upload document */}
 									<Draggable
+										bulk={true}
 										onFileDrag={(file) => {
-											if (selectedDocuments.length > 6) {
-												setErrors({
-													...errors,
-													document:
-														"Você atingiu o limite de 6 documentos.",
-												});
+											const filesArray = Array.isArray(
+												file
+											)
+												? file
+												: [file];
+
+											if (
+												selectedDocuments.length +
+													filesArray.length >
+												6
+											) {
+												toast.error(
+													"Você atingiu o limite de 6 documentos.",
+													{ autoClose: 3000 }
+												);
+												return;
 											}
 
 											setSelectedDocuments((prev) => [
 												...prev,
-												file,
+												...filesArray,
 											]);
+										}}
+										onError={(message) => {
+											toast.error(message, {
+												autoClose: 2000,
+											});
 										}}
 										acceptedTypes={
 											supportedFormats.document
@@ -468,20 +498,27 @@ export default function CreatePost({
 													<CloudArrowUpIcon className="h-20 w-20" />
 													<p>
 														Arraste ou{" "}
-														<Button
-															onClick={
-																handleSelectDocument
-															}
-															isDisabled={
-																loading ||
-																selectedDocuments.length >=
-																	6
-															}
-															color="secondary"
+														<Link
+															onClick={() => {
+																if (
+																	!loading &&
+																	selectedDocuments.length <
+																		5
+																) {
+																	handleSelectDocument();
+																} else {
+																	toast.error(
+																		"Você atingiu o limite de 6 documentos.",
+																		{
+																			autoClose: 3000,
+																		}
+																	);
+																}
+															}}
 															className="text-foreground"
 														>
 															<b>clique aqui</b>
-														</Button>{" "}
+														</Link>{" "}
 														para adicionar
 														documentos.
 													</p>

@@ -29,7 +29,15 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 		});
 
 		socketInstance.on("notificationMessage", (data) => {
-			showToast(data.message);
+			function notificationMessage(data: any) {
+				return (
+					<div>
+						<p>{`${data.message.user.username} em ${data.message.chat.group.groupname}: ${data.message.content}`}</p>
+					</div>
+				);
+			}
+
+			showToast(notificationMessage(data));
 			alert("spearmaster");
 		});
 

@@ -34,11 +34,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 	return (
 		<ToastDisplayContext.Provider value={{ showToast }}>
 			{children}
-			<div style={{ position: "absolute", bottom: 0, right: 0 }}>
+			<div>
 				{toasts.map((toast, index) => (
-					<div key={index}>
+					<div
+						key={index}
+						className="h-20 max-w-[350px] bg-background rounded-large border-default fixed bottom-10 "
+						style={{ zIndex: 999999999999999 }}
+					>
 						{typeof toast === "string" ? (
-							<span>showing something</span>
+							<span>{toast}</span>
 						) : (
 							toast
 						)}

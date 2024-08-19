@@ -93,6 +93,12 @@ export default function CreatePost({
 			return false;
 		}
 
+		const docToUpload = selectedDocuments.map((d) => ({
+			fileName: d.file?.name,
+			base64: d.base64,
+			fileType: d.fileType,
+		}));
+
 		const data = await createPost(
 			title,
 			mdParser.render(content),
@@ -100,9 +106,7 @@ export default function CreatePost({
 				base64: i.base64,
 				fileType: i.fileType,
 			})),
-			selectedDocuments.map((d) => {
-				return { base64: d.base64, fileType: d.fileType };
-			}),
+			docToUpload,
 			group.id
 		);
 
@@ -183,9 +187,12 @@ export default function CreatePost({
 
 	async function handleSelectDocument() {
 		try {
-			const file = await getFileBase64(supportedFormats.document);
-			if (!file.fileType) return false;
-			setSelectedDocuments((prev) => [...prev, file]);
+			const file = await getFilesBase64(supportedFormats.document);
+			if (file.length + selectedDocuments.length > 6) {
+				return;
+			}
+			console.log(file);
+			setSelectedDocuments((prev) => [...prev, ...file]);
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case "file-too-large":

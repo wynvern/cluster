@@ -21,7 +21,7 @@ export default function getFileBase64(
 				return;
 			}
 
-			const fileType = file.type;
+			const fileType = file.name.split(".").pop() || "";
 			const isAcceptedType = acceptedTypes.some((type) =>
 				fileType.includes(type)
 			);
@@ -44,7 +44,7 @@ export default function getFileBase64(
 					const [, base64] = reader.result.split(",");
 
 					const preview = URL.createObjectURL(file);
-					const fileType = file.type;
+					const fileType = file.name.split(".").pop() || "";
 
 					resolve({
 						base64,
@@ -83,7 +83,7 @@ export function getFilesBase64(
 
 			const fileBase64Infos: FileBase64Info[] = [];
 			for (const file of files) {
-				const fileType = file.type;
+				const fileType = file.name.split(".").pop() || "";
 				const isAcceptedType = acceptedTypes.some((type) =>
 					fileType.includes(type)
 				);
@@ -100,6 +100,7 @@ export function getFilesBase64(
 
 				try {
 					const fileBase64Info = await readFileAsBase64(file);
+					console.log(fileBase64Info, "fileBase64Info");
 					fileBase64Infos.push(fileBase64Info);
 				} catch (error) {
 					reject(error);
@@ -122,7 +123,7 @@ function readFileAsBase64(file: File): Promise<FileBase64Info> {
 				const [, base64] = reader.result.split(",");
 
 				const preview = URL.createObjectURL(file);
-				const fileType = file.type;
+				const fileType = file.name.split(".").pop() || "";
 
 				resolve({
 					base64,

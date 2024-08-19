@@ -37,22 +37,24 @@ export async function uploadPostMedia(
 
 export async function uploadPostDocument(
 	id: string,
-	files: { base64: string }[]
+	files: { base64: string; fileType: string; fileName: string }[]
 ) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
-	const documentUrls = [];
 
 	for (const file of files) {
 		const buffer = Buffer.from(file.base64, "base64");
-		const blob = await postBlob(buffer.toString("base64"), "pdf");
-		documentUrls.push(blob.urlToMedia);
-	}
+		const blob = await postBlob(buffer.toString("base64"), file.fileType);
 
-	await db.post.update({
-		where: { id, authorId: session.user.id },
-		data: { document: documentUrls },
-	});
+		await db.postDocument.create({
+			data: {
+				postId: id,
+				name: file.fileName,
+				url: blob.urlToMedia,
+				type: file.fileType,
+			},
+		});
+	}
 
 	return "ok";
 }

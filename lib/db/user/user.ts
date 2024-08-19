@@ -18,6 +18,14 @@ export async function createUser(
 	if (numberval) return "error"; // Honeypot
 
 	try {
+		// Check if the email is already in use
+		const existingUser = await db.user.findUnique({
+			where: { email: email },
+		});
+		if (existingUser) {
+			return "email already in use";
+		}
+
 		const hashedPassword = await hash(password, 10);
 		const newUser = await db.user.create({
 			data: {

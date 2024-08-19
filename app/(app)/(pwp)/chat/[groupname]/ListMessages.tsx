@@ -1,9 +1,11 @@
 import UserAvatar from "@/components/user/UserAvatar";
-import { Link, Image } from "@nextui-org/react";
+import { Link, Image, Chip } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
 import type { MessageProps } from "@/lib/db/group/type";
 import { useImageCarousel } from "@/providers/ImageDisplay";
+import prettyDate from "@/util/prettyDate";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 export function ListMessages({ messages }: { messages: MessageProps[] }) {
 	const session = useSession();
@@ -34,21 +36,20 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 							)}
 						</div>
 						<div
-							className={`w-full flex gap-x-4 message-animation ${
+							className={`w-full flex gap-x-2 message-animation ${
 								isUserMessage ? "flex-row-reverse" : ""
 							}`}
 						>
-							{i === 0 ||
-							message.user.id !== messages[i - 1].user.id ||
-							isNewDay ? (
-								<div>
-									<UserAvatar
-										avatarURL={message.user.image}
-									/>
-								</div>
-							) : (
-								<div className="w-12" />
-							)}
+							<div>
+								<Image
+									removeWrapper={true}
+									src={
+										message.user.image ||
+										"/brand/default-avatar.svg"
+									}
+									className="w-6 h-6"
+								/>
+							</div>
 							<div
 								className={`flex flex-col gap-y-1 grow ${
 									isUserMessage ? "items-end" : ""
@@ -62,16 +63,36 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 									<div>
 										<MessageActions message={message} />
 									</div>
-									{i === 0 ||
-									message.user.id !==
-										messages[i - 1].user.id ||
-									isNewDay ? (
+									<div
+										className={`flex gap-x-2 ${
+											isUserMessage
+												? "flex-row-reverse"
+												: ""
+										}`}
+									>
 										<Link
 											href={`/user/${message.user.username}`}
 										>
 											<b>{message.user.username}</b>
 										</Link>
-									) : null}
+										{message.replyToId && (
+											<Chip
+												color="warning"
+												startContent={
+													<ChevronLeftIcon className="h-5\" />
+												}
+											>
+												Respondendo{" "}
+												{
+													messages.find(
+														(m) =>
+															m.id ===
+															message.replyToId
+													)?.user.username
+												}
+											</Chip>
+										)}
+									</div>
 								</div>
 								<p
 									className={
@@ -102,14 +123,6 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 								<div />
 							</div>
 						)}
-						<p
-							className={`text-neutral-600 mt-2 ${
-								isUserMessage ? "text-right mr-16" : "ml-16"
-							}`}
-							style={{ fontSize: "12px" }}
-						>
-							{new Date(message.createdAt).toLocaleString()}
-						</p>
 					</div>
 				);
 			})}

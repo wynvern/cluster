@@ -5,6 +5,7 @@ import {
 	ArrowUpOnSquareStackIcon,
 	EllipsisHorizontalIcon,
 	FlagIcon,
+	ShareIcon,
 	ShieldCheckIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -20,6 +21,7 @@ import { useEffect, useState } from "react";
 import { approvePost, deletePost, pinPost } from "@/lib/db/post/post";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 import { getMemberRole } from "@/lib/db/group/groupMember";
+import { toast } from "react-toastify";
 
 interface DropdownItemProps {
 	description: string;
@@ -70,6 +72,23 @@ export default function PostDropdown({
 		});
 	}
 
+	async function sharePost() {
+		if (navigator.share) {
+			await navigator.share({
+				title: post.title,
+				text: post.content,
+				url: window.location.href,
+			});
+		} else {
+			navigator.clipboard.writeText(
+				`${window.location.host}/post/${post.id}`
+			);
+			toast.success("Link copiado para a área de transferência", {
+				autoClose: 3000,
+			});
+		}
+	}
+
 	const dropdownItems = [
 		// Approve Post action
 		["owner", "moderator"].includes(String(userRole)) && !isUserPage
@@ -87,6 +106,15 @@ export default function PostDropdown({
 					onClick: handleApprovePost,
 			  }
 			: null,
+
+		{
+			description: "Compartilhar esse post.",
+			className: "",
+			icon: <ShareIcon className="h-8" aria-label="Pin Post" />,
+			ariaLabel: "share-post",
+			text: "Compartilhar",
+			onClick: sharePost,
+		},
 
 		// Pin Post action
 		["owner", "moderator"].includes(String(userRole)) && !isUserPage

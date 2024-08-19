@@ -2,7 +2,10 @@
 
 import { useSocket } from "@/providers/Socket";
 import { BellIcon } from "@heroicons/react/24/outline";
+import { BellIcon as BoldBellIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
+import Notifications from "../modal/Notifications";
+import { Link } from "@nextui-org/react";
 
 interface NotificationProps {
 	previousNotifications: any;
@@ -15,6 +18,7 @@ export default function NotificationsButton({
 	const [notifications, setNotifications] = useState([
 		...previousNotifications,
 	]);
+	const [openNotifications, setOpenNotifications] = useState(false);
 
 	useEffect(() => {
 		if (!socket) return;
@@ -25,24 +29,43 @@ export default function NotificationsButton({
 	}, [socket]);
 
 	return (
-		<div className="flex items-center gap-x-4">
-			<div className="relative">
-				{notifications.length > 0 && (
-					<div
-						className="rounded-full bg-red-600 text-white flex items-center justify-center absolute w-5 h-5 text-sm right-[-3px] top-[-7px]"
-						style={{
-							outline: "2px hsl(var(--nextui-background) solid",
-							scale: "0.9",
-						}}
-					>
-						<b>{notifications.length}</b>
-					</div>
-				)}
-				<BellIcon className="h-7" />
-			</div>
-			<div className="sidebar-inside">
-				<p>Notificações</p>
-			</div>
-		</div>
+		<>
+			<Link
+				className="flex items-center gap-x-4"
+				onClick={() => setOpenNotifications(true)}
+			>
+				<div className="relative">
+					{notifications.length > 0 && (
+						<div
+							className="rounded-full bg-red-600 text-white flex items-center justify-center absolute w-5 h-5 text-sm right-[-3px] top-[-7px]"
+							style={{
+								outline:
+									"3px hsl(var(--nextui-background) / var(--nextui-background-opacity, var(--tw-bg-opacity))) solid",
+								scale: "0.9",
+							}}
+						>
+							<b>{notifications.length}</b>
+						</div>
+					)}
+					{openNotifications ? (
+						<BoldBellIcon className="h-7" />
+					) : (
+						<BellIcon className="h-7" />
+					)}
+				</div>
+				<div className="sidebar-inside">
+					{openNotifications ? (
+						<b>Notificações</b>
+					) : (
+						<p>Notificações</p>
+					)}
+				</div>
+			</Link>
+
+			<Notifications
+				isActive={openNotifications}
+				setIsActive={setOpenNotifications}
+			/>
+		</>
 	);
 }

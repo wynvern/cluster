@@ -5,6 +5,7 @@
 
 .sidebar-container:hover {
 	width: 300px;
+	border-right: 1px solid var(--border) !important;
 }
 
 .sidebar-container:hover .sidebar-inside {

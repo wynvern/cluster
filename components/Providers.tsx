@@ -9,6 +9,7 @@ import { ImageCarouselProvider } from "@/providers/ImageDisplay";
 import { SocketProvider } from "@/providers/Socket";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ImageCropperProvider } from "@/providers/ImageCropper";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
@@ -21,7 +22,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 							defaultTheme="light"
 						>
 							<ImageCarouselProvider>
-								<SocketProvider>{children}</SocketProvider>
+								<SocketProvider>
+									<ImageCropperProvider>
+										{children}
+									</ImageCropperProvider>
+								</SocketProvider>
 							</ImageCarouselProvider>
 							<ServiceWorkerHandler />
 						</NextThemesProvider>

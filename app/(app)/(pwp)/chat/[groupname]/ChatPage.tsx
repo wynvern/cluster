@@ -1,6 +1,6 @@
 "use client";
 
-import getFileBase64 from "@/util/getFile";
+import getFileBase64, { getFilesBase64 } from "@/util/getFile";
 import {
 	ChevronDownIcon,
 	PaperAirplaneIcon,
@@ -17,6 +17,8 @@ import { useMessageAttr } from "@/hooks/ChatMessage";
 import type { MessageProps } from "@/lib/db/group/type";
 import { fetchMessages } from "@/lib/db/group/groupChat";
 import { useSocket } from "@/providers/Socket";
+import supportedFormats from "@/public/supportedFormats.json";
+import { toast } from "react-toastify";
 
 interface FileBase64Info {
 	base64: string;
@@ -26,9 +28,9 @@ interface FileBase64Info {
 
 export default function ChatPage({ group }: { group: Group }) {
 	const [isSending, setIsSending] = useState(false);
-	const [selectedImage, setSelectedImage] = useState<FileBase64Info | null>(
-		null
-	);
+	const [selectedImages, setSelectedImages] = useState<
+		FileBase64Info[] | null
+	>(null);
 	const [messages, setMessages] = useState<MessageProps[]>([]);
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
@@ -43,6 +45,33 @@ export default function ChatPage({ group }: { group: Group }) {
 	const [userTyping, setUserTyping] = useState<
 		{ userId: string; username: string }[]
 	>([]);
+
+	// Cooldown System
+	const [cooldownActive, setCooldownActive] = useState(false);
+	const [lastMessagesTimestamps, setLastMessagesTimestamps] = useState<
+		number[]
+	>([]);
+
+	function verifyCooldown(timestamp: number) {
+		console.log("verifyCooldown");
+		setLastMessagesTimestamps((prev) => [...prev, timestamp]);
+		setTimeout(() => {
+			setLastMessagesTimestamps((prev) =>
+				prev.filter((time) => time !== timestamp)
+			);
+		}, 5000);
+
+		if (lastMessagesTimestamps.length > 2) {
+			setCooldownActive(true);
+			toast.warn("Você está enviando mensagens muito rápido.", {
+				autoClose: 10000,
+			});
+			setTimeout(() => {
+				setCooldownActive(false);
+			}, 10000);
+		}
+	}
+
 	const socket = useSocket();
 
 	useEffect(() => {
@@ -98,27 +127,28 @@ export default function ChatPage({ group }: { group: Group }) {
 			}, 2000);
 		});
 
-		if (socket.connected) {
-			onConnect();
-			console.log("executed");
-		}
+		onConnect();
+		console.log("executed");
 
 		return () => {
 			socket.off("receiveMessage");
 			socket.off("typing");
 		};
-	}, [socket?.connected]);
+	}, [socket]);
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		if (isSending) return false;
 		if (!socket) return;
+		if (cooldownActive) return;
 
 		setIsSending(true);
 		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const message = formData.get("message") as string;
 
 		if (message) {
+			verifyCooldown(new Date().valueOf());
+
 			const messageToSend = {
 				content: message,
 				userId: session.data?.user?.id || "",
@@ -129,29 +159,55 @@ export default function ChatPage({ group }: { group: Group }) {
 				},
 
 				chatId: group?.GroupChat?.id,
-				media: selectedImage?.base64 ? [selectedImage.base64] : [],
+				media:
+					selectedImages && selectedImages?.length > 0
+						? selectedImages.map((image) => image.base64)
+						: [],
 				replyToId: replyToMessageContent?.id,
 				createdAt: new Date(),
 			} as MessageProps;
+
 			socket.emit("sendMessage", messageToSend);
 			e.currentTarget.reset();
-			setSelectedImage(null);
+			setSelectedImages(null);
 		}
 		setIsSending(false);
 	}
 
 	async function handleSelectImage() {
-		const file = await getFileBase64([
-			"png",
-			"jpg",
-			"jpeg",
-			"gif",
-			"webp",
-			"svg",
-		]);
+		try {
+			const file = await getFilesBase64(supportedFormats.image);
 
-		if (file) {
-			setSelectedImage(file);
+			if (selectedImages && selectedImages?.length + file.length > 4) {
+				toast.error("Máximo de 4 imagens por mensagem.", {
+					autoClose: 3000,
+				});
+				return;
+			}
+
+			if (file.length > 0) {
+				setSelectedImages((prevImages) =>
+					prevImages ? [...prevImages, ...file] : [...file]
+				);
+			}
+		} catch (e) {
+			switch ((e as { message: string }).message) {
+				case "file-too-large":
+					toast.error("Arquivo muito grande. Máximo de 4.5MB.", {
+						autoClose: 3000,
+					});
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido.", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro ao adicionar documento.", {
+						autoClose: 3000,
+					});
+					break;
+			}
 		}
 	}
 
@@ -234,12 +290,7 @@ export default function ChatPage({ group }: { group: Group }) {
 								<XMarkIcon className="h-6" />
 							</Button>
 							<div className="flex gap-x-1 text-tiny">
-								<b>
-									Respondendo{" "}
-									{replyToMessageContent?.authorUsername}:{" "}
-								</b>
-
-								<p>{replyToMessageContent?.content}</p>
+								{`Respondendo ${replyToMessageContent?.authorUsername}: ${replyToMessageContent?.content}`}
 							</div>
 						</div>
 					)}
@@ -251,22 +302,34 @@ export default function ChatPage({ group }: { group: Group }) {
 						classNames={{ inputWrapper: "border-none" }}
 						max={1000}
 					/>
-					{selectedImage && (
-						<div className="relative">
-							<Button
-								color="secondary"
-								size="sm"
-								isIconOnly={true}
-								className="absolute z-50 left-2 top-2"
-								onClick={() => setSelectedImage(null)}
-							>
-								<XMarkIcon className="h-4" />
-							</Button>
-							<Image
-								src={selectedImage.preview}
-								removeWrapper={true}
-								className="w-auto h-20"
-							/>
+					{selectedImages && selectedImages.length > 0 && (
+						<div className="flex gap-x-2">
+							{selectedImages.map((image, index) => (
+								<div className="relative" key={index}>
+									<Button
+										color="secondary"
+										size="sm"
+										isIconOnly={true}
+										className="absolute z-50 left-2 top-2"
+										onClick={() => {
+											const newSelectedImages =
+												selectedImages.filter(
+													(_, i) => i !== index
+												);
+											setSelectedImages(
+												newSelectedImages
+											);
+										}}
+									>
+										<XMarkIcon className="h-4" />
+									</Button>
+									<Image
+										src={image.preview}
+										removeWrapper={true}
+										className="w-auto h-20 max-w-20 object-cover"
+									/>
+								</div>
+							))}
 						</div>
 					)}
 					{userTyping.length > 0 &&
@@ -287,7 +350,7 @@ export default function ChatPage({ group }: { group: Group }) {
 				<Button
 					isIconOnly={true}
 					color="primary"
-					isDisabled={isSending}
+					isDisabled={isSending || cooldownActive}
 					type="submit"
 				>
 					<PaperAirplaneIcon className="h-6" />

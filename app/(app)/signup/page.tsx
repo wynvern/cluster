@@ -90,18 +90,26 @@ export default function SignUp() {
 
 		const data = await createUser(email, password, numberval);
 
-		if (data === "error") {
-			setInputError({ ...inputError, email: "Erro ao criar conta." });
-			setLoading(false);
-			return false;
-		}
-		if (data === "ok") {
-			setSucess(true);
-			await signIn("credentials", {
-				email,
-				password,
-				redirect: false,
-			});
+		switch (data) {
+			case "error":
+				setInputError({ ...inputError, email: "Erro ao criar conta." });
+				break;
+			case "email already in use":
+				setInputError({
+					...inputError,
+					email: "Este email já está em uso.",
+				});
+				break;
+			case "ok":
+				setSucess(true);
+				await signIn("credentials", {
+					email,
+					password,
+					redirect: false,
+				});
+				break;
+			default:
+				break;
 		}
 		setLoading(false);
 	}

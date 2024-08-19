@@ -12,7 +12,7 @@ export async function createPost(
 	title: string,
 	content: string,
 	media: { base64: string; fileType: string }[],
-	document: { base64: string; fileType: string }[],
+	documents: { base64: string; fileType: string; fileName: string }[],
 	groupId: string
 ) {
 	const session = await getServerSession(authOptions);
@@ -36,11 +36,8 @@ export async function createPost(
 		}
 	}
 
-	if (document.length > 0) {
-		const documentToSend = document.map((doc) => {
-			return { base64: doc.base64 };
-		});
-		const result = await uploadPostDocument(data.id, documentToSend);
+	if (documents.length > 0) {
+		const result = await uploadPostDocument(data.id, documents);
 
 		if (result !== "ok") {
 			throw new Error("Failed to upload document.");

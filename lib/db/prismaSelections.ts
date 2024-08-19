@@ -9,7 +9,7 @@ export function postSelection(userId: string) {
 		authorId: true,
 		content: true,
 		createdAt: true,
-		document: true,
+		PostDocument: true,
 		approved: true,
 		groupId: true,
 		id: true,

@@ -24,7 +24,13 @@ export default interface Post {
 		}[];
 	};
 	media: string[];
-	document?: string[];
+	PostDocument: {
+		id: string;
+		postId: string;
+		name: string;
+		url: string;
+		type: string;
+	}[];
 	pinned: boolean;
 	approved: boolean;
 	bookmarks: {
@@ -35,4 +41,3 @@ export default interface Post {
 	}[];
 	createdAt: Date;
 }
-5;

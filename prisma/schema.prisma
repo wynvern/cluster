@@ -137,24 +137,37 @@ model UserReport {
 }
 
 model Post {
-   id         String       @id @default(cuid())
-   title      String
-   content    String
-   author     User         @relation(fields: [authorId], references: [id])
-   authorId   String       @map("author_id")
-   media      String[]     @default([])
-   document   String[]     @default([])
-   comments   Comment[]
-   bookmarks  Bookmark[]
-   postView   PostView[]
-   group      Group        @relation(fields: [groupId], references: [id])
-   groupId    String       @map("group_id")
-   createdAt  DateTime     @default(now())
-   pinned     Boolean      @default(false)
-   PostReport PostReport[]
-   approved   Boolean      @default(false)
+   id           String         @id @default(cuid())
+   title        String
+   content      String
+   author       User           @relation(fields: [authorId], references: [id])
+   authorId     String         @map("author_id")
+   media        String[]       @default([])
+   comments     Comment[]
+   bookmarks    Bookmark[]
+   postView     PostView[]
+   group        Group          @relation(fields: [groupId], references: [id])
+   groupId      String         @map("group_id")
+   createdAt    DateTime       @default(now())
+   pinned       Boolean        @default(false)
+   PostReport   PostReport[]
+   approved     Boolean        @default(false)
+   PostDocument PostDocument[]
 
    @@map("post")
+}
+
+model PostDocument {
+   id        String   @id @default(cuid())
+   postId    String   @map("post_id")
+   url       String
+   name      String
+   type      String
+   createdAt DateTime @default(now()) @map("created_at")
+
+   post Post @relation(fields: [postId], references: [id])
+
+   @@map("post_document")
 }
 
 model PostReport {

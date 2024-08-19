@@ -150,23 +150,15 @@ export default function PostCard({
 					</Link>
 				)}
 				{/* Document */}
-				{post.document && post.document.length > 0 ? (
+				{post.PostDocument && post.PostDocument.length > 0 ? (
 					<div className="flex gap-x-2">
-						{post.document.map((doc, index) => {
-							const docName = new URL(doc).pathname
-								.split("/")
-								.pop();
-							if (!docName) return null;
-							const docNameWithoutSuffix = docName
-								.split("-")
-								.slice(0, -1)
-								.join("-");
+						{post.PostDocument.map((doc, index) => {
 							return (
-								<Link key={doc} href={doc}>
+								<Link key={doc.id} href={doc.url}>
 									<Chip>
 										<div className="flex gap-x-2">
 											<DocumentIcon className="h-5 w-5" />
-											<p>{docNameWithoutSuffix}</p>
+											<p>{doc.name}</p>
 										</div>
 									</Chip>
 								</Link>

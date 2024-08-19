@@ -3,7 +3,8 @@ import GroupHeader from "./GroupHeader";
 import GroupProfile from "./GroupProfile";
 import GroupContent from "./GroupContent";
 import CreatePostButton from "./CreatePostButton";
-import fetchGroup from "@/lib/db/group/groupManagement";
+import fetchGroup, { fetchGroupSettings } from "@/lib/db/group/groupManagement";
+import { getMemberRole } from "@/lib/db/group/groupMember";
 
 interface GroupPageProps {
 	params: {
@@ -15,6 +16,12 @@ export default async function GroupPage({
 	params: { groupname },
 }: GroupPageProps) {
 	const groupData = await fetchGroup({ groupname });
+	const userRole = groupData
+		? await getMemberRole({ groupname: groupData?.groupname })
+		: null;
+	const groupSettings = groupData
+		? await fetchGroupSettings({ groupname: groupData.groupname })
+		: null;
 
 	return (
 		<div className="flex justify-center w-full h-full">
@@ -32,7 +39,15 @@ export default async function GroupPage({
 				)}
 			</div>
 
-			{groupData && <CreatePostButton group={groupData} />}
+			{groupData &&
+				(!groupSettings?.memberPosting && userRole
+					? ["moderator", "owner"].includes(userRole)
+					: true) && (
+					<CreatePostButton
+						group={groupData}
+						isUserMember={!!userRole}
+					/>
+				)}
 		</div>
 	);
 }

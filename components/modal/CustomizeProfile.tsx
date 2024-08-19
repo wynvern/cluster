@@ -16,6 +16,8 @@ import Draggable from "../general/Draggable";
 import { useSession } from "next-auth/react";
 import supportedFormats from "@/public/supportedFormats.json";
 import { toast } from "react-toastify";
+import CropImage from "@/util/CropImage";
+import { useImageCropper } from "@/providers/ImageCropper";
 
 interface CustomizeProfileProps {
 	active: boolean;
@@ -33,6 +35,7 @@ export default function CustomizeProfile({
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const { update } = useSession();
+	const { cropImage } = useImageCropper();
 
 	const [selectedImages, setSelectedImages] = useState({
 		avatar: {
@@ -164,167 +167,187 @@ export default function CustomizeProfile({
 	}, [active]);
 
 	return (
-		<BaseModal
-			title="Customizar Perfil"
-			size="xl"
-			active={active}
-			setActive={setActive}
-			body={
-				<>
-					<div
-						className="w-full flex items-center justify-center rounded-large relative"
-						style={{
-							aspectRatio: "1000 / 400",
-						}}
-					>
-						<Draggable
-							onFileDrag={(file) => {
-								setSelectedImages((prev) => ({
-									banner: { ...file, error: "" },
-									avatar: prev.avatar,
-								}));
+		<>
+			<BaseModal
+				title="Customizar Perfil"
+				size="xl"
+				active={active}
+				setActive={setActive}
+				body={
+					<>
+						<div
+							className="w-full flex items-center justify-center rounded-large relative"
+							style={{
+								aspectRatio: "1000 / 400",
 							}}
-							onError={(error) => {
-								setSelectedImages((prev) => ({
-									banner: { ...prev.banner, error },
-									avatar: prev.avatar,
-								}));
-								setTimeout(() => {
+						>
+							<Draggable
+								onFileDrag={(file) => {
 									setSelectedImages((prev) => ({
-										banner: { ...prev.banner, error: "" },
+										banner: { ...file, error: "" },
 										avatar: prev.avatar,
 									}));
-								}, 3000);
-							}}
-							acceptedTypes={supportedFormats.image}
-						>
-							<div className="w-full h-full absolute bg-neutral-500 ">
-								<Image
-									removeWrapper={true}
-									src={
-										selectedImages.banner.preview ||
-										user.banner ||
-										""
-									}
-									className="absolute w-full h-full object-cover z-1"
+								}}
+								onError={(error) => {
+									setSelectedImages((prev) => ({
+										banner: { ...prev.banner, error },
+										avatar: prev.avatar,
+									}));
+									setTimeout(() => {
+										setSelectedImages((prev) => ({
+											banner: {
+												...prev.banner,
+												error: "",
+											},
+											avatar: prev.avatar,
+										}));
+									}, 3000);
+								}}
+								acceptedTypes={supportedFormats.image}
+							>
+								<div className="w-full h-full absolute bg-neutral-500 ">
+									<Image
+										removeWrapper={true}
+										src={
+											selectedImages.banner.preview ||
+											user.banner ||
+											""
+										}
+										className="absolute w-full h-full object-cover z-1"
+									/>
+								</div>
+							</Draggable>
+							<Button
+								isIconOnly={true}
+								className="opacity-80"
+								onClick={handleSelectBanner}
+								color="secondary"
+							>
+								<PhotoIcon className="h-6" />
+							</Button>
+							<Draggable
+								onFileDrag={async (file) => {
+									const draggedImage = Array.isArray(file)
+										? file[0]
+										: file;
+
+									const result = await cropImage(
+										draggedImage.preview,
+										1
+									);
+
+									console.log(result);
+
+									setSelectedImages((prev) => ({
+										banner: prev.banner,
+										avatar: { ...file, error: "" },
+									}));
+								}}
+								onError={(error) => {
+									setSelectedImages((prev) => ({
+										banner: { ...prev.banner, error },
+										avatar: prev.avatar,
+									}));
+									setTimeout(() => {
+										setSelectedImages((prev) => ({
+											banner: {
+												...prev.banner,
+												error: "",
+											},
+											avatar: prev.avatar,
+										}));
+									}, 3000);
+								}}
+								acceptedTypes={supportedFormats.image}
+							>
+								<div className="absolute -bottom-10 left-4 flex items-center justify-center">
+									<Button
+										isIconOnly={true}
+										className="absolute opacity-80 z-50"
+										onClick={handleSelectAvatar}
+										color="secondary"
+									>
+										<PhotoIcon className="h-6" />
+									</Button>
+									<Image
+										className="h-[100px] sm:h-[140px] w-[100px] sm:w-[140px] object-cover z-1"
+										src={
+											selectedImages.avatar.preview ||
+											user.image ||
+											"/brand/default-avatar.svg"
+										}
+										removeWrapper={true}
+									/>
+								</div>
+							</Draggable>
+						</div>
+						<div className="mt-11">
+							<form
+								className="flex gap-y-3 flex-col"
+								id="update-profile-form"
+								onSubmit={handleUpdateProfile}
+							>
+								{selectedImages.avatar.error ||
+									(selectedImages.banner.error && (
+										<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
+											<p className="text-danger">
+												{selectedImages.banner.error ||
+													""}
+											</p>
+										</div>
+									))}
+								<Input
+									name="name"
+									label="Nome"
+									variant="bordered"
+									classNames={{ inputWrapper: "h-14" }}
+									max={50}
+									defaultValue={user.name || ""}
 								/>
-							</div>
-						</Draggable>
+								<Textarea
+									name="bio"
+									label="Biografia"
+									variant="bordered"
+									max={200}
+									defaultValue={user.bio || ""}
+								/>
+							</form>
+						</div>
+					</>
+				}
+				footer={
+					<>
 						<Button
-							isIconOnly={true}
-							className="opacity-80"
-							onClick={handleSelectBanner}
-							color="secondary"
+							aria-label="cancelar-perfil"
+							isDisabled={loading || success}
+							startContent={<XMarkIcon className="h-6" />}
+							variant="bordered"
+							onClick={() => setActive(false)}
 						>
-							<PhotoIcon className="h-6" />
+							Cancelar
 						</Button>
-						<Draggable
-							onFileDrag={(file) => {
-								setSelectedImages((prev) => ({
-									banner: prev.banner,
-									avatar: { ...file, error: "" },
-								}));
-							}}
-							onError={(error) => {
-								setSelectedImages((prev) => ({
-									banner: { ...prev.banner, error },
-									avatar: prev.avatar,
-								}));
-								setTimeout(() => {
-									setSelectedImages((prev) => ({
-										banner: { ...prev.banner, error: "" },
-										avatar: prev.avatar,
-									}));
-								}, 3000);
-							}}
-							acceptedTypes={supportedFormats.image}
+						<Button
+							color={success ? "success" : "primary"}
+							type="submit"
+							form="update-profile-form"
+							isLoading={loading}
+							isDisabled={loading || success}
+							aria-label="salvar-perfil"
+							startContent={
+								loading ? (
+									""
+								) : success ? (
+									<CheckIcon className="h-6" />
+								) : (
+									<PencilSquareIcon className="h-6" />
+								)
+							}
 						>
-							<div className="absolute -bottom-10 left-4 flex items-center justify-center">
-								<Button
-									isIconOnly={true}
-									className="absolute opacity-80 z-50"
-									onClick={handleSelectAvatar}
-									color="secondary"
-								>
-									<PhotoIcon className="h-6" />
-								</Button>
-								<Image
-									className="h-[100px] sm:h-[140px] w-[100px] sm:w-[140px] object-cover z-1"
-									src={
-										selectedImages.avatar.preview ||
-										user.image ||
-										"/brand/default-avatar.svg"
-									}
-									removeWrapper={true}
-								/>
-							</div>
-						</Draggable>
-					</div>
-					<div className="mt-11">
-						<form
-							className="flex gap-y-3 flex-col"
-							id="update-profile-form"
-							onSubmit={handleUpdateProfile}
-						>
-							{selectedImages.avatar.error ||
-								(selectedImages.banner.error && (
-									<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
-										<p className="text-danger">
-											{selectedImages.banner.error || ""}
-										</p>
-									</div>
-								))}
-							<Input
-								name="name"
-								label="Nome"
-								variant="bordered"
-								classNames={{ inputWrapper: "h-14" }}
-								max={50}
-								defaultValue={user.name || ""}
-							/>
-							<Textarea
-								name="bio"
-								label="Biografia"
-								variant="bordered"
-								max={200}
-								defaultValue={user.bio || ""}
-							/>
-						</form>
-					</div>
-				</>
-			}
-			footer={
-				<>
-					<Button
-						aria-label="cancelar-perfil"
-						isDisabled={loading || success}
-						startContent={<XMarkIcon className="h-6" />}
-						variant="bordered"
-						onClick={() => setActive(false)}
-					>
-						Cancelar
-					</Button>
-					<Button
-						color={success ? "success" : "primary"}
-						type="submit"
-						form="update-profile-form"
-						isLoading={loading}
-						isDisabled={loading || success}
-						aria-label="salvar-perfil"
-						startContent={
-							loading ? (
-								""
-							) : success ? (
-								<CheckIcon className="h-6" />
-							) : (
-								<PencilSquareIcon className="h-6" />
-							)
-						}
-					>
-						Salvar
-					</Button>
-				</>
-			}
-		/>
+							Salvar
+						</Button>
+					</>
+				}
+			/>
+		</>
 	);
 }

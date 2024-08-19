@@ -28,7 +28,7 @@ export default async function Sidebar() {
 	return (
 		<>
 			<div
-				className="fixed h-dvh border-for-sidebar flex-col  sidebar-container bg-background hidden sm:flex"
+				className="fixed h-dvh border-for-sidebar flex-col sidebar-container bg-background hidden sm:flex"
 				style={{ zIndex: 99999999999 }}
 			>
 				<div className="flex flex-col justify-between h-full sidebar-wrapper py-6">
@@ -48,11 +48,11 @@ export default async function Sidebar() {
 							<h2 className="main-text">Cluster</h2>
 						</div>
 					</div>
-					<div className="flex flex-col gap-y-8 pl-[7px]">
-						<div className="flex items-center gap-x-4">
-							<Link href="/">
+					<div className="flex flex-col gap-y-8 pl-[9.5px]">
+						<Link href="/" className="flex items-center gap-x-4">
+							<div>
 								<HomeIcon className="h-7" />
-							</Link>
+							</div>
 							<div className="sidebar-inside">
 								{path === "/" ? (
 									<p>
@@ -62,14 +62,17 @@ export default async function Sidebar() {
 									<p>Home</p>
 								)}
 							</div>
-						</div>
+						</Link>
 						<NotificationsButton
 							previousNotifications={previousNotifications}
-						/>
-						<div className="flex items-center gap-x-4">
-							<Link href="/search">
+						/>{" "}
+						<Link
+							href="/search"
+							className="flex items-center gap-x-4"
+						>
+							<div>
 								<MagnifyingGlassIcon className="h-7" />
-							</Link>
+							</div>
 							<div className="sidebar-inside">
 								{path.startsWith("/search") ? (
 									<p>
@@ -79,11 +82,14 @@ export default async function Sidebar() {
 									<p>Pesquisa</p>
 								)}
 							</div>
-						</div>
-						<div className="flex items-center gap-x-4">
-							<Link href="/chat">
+						</Link>
+						<Link
+							href="/chat"
+							className="flex items-center gap-x-4"
+						>
+							<div>
 								<ChatBubbleBottomCenterIcon className="h-7" />
-							</Link>
+							</div>
 							<div className="sidebar-inside">
 								{path.startsWith("/chat") ? (
 									<p>
@@ -93,11 +99,14 @@ export default async function Sidebar() {
 									<p>Chat</p>
 								)}
 							</div>
-						</div>
-						<div className="flex items-center gap-x-4">
-							<Link href="/group">
+						</Link>
+						<Link
+							href="/group"
+							className="flex items-center gap-x-4"
+						>
+							<div>
 								<UserGroupIcon className="h-7" />
-							</Link>
+							</div>
 							<div className="sidebar-inside">
 								{path.startsWith("/group") ? (
 									<p>
@@ -107,7 +116,7 @@ export default async function Sidebar() {
 									<p>Grupos</p>
 								)}
 							</div>
-						</div>
+						</Link>
 					</div>
 					<div>
 						<ProfileDropdown />

@@ -46,9 +46,21 @@ export default function ({
 		if (isFollowing) {
 			await exitGroup({ groupname });
 			setIsFollowing(false);
+
+			// Hide create post button
+			const divToHide = document.getElementById("create-post-button");
+			if (divToHide) {
+				divToHide.style.display = "none";
+			}
 		} else {
 			await enterGroup({ groupname });
 			setIsFollowing(true);
+
+			// Show create post button
+			const divToShow = document.getElementById("create-post-button");
+			if (divToShow) {
+				divToShow.style.display = "flex";
+			}
 		}
 	};
 
@@ -58,9 +70,7 @@ export default function ({
 			color="primary"
 			onClick={handleClick}
 			isDisabled={
-				userRole === "owner" //||
-				//(isJoiningDisabled && !isFollowing) ||
-				//!userRole
+				userRole === "owner" || (isJoiningDisabled && !isFollowing)
 			}
 		>
 			{isFollowing ? "Seguindo" : "Seguir"}

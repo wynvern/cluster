@@ -1,13 +1,11 @@
 "use client";
 
 import CustomizeProfile from "@/components/modal/CustomizeProfile";
-import Notifications from "@/components/modal/Notifications";
 import ReportProfile from "@/components/modal/ReportProfile";
 import type User from "@/lib/db/user/type";
 import { blockUser } from "@/lib/db/user/user";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 import {
-	BellIcon,
 	EllipsisHorizontalIcon,
 	FlagIcon,
 	NoSymbolIcon,
@@ -21,12 +19,10 @@ import {
 	Button,
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function UserActions({ user }: { user: User }) {
 	const [customizeProfileActive, setCustomizeProfileActive] = useState(false);
-	const [notificationsActive, setNotificationsActive] = useState(false);
 	const [reportProfileActive, setReportProfileActive] = useState(false);
 	const session = useSession();
 	const { confirm } = useConfirmationModal();
@@ -73,16 +69,6 @@ export default function UserActions({ user }: { user: User }) {
 
 	return (
 		<>
-			{session.data?.user.id === user.id && (
-				<Button
-					isIconOnly={true}
-					variant="bordered"
-					className="mr-4"
-					onClick={() => setNotificationsActive(true)}
-				>
-					<BellIcon className="h-6" />
-				</Button>
-			)}
 			<Dropdown
 				className="default-border shadow-none"
 				placement="bottom-end"
@@ -119,10 +105,6 @@ export default function UserActions({ user }: { user: User }) {
 				active={customizeProfileActive}
 				setActive={setCustomizeProfileActive}
 				user={user}
-			/>
-			<Notifications
-				isActive={notificationsActive}
-				setIsActive={setNotificationsActive}
 			/>
 			<ReportProfile
 				active={reportProfileActive}

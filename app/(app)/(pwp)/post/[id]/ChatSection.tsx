@@ -48,7 +48,7 @@ function CommentCreator({
 			<UserAvatar avatarURL={session.data?.user.image} />
 			<Textarea
 				value={newComment.text}
-				onChange={(e) => setNewComment({ text: e.target.value })}
+				onChange={(e: any) => setNewComment({ text: e.target.value })}
 				placeholder="Escreva seu comentário..."
 				variant="bordered"
 			/>
@@ -59,7 +59,7 @@ function CommentCreator({
 				isIconOnly={true}
 				variant="bordered"
 				onClick={() => handleCreatePost()}
-				disabled={newComment.text === ''}
+				disabled={newComment.text === ""}
 			>
 				<PaperAirplaneIcon className="h-6" />
 			</Button>

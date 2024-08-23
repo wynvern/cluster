@@ -25,6 +25,7 @@ export default async function GroupPage() {
 					<h2 className="mb-4">Recentes</h2>
 					{recentGroups.length > 0 ? (
 						<ScrollShadow
+							// @ts-ignore
 							orientation="horizontal"
 							className="gap-x-4 flex w-full"
 						>

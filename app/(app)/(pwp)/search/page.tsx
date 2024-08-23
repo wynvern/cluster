@@ -127,16 +127,17 @@ export default function SearchPage() {
 				<div className="px-4 sm:px-10 pb-4">
 					<Input
 						placeholder="Pesquisar"
-						onChange={(e) => {
+						onChange={(e: any) => {
 							debounce(handleSearch(e.target.value), 1000);
 						}}
 					/>
 				</div>
+				{/* @ts-ignore */}
 				<Tabs
 					variant="underlined"
 					className="w-full bottom-border flex items-center justify-center"
 					selectedKey={selectedCat}
-					onSelectionChange={(key) => {
+					onSelectionChange={(key: any) => {
 						setSelectedCat(
 							key as "user" | "group" | "post" | "comment"
 						);

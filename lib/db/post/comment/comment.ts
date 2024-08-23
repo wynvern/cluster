@@ -77,8 +77,28 @@ export async function createComment({
 			sendNotification({
 				receiverUserId: postAuthor?.authorId,
 				message: {
-					title: "New comment",
-					body: "Someone commented on your post",
+					title: `u/${session.user.username} comentou em seu post`,
+					body: `${text.slice(0, 50)}`,
+					url: `/post/${postId}`,
+				},
+			});
+		}
+	} else {
+		const parentComment = await db.comment.findUnique({
+			where: { id: parentId },
+			select: { authorId: true },
+		});
+
+		if (
+			parentComment?.authorId &&
+			parentComment.authorId !== session.user.id
+		) {
+			sendNotification({
+				receiverUserId: parentComment?.authorId,
+				message: {
+					title: `u/${session.user.username} respondeu seu comentário`,
+					body: `${text.slice(0, 50)}`,
+					url: `/post/${postId}`,
 				},
 			});
 		}

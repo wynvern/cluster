@@ -132,3 +132,4 @@ dist
 # Packages
 ./public/sw.js
 ./public/workbox-*
+.vscode/tasks.json

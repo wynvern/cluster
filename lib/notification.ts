@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
 import { db } from "./db";
 import * as webPush from "web-push";
+import { url } from "inspector";
 
 webPush.setVapidDetails(
 	"mailto:wynvernn@gmail.com",
@@ -45,6 +46,7 @@ export async function sendNotification({
 		title: string;
 		body: string;
 		image?: string;
+		url?: string;
 	};
 }) {
 	const subscriptions = await db.subscription.findMany({
@@ -53,13 +55,15 @@ export async function sendNotification({
 		},
 	});
 
-	await db.notification.create({
+	const cretedNotification = await db.notification.create({
 		data: {
 			title: message.title,
 			body: message.body,
 			userId: receiverUserId,
 			image: message.image,
+			link: message.url,
 		},
+		select: { viewed: true, createdAt: true },
 	});
 
 	for (const sub of subscriptions) {
@@ -71,7 +75,7 @@ export async function sendNotification({
 
 	await sendLiveSocketNotification({
 		receiverUserId,
-		message,
+		message: cretedNotification,
 	});
 }
 
@@ -80,11 +84,7 @@ async function sendLiveSocketNotification({
 	message,
 }: {
 	receiverUserId: string;
-	message: {
-		title: string;
-		body: string;
-		image?: string;
-	};
+	message: any;
 }) {
 	const io = require("socket.io-client");
 	const socket = io("http://localhost:3002");

@@ -61,6 +61,7 @@ export default function GeneralSettings({
 						</div>
 						<div>
 							<Switch
+								// @ts-ignore
 								onValueChange={(selected: boolean) => {
 									setGroupSettings({
 										...groupSettings,
@@ -84,6 +85,7 @@ export default function GeneralSettings({
 						</div>
 						<div>
 							<Switch
+								// @ts-ignore
 								onValueChange={(selected: boolean) => {
 									setGroupSettings({
 										...groupSettings,
@@ -106,6 +108,7 @@ export default function GeneralSettings({
 						</div>
 						<div>
 							<Switch
+								// @ts-ignore
 								onValueChange={(selected: boolean) => {
 									setGroupSettings({
 										...groupSettings,

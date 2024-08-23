@@ -77,7 +77,6 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 										</Link>
 										{message.replyToId && (
 											<Chip
-												color="warning"
 												startContent={
 													<ChevronLeftIcon className="h-5\" />
 												}

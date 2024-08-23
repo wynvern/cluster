@@ -21,6 +21,7 @@ export default function UserGroupActions({
 					<EllipsisHorizontalIcon className="h-8" />
 				</Button>
 			</DropdownTrigger>
+			{/* @ts-ignore */}
 			<DropdownMenu>
 				<DropdownItem
 					description="Reportar grupo"

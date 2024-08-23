@@ -29,6 +29,7 @@ export default function ModeratorGroupActions({
 					<EllipsisHorizontalIcon className="h-8" />
 				</Button>
 			</DropdownTrigger>
+			{/* @ts-ignore */}
 			<DropdownMenu>
 				<DropdownItem
 					description="Customize o grupo"

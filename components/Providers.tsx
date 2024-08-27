@@ -2,7 +2,7 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProvider } from "next-themes";
 import ServiceWorkerHandler from "./service/ServiceWorkerHandler";
 import { ConfirmationModalProvider } from "@/providers/ConfirmationModal";
 import { ImageCarouselProvider } from "@/providers/ImageDisplay";
@@ -14,13 +14,10 @@ import { ImageCropperProvider } from "@/providers/ImageCropper";
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<NextUIProvider>
-				<SessionProvider>
-					<ConfirmationModalProvider>
-						<NextThemesProvider
-							attribute="class"
-							defaultTheme="light"
-						>
+			<ThemeProvider attribute="class" defaultTheme="dark">
+				<NextUIProvider>
+					<SessionProvider>
+						<ConfirmationModalProvider>
 							<ImageCarouselProvider>
 								<SocketProvider>
 									<ImageCropperProvider>
@@ -29,10 +26,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 								</SocketProvider>
 							</ImageCarouselProvider>
 							<ServiceWorkerHandler />
-						</NextThemesProvider>
-					</ConfirmationModalProvider>
-				</SessionProvider>
-			</NextUIProvider>
+						</ConfirmationModalProvider>
+					</SessionProvider>
+				</NextUIProvider>
+			</ThemeProvider>
 
 			<ToastContainer
 				stacked={true}

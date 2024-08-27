@@ -8,8 +8,10 @@ import { useState } from "react";
 export default function GoogleLoginButton() {
 	const [loadingGoogle, setLoadingGoogle] = useState(false);
 
-	function signInGoogle() {
-		signIn("google");
+	async function signInGoogle() {
+		const result = await signIn("google", {
+			callbackUrl: "/",
+		});
 	}
 
 	return (

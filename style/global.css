@@ -197,3 +197,7 @@ header {
 a {
 	cursor: pointer;
 }
+
+button.text-primary-foreground {
+	font-weight: 600;
+}

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../../style/global.css";
 import Providers from "@/components/Providers";
-import Initializer from "@/components/general/Initializer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -31,7 +30,6 @@ export default async function RootLayout({
 	return (
 		<html lang="pt-BR">
 			<body>
-				<Initializer />
 				<Providers>{children}</Providers>
 			</body>
 		</html>

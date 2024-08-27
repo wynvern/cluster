@@ -22,7 +22,7 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 		const formCode: string = formData.get("code") as string;
 
 		if (!formCode) {
-			setInputError("Digite o código");
+			setInputError("Digite o código aqui.");
 			setLoading(false);
 			return false;
 		}

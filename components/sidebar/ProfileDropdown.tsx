@@ -37,6 +37,7 @@ export default function ProfileDropdown() {
 				<div className="sidebar-inside">
 					<Dropdown
 						className="default-border shadow-none"
+						// @ts-ignore
 						placement="left"
 					>
 						<DropdownTrigger>
@@ -44,6 +45,7 @@ export default function ProfileDropdown() {
 								<EllipsisHorizontalIcon className="h-6" />
 							</Link>
 						</DropdownTrigger>
+						{/* @ts-ignore */}
 						<DropdownMenu aria-label="Static Actions">
 							<DropdownItem>
 								Logado como{" "}

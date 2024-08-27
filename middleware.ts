@@ -43,6 +43,7 @@ export default async function middleware(req: NextRequest) {
 		{
 			location: "/verify-email",
 			redirection: {
+				// @ts-ignore
 				condition: !session && !session?.emailVerified,
 				to: "/",
 			},

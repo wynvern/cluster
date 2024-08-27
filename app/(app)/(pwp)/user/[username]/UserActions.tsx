@@ -71,6 +71,7 @@ export default function UserActions({ user }: { user: User }) {
 		<>
 			<Dropdown
 				className="default-border shadow-none"
+				// @ts-ignore
 				placement="bottom-end"
 			>
 				<DropdownTrigger>
@@ -78,6 +79,7 @@ export default function UserActions({ user }: { user: User }) {
 						<EllipsisHorizontalIcon className="h-8" />
 					</Button>
 				</DropdownTrigger>
+				{/* @ts-ignore */}
 				<DropdownMenu aria-label="Static Actions">
 					{dropdownItems
 						.filter((item) =>

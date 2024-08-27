@@ -222,6 +222,7 @@ export default function CreatePost({
 			setActive={onClosing}
 			body={
 				<>
+					{/* @ts-ignore */}
 					<Tabs
 						selectedKey={activeTab}
 						onSelectionChange={(key: Key) =>

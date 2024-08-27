@@ -183,6 +183,8 @@ export default function CustomizeProfile({
 						>
 							<Draggable
 								onFileDrag={(file) => {
+									if (Array.isArray(file)) return;
+
 									setSelectedImages((prev) => ({
 										banner: { ...file, error: "" },
 										avatar: prev.avatar,
@@ -227,16 +229,7 @@ export default function CustomizeProfile({
 							</Button>
 							<Draggable
 								onFileDrag={async (file) => {
-									const draggedImage = Array.isArray(file)
-										? file[0]
-										: file;
-
-									const result = await cropImage(
-										draggedImage.preview,
-										1
-									);
-
-									console.log(result);
+									if (Array.isArray(file)) return;
 
 									setSelectedImages((prev) => ({
 										banner: prev.banner,

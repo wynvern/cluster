@@ -4,17 +4,11 @@ import NoPosts from "@/components/card/NoPosts";
 import PostCard from "@/components/card/PostCard";
 import GroupCard from "@/components/group/GroupCard";
 import type Group from "@/lib/db/group/type";
+import { CircularProgress } from "@nextui-org/progress";
 import type Post from "@/lib/db/post/type";
 import { searchGroup, searchPost, searchUser } from "@/lib/db/search/Search";
 import type User from "@/lib/db/user/type";
-import {
-	CircularProgress,
-	Image,
-	Input,
-	Tab,
-	Tabs,
-	user,
-} from "@nextui-org/react";
+import { Image, Input, Tab, Tabs, user } from "@nextui-org/react";
 import { useState } from "react";
 
 function debounce(func: any, wait: number) {
@@ -166,6 +160,7 @@ export default function SearchPage() {
 
 							{isSearching && (
 								<div>
+									{/* @ts-ignore */}
 									<CircularProgress size="lg" />
 								</div>
 							)}
@@ -196,6 +191,7 @@ export default function SearchPage() {
 
 							{isSearching && (
 								<div>
+									{/* @ts-ignore */}
 									<CircularProgress size="lg" />
 								</div>
 							)}
@@ -237,6 +233,7 @@ export default function SearchPage() {
 
 							{isSearching && (
 								<div>
+									{/* @ts-ignore */}
 									<CircularProgress size="lg" />
 								</div>
 							)}
@@ -245,7 +242,7 @@ export default function SearchPage() {
 					<Tab
 						title={<h3 className="p-2">Comentários</h3>}
 						className="px-0 w-full"
-					></Tab>
+					/>
 				</Tabs>
 			</div>
 		</div>

@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import Draggable from "../general/Draggable";
 import { image } from "@/public/supportedFormats.json";
 import { createGroup } from "@/lib/db/group/groupManagement";
-import supportedCategories from '@/public/categories.json';
+import supportedCategories from "@/public/categories.json";
 
 interface CreateGroupProps {
 	active: boolean;
@@ -49,8 +49,10 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 	});
 
 	function matchCategory(e: string) {
-		const category = supportedCategories.find((i) => i.toLowerCase() == e.toLowerCase());
-		return category ? true : false;
+		const category = supportedCategories.find(
+			(i) => i.toLowerCase() === e.toLowerCase()
+		);
+		return !!category;
 	}
 
 	function handleAddCategory(e: string) {
@@ -59,10 +61,10 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			categories: "",
 		}));
 
-		if (!e.includes(' ')) {
+		if (!e.includes(" ")) {
 			setCategory(e);
 			return;
-		};
+		}
 
 		if (categories.length > 4) {
 			setErrors((prev) => ({
@@ -80,16 +82,13 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		}
 
 		if (categories.includes(e.trim())) {
-			setCategory('');
+			setCategory("");
 			return;
 		}
 
 		if (matchCategory(e.trim())) {
-			setCategories([
-				...categories,
-				e.trim(),
-			]);
-			setCategory('')
+			setCategories([...categories, e.trim()]);
+			setCategory("");
 		} else {
 			setErrors((prev) => ({
 				...prev,
@@ -118,7 +117,9 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		setErrors(throwErrors);
 
 		// Check if there are any errors by looking for non-empty error messages in throwErrors
-		const hasErrors = Object.values(throwErrors).some(error => error !== "");
+		const hasErrors = Object.values(throwErrors).some(
+			(error) => error !== ""
+		);
 		return !hasErrors; // Return true if there are no errors, false otherwise
 	}
 
@@ -274,6 +275,8 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 					>
 						<Draggable
 							onFileDrag={(file) => {
+								if (Array.isArray(file)) return;
+
 								setSelectedImages((prev) => ({
 									banner: { ...file, error: "" },
 									image: prev.image,
@@ -299,6 +302,8 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 						</Button>
 						<Draggable
 							onFileDrag={(file) => {
+								if (Array.isArray(file)) return;
+
 								setSelectedImages((prev) => ({
 									banner: prev.banner,
 									image: { ...file, error: "" },
@@ -359,7 +364,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 									}));
 								}}
 							/>
-							{ /* Categories system made by a furry */}
+							{/* Categories system made by a furry */}
 							<Input
 								placeholder="Categorias"
 								variant="bordered"
@@ -371,11 +376,16 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								isInvalid={errors.categories !== ""}
 								max={20}
 								value={category}
-								onValueChange={(e: string) => handleAddCategory(e)}
-								onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+								onValueChange={(e: string) =>
+									handleAddCategory(e)
+								}
+								onKeyDown={(
+									e: React.KeyboardEvent<HTMLInputElement>
+								) => {
 									if (e.key === "Enter") {
-										e.preventDefault()
-									}}}
+										e.preventDefault();
+									}
+								}}
 							/>
 							{categories.length >= 1 ? (
 								<div className="flex gap-y-2 gap-x-2 overflow-x-auto">

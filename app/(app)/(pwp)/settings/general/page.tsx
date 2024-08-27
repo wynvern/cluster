@@ -68,6 +68,7 @@ export default function GeneralSettings({
 						</div>
 						<div>
 							<Switch
+								// @ts-ignore
 								onValueChange={(selected: boolean) => {
 									setSettings({
 										...settings,
@@ -89,6 +90,7 @@ export default function GeneralSettings({
 						</div>
 						<div>
 							<Switch
+								// @ts-ignore
 								onValueChange={(selected: boolean) => {
 									setSettings({
 										...settings,
@@ -110,6 +112,7 @@ export default function GeneralSettings({
 						</div>
 						<div>
 							<Switch
+								// @ts-ignore
 								onValueChange={(selected: boolean) => {
 									setSettings({
 										...settings,

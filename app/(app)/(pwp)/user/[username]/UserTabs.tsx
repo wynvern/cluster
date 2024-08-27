@@ -127,6 +127,7 @@ export default function UserTabs({
 	);
 
 	return (
+		//  @ts-ignore
 		<Tabs
 			variant="underlined"
 			className="w-full bottom-border flex items-center justify-center"

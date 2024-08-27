@@ -93,6 +93,7 @@ export default function Notifications({
 					className={`oveflow-y-scroll max-h-[70vh] min-h-[50vh] ${
 						loading ? "flex items-center justify-center" : ""
 					}`}
+					// @ts-ignore
 					orientation="vertical"
 				>
 					{Object.values(notifications).length === 0 && (

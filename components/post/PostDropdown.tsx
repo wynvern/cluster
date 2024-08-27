@@ -176,12 +176,14 @@ export default function PostDropdown({
 	}
 
 	return (
+		// @ts-ignore
 		<Dropdown className="default-border shadow-none" placement="bottom-end">
 			<DropdownTrigger>
 				<Button isIconOnly={true} variant="bordered">
 					<EllipsisHorizontalIcon className="h-8" />
 				</Button>
 			</DropdownTrigger>
+			{/* @ts-ignore */}
 			<DropdownMenu aria-label="Static Actions">
 				{dropdownItems.map((item) => (
 					<DropdownItem

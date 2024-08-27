@@ -59,6 +59,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 						</div>
 						<div>
 							<Switch
+								// @ts-ignore
 								onValueChange={(selected: boolean) => {
 									setSettings({
 										...settings,

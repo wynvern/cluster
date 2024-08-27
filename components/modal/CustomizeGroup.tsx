@@ -155,6 +155,8 @@ export default function CustomizeGroup({
 					>
 						<Draggable
 							onFileDrag={(file) => {
+								if (Array.isArray(file)) return;
+
 								setSelectedImages((prev) => ({
 									banner: { ...file, error: "" },
 									image: prev.image,
@@ -184,6 +186,8 @@ export default function CustomizeGroup({
 						</Button>
 						<Draggable
 							onFileDrag={(file) => {
+								if (Array.isArray(file)) return;
+
 								setSelectedImages((prev) => ({
 									banner: prev.banner,
 									image: { ...file, error: "" },

@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		if (!session.data) return;
 
-		const socketInstance = io("http://localhost:3002");
+		const socketInstance = io(process.env.SOCKET_URL || "");
 
 		async function run() {
 			setSocket(socketInstance);

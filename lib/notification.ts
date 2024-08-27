@@ -87,7 +87,7 @@ async function sendLiveSocketNotification({
 	message: any;
 }) {
 	const io = require("socket.io-client");
-	const socket = io("http://localhost:3002");
+	const socket = io(process.env.SOCKET_URL || "");
 
 	socket.emit("serverForwardNotification", {
 		receiverUserId,

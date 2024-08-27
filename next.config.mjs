@@ -4,7 +4,11 @@ const nextConfig = {
 	experimental: {
 		serverActions: {
 			bodySizeLimit: "10mb",
-			allowedOrigins: [process.env.SERVER_HOSTNAME, "localhost:3000"],
+			allowedOrigins: [
+				process.env.SERVER_HOSTNAME,
+				"localhost:3000",
+				process.env.SOCKET_URL,
+			],
 		},
 	},
 	images: {
@@ -19,6 +23,18 @@ const nextConfig = {
 				hostname: "localhost",
 				protocol: "http",
 				port: "3001",
+				pathname: "/**",
+			},
+			{
+				hostname: process.env.SERVER_HOSTNAME,
+				protocol: "https",
+				port: "",
+				pathname: "/**",
+			},
+			{
+				hostname: process.env.BLOB_URL,
+				protocol: "https",
+				port: "",
 				pathname: "/**",
 			},
 		],

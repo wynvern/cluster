@@ -3,7 +3,8 @@
 	transition: width 200ms ease-in-out;
 }
 
-.sidebar-container:hover {
+.sidebar-container:hover,
+.sidebar-mobile {
 	width: 300px;
 	border-right: 1px solid var(--border) !important;
 }
@@ -15,6 +16,10 @@
 .sidebar-inside {
 	display: none;
 	transition: all 100ms ease-in-out;
+}
+
+.sidebar-mobile .sidebar-inside {
+	display: block;
 }
 
 .sidebar-wrapper {

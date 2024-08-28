@@ -19,7 +19,8 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		if (!session.data) return;
 
-		const socketInstance = io(process.env.SOCKET_URL || "");
+		const socketInstance = io(process.env.NEXT_PUBLIC_SOCKET_URL || "");
+		console.log(process.env.NEXT_PUBLIC_SOCKET_URL || "nothing");
 
 		async function run() {
 			setSocket(socketInstance);

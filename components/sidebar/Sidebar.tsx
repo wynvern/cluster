@@ -117,7 +117,7 @@ export default async function Sidebar() {
 			</div>
 
 			<div
-				style={{ zIndex: "999999" }}
+				style={{ zIndex: "999998" }}
 				className="bg-background fixed bottom-0 w-full sm:hidden flex items-center justify-around py-4 px-6 h-14 sidebar-border-mobile"
 			>
 				<Link href="/">
@@ -126,6 +126,9 @@ export default async function Sidebar() {
 				<Link href="/search">
 					<MagnifyingGlassIcon className="h-7" />
 				</Link>
+				<NotificationsButton
+					previousNotifications={previousNotifications}
+				/>
 				<Link href="/chat">
 					<ChatBubbleBottomCenterIcon className="h-7" />
 				</Link>

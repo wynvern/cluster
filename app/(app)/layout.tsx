@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "../../style/global.css";
 import Providers from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
 	title: "Cluster",
@@ -30,6 +32,8 @@ export default async function RootLayout({
 	return (
 		<html lang="pt-BR">
 			<body>
+				<SpeedInsights />
+				<Analytics />
 				<Providers>{children}</Providers>
 			</body>
 		</html>

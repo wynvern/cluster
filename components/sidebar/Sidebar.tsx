@@ -1,17 +1,9 @@
 import {
-	BellIcon,
 	ChatBubbleBottomCenterIcon,
 	HomeIcon,
 	MagnifyingGlassIcon,
 	UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import {
-	BellIcon as SolidBellIcon,
-	ChatBubbleBottomCenterIcon as SolidChatBubbleBottomCenterIcon,
-	HomeIcon as SolidHomeIcon,
-	MagnifyingGlassIcon as SolidMagnifyingGlassIcon,
-	UserGroupIcon as SolidUserGroupIcon,
-} from "@heroicons/react/24/solid";
 import { Link } from "@nextui-org/react";
 import Image from "next/image";
 import ProfileDropdown from "./ProfileDropdown";
@@ -29,7 +21,7 @@ export default async function Sidebar() {
 		<>
 			<div
 				className="fixed h-dvh border-for-sidebar flex-col sidebar-container bg-background hidden sm:flex"
-				style={{ zIndex: 99999999999 }}
+				style={{ zIndex: 90000 }}
 			>
 				<div className="flex flex-col justify-between h-full sidebar-wrapper py-6">
 					<div className="flex items-center gap-x-4 pl-[7px]">

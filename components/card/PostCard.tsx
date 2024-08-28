@@ -125,6 +125,7 @@ export default function PostCard({
 							{post.title}
 						</h2>
 						<div
+							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 							dangerouslySetInnerHTML={{ __html: post.content }}
 							style={{ wordWrap: "break-word" }}
 							className="max-w-[100%]"
@@ -140,6 +141,7 @@ export default function PostCard({
 								{post.title}
 							</h2>
 							<div
+								// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 								dangerouslySetInnerHTML={{
 									__html: post.content,
 								}}

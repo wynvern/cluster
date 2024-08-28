@@ -176,8 +176,11 @@ export default function PostDropdown({
 	}
 
 	return (
-		// @ts-ignore
-		<Dropdown className="default-border shadow-none" placement="bottom-end">
+		<Dropdown
+			className="default-border shadow-none"
+			// @ts-ignore
+			placement="right"
+		>
 			<DropdownTrigger>
 				<Button isIconOnly={true} variant="bordered">
 					<EllipsisHorizontalIcon className="h-8" />

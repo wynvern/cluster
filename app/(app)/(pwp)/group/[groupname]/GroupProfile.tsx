@@ -23,7 +23,7 @@ export default async function GroupProfile({ group }: { group: Group }) {
 								: "/brand/default-group.svg"
 						}
 						removeWrapper={true}
-						className="h-[150px] sm:h-60 object-cover aspect-square"
+						className="h-[100px] sm:h-60 object-cover aspect-square"
 					/>
 				</div>
 			</div>

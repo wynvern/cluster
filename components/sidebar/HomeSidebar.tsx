@@ -85,13 +85,7 @@ export default function HomeSidebar() {
 									<HomeIcon className="h-7" />
 								</div>
 								<div className="sidebar-inside">
-									{path === "/" ? (
-										<p>
-											<b>Home</b>
-										</p>
-									) : (
-										<p>Home</p>
-									)}
+									<p>Home</p>
 								</div>
 							</Link>
 							{/* TODO: Load previous notifications */}

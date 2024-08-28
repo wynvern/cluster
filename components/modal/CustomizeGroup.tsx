@@ -65,7 +65,7 @@ export default function CustomizeGroup({
 
 		setLoading(false);
 		setSuccess(true);
-		setTimeout(() => setActive(false), 1000);
+		setTimeout(() => window.location.reload(), 1000);
 	}
 
 	async function handleSelectBanner() {

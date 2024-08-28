@@ -1,6 +1,5 @@
 import {
 	CheckIcon,
-	PencilIcon,
 	PencilSquareIcon,
 	PhotoIcon,
 	XMarkIcon,
@@ -16,8 +15,6 @@ import Draggable from "../general/Draggable";
 import { useSession } from "next-auth/react";
 import supportedFormats from "@/public/supportedFormats.json";
 import { toast } from "react-toastify";
-import CropImage from "@/util/CropImage";
-import { useImageCropper } from "@/providers/ImageCropper";
 
 interface CustomizeProfileProps {
 	active: boolean;
@@ -35,7 +32,6 @@ export default function CustomizeProfile({
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const { update } = useSession();
-	const { cropImage } = useImageCropper();
 
 	const [selectedImages, setSelectedImages] = useState({
 		avatar: {

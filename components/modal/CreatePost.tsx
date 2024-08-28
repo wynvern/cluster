@@ -121,7 +121,7 @@ export default function CreatePost({
 
 		setLoading(false);
 		setSuccess(true);
-		setTimeout(() => setActive(false), 3000);
+		setTimeout(() => window.location.reload(), 3000);
 	}
 
 	useEffect(() => {

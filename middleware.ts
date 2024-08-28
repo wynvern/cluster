@@ -26,8 +26,13 @@ export default async function middleware(req: NextRequest) {
 	const url = new URL(req.url);
 	const session = await getToken({ req });
 
-	if (excludedPrefixes.some((prefix) => url.pathname.startsWith(prefix)))
+	console.log("session", session);
+	console.log("url", url.pathname);
+
+	if (excludedPrefixes.some((prefix) => url.pathname.startsWith(prefix))) {
+		console.log("continuing to next middleware", url.pathname);
 		return NextResponse.next();
+	}
 
 	// Mini API to handle redirects
 	// The route / means any route

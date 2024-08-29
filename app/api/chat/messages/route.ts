@@ -1,4 +1,4 @@
-import { postBlob } from "@/lib/blob";
+import { createBlob } from "@/lib/blob";
 import { db } from "@/lib/db";
 import { compressImage } from "@/lib/image";
 import { NextResponse } from "next/server";
@@ -65,13 +65,13 @@ export async function POST(req: Request) {
 			const buffer = Buffer.from(media, "base64");
 			const processedImage = await compressImage(buffer);
 
-			const blob = await postBlob(
-				processedImage.toString("base64"),
-				"png"
-			);
+			const blob = await createBlob(processedImage, "chat", {
+				name: `${newMessage.id}`,
+				type: "png",
+			});
 
-			console.log(blob.urlToMedia);
-			mediaUrl.push(blob.urlToMedia);
+			console.log(blob);
+			mediaUrl.push(blob);
 		}
 
 		await db.message.update({

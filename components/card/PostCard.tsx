@@ -3,9 +3,9 @@
 import type Post from "@/lib/db/post/type";
 import {
 	ArrowUpOnSquareStackIcon,
-	DocumentIcon,
 	ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
+import { DocumentIcon } from "@heroicons/react/24/solid";
 import {
 	Chip,
 	Image,
@@ -62,7 +62,10 @@ export default function PostCard({
 									post.createdAt
 								).toLocaleString()}
 							>
-								<p className="second-foreground">
+								<p
+									className="second-foreground"
+									suppressHydrationWarning
+								>
 									{prettyDate({ date: post.createdAt })}
 								</p>
 							</Tooltip>
@@ -157,9 +160,9 @@ export default function PostCard({
 						{post.PostDocument.map((doc, index) => {
 							return (
 								<Link key={doc.id} href={doc.url}>
-									<Chip>
+									<Chip className="bg-background border-default p-0 px-0">
 										<div className="flex gap-x-2">
-											<DocumentIcon className="h-5 w-5" />
+											<DocumentIcon className="h-4 w-4" />
 											<p>{doc.name}</p>
 										</div>
 									</Chip>

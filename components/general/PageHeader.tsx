@@ -14,7 +14,7 @@ export default function ({
 	const router = useRouter();
 
 	return (
-		<div className="pt-6 px-4 pb-6 flex gap-x-4 items-center">
+		<div className="pt-4 px-4 pb-4 flex gap-x-4 items-center">
 			{showBackButton && (
 				<Button
 					onClick={() => router.back()}

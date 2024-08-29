@@ -28,10 +28,9 @@ export default function ProfileDropdown() {
 				<div className="flex gap-x-4 items-center">
 					<UserAvatar avatarURL={session.data?.user.image} />
 					<div className="flex flex-col">
-						<b className=" sidebar-inside">
-							{session.data?.user.username}
-						</b>
-						<p className=" sidebar-inside">abc</p>
+						<p className=" sidebar-inside">
+							u/{session.data?.user.username}
+						</p>
 					</div>
 				</div>
 				<div className="sidebar-inside">

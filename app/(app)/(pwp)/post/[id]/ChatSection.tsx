@@ -20,10 +20,12 @@ function CommentCreator({
 	parentId,
 	postId,
 	addNewComment,
+	setActiveReplies,
 }: {
 	parentId?: string;
 	postId: string;
 	addNewComment: (newComment: RecursiveComments, parentId?: string) => void;
+	setActiveReplies?: any;
 }) {
 	const [newComment, setNewComment] = useState({ text: "" });
 	const session = useSession();
@@ -39,6 +41,12 @@ function CommentCreator({
 		if (typeof createdComment === "string") {
 			return;
 		}
+		if (parentId) {
+			setActiveReplies((prev: any) => ({
+				...prev,
+				[parentId]: false,
+			}));
+		}
 		addNewComment(createdComment, parentId);
 		setNewComment({ text: "" });
 	}
@@ -49,7 +57,7 @@ function CommentCreator({
 			<Textarea
 				value={newComment.text}
 				onChange={(e: any) => setNewComment({ text: e.target.value })}
-				placeholder="Escreva seu comentário..."
+				placeholder="Comente"
 				variant="bordered"
 			/>
 			<Button isIconOnly={true} variant="bordered">
@@ -96,7 +104,7 @@ function RenderCommentLevel({
 			{comments.map((comment) => (
 				<div
 					key={comment.id}
-					style={{ paddingLeft: `${level + 1}em` }}
+					style={{ paddingLeft: `${level}em` }}
 					className="mt-6"
 				>
 					<PostComment
@@ -108,6 +116,7 @@ function RenderCommentLevel({
 							parentId={comment.id}
 							postId={postId}
 							addNewComment={addNewComment}
+							setActiveReplies={setActiveReplies}
 						/>
 					)}
 					{comment.children && comment.children.length > 0 && (
@@ -168,11 +177,11 @@ export default function ChatSection({
 	};
 
 	return (
-		<div className="w-full flex gap-x-4 items-start flex-col px-6">
+		<div className="w-full flex gap-x-4 items-start flex-col px-4">
 			<CommentCreator postId={post.id} addNewComment={addNewComment} />
 			<div className="w-full">
 				{comments.length > 0 ? (
-					<div className="mt-6 ml-12">
+					<div className="mt-4">
 						<RenderCommentLevel
 							level={0}
 							comments={comments}
@@ -186,6 +195,7 @@ export default function ChatSection({
 					</div>
 				)}
 			</div>
+			<div className="h-20" />
 		</div>
 	);
 }

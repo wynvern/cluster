@@ -5,6 +5,7 @@ import {
 	uploadBytesResumable,
 	ref,
 } from "firebase/storage";
+import * as mime from "mime-types";
 
 const firebaseConfig = {
 	apiKey: process.env.FIREBASE_API_KEY,
@@ -34,7 +35,7 @@ export async function createBlob(
 ) {
 	const storageRef = ref(storage, `${folderLocation}/${metadata.name}`);
 	const snapshot = await uploadBytesResumable(storageRef, data, {
-		contentType: metadata.type,
+		contentType: mime.lookup(metadata.type) || "plain/text",
 	});
 	const downloadURL = await getDownloadURL(snapshot.ref);
 

@@ -10,12 +10,14 @@
 }
 
 .sidebar-container:hover .sidebar-inside {
-	display: block;
+	visibility: visible;
+	opacity: 1;
 }
 
 .sidebar-inside {
-	display: none;
-	transition: all 100ms ease-in-out;
+	visibility: hidden;
+	opacity: 0;
+	transition: 200ms ease-in-out all;
 }
 
 .sidebar-mobile .sidebar-inside {

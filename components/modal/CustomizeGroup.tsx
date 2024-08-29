@@ -9,11 +9,12 @@ import { Button, Image, Input, Textarea } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import BaseModal from "@/components/modal/BaseModal";
 import type Group from "@/lib/db/group/type";
-import getFileBase64 from "@/util/getFile";
+import getFileBase64, { type FileBase64Info } from "@/util/getFile";
 import { uploadGroupBanner, uploadGroupImage } from "@/lib/blob/groupBlob";
 import Draggable from "@/components/general/Draggable";
 import { updateGroup } from "@/lib/db/group/groupManagement";
 import supportedFormats from "@/public/supportedFormats.json";
+import { toast } from "react-toastify";
 
 interface CustomizeGroupProps {
 	active: boolean;
@@ -29,19 +30,12 @@ export default function CustomizeGroup({
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 
-	const [selectedImages, setSelectedImages] = useState({
-		image: {
-			base64: "",
-			preview: "",
-			type: "",
-			error: "",
-		},
-		banner: {
-			base64: "",
-			preview: "",
-			error: "",
-			type: "",
-		},
+	const [selectedImages, setSelectedImages] = useState<{
+		image: FileBase64Info | null;
+		banner: FileBase64Info | null;
+	}>({
+		image: null,
+		banner: null,
 	});
 
 	async function handleUpdateProfile(e: React.FormEvent<HTMLFormElement>) {
@@ -52,18 +46,18 @@ export default function CustomizeGroup({
 		const name = form.get("name") as string;
 		const description = form.get("description") as string;
 
-		if (selectedImages.image.base64) {
+		if (selectedImages.image) {
 			await uploadGroupImage(
 				group.id,
 				selectedImages.image.base64,
-				selectedImages.image.type
+				selectedImages.image.fileType
 			);
 		}
-		if (selectedImages.banner.base64) {
+		if (selectedImages.banner) {
 			await uploadGroupBanner(
 				group.id,
 				selectedImages.banner.base64,
-				selectedImages.banner.type
+				selectedImages.banner.fileType
 			);
 		}
 
@@ -86,30 +80,28 @@ export default function CustomizeGroup({
 
 			setSelectedImages((prev) => ({
 				...prev,
-				banner: { ...data, error: "", preview: "", type: "" },
+				banner: data,
 			}));
 		} catch (e) {
-			if ((e as { message: string }).message === "image-too-big") {
-				setSelectedImages((prev) => ({
-					banner: {
-						base64: "",
-						preview: "",
-						error: "image-too-big",
-						type: "",
-					},
-					image: prev.image,
-				}));
-				setTimeout(() => {
-					setSelectedImages((prev) => ({
-						banner: {
-							base64: "",
-							preview: "",
-							error: "",
-							type: "",
-						},
-						image: prev.image,
-					}));
-				}, 3000);
+			switch ((e as { message: string }).message) {
+				case "file-too-large":
+					toast.error(
+						"Imagem selecionada muito grande, máximo 4.5 MB",
+						{
+							autoClose: 3000,
+						}
+					);
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro desconhecido", {
+						autoClose: 3000,
+					});
+					break;
 			}
 		}
 	}
@@ -122,25 +114,28 @@ export default function CustomizeGroup({
 
 			setSelectedImages((prev) => ({
 				...prev,
-				image: { ...data, error: "", type: data.fileType },
+				image: data,
 			}));
 		} catch (e) {
-			if ((e as { message: string }).message === "image-too-big") {
-				setSelectedImages((prev) => ({
-					image: {
-						base64: "",
-						preview: "",
-						error: "image-too-big",
-						type: "",
-					},
-					banner: prev.banner,
-				}));
-				setTimeout(() => {
-					setSelectedImages((prev) => ({
-						image: { base64: "", preview: "", error: "", type: "" },
-						banner: prev.banner,
-					}));
-				}, 3000);
+			switch ((e as { message: string }).message) {
+				case "file-too-large":
+					toast.error(
+						"Imagem selecionada muito grande, máximo 4.5 MB",
+						{
+							autoClose: 3000,
+						}
+					);
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro desconhecido", {
+						autoClose: 3000,
+					});
+					break;
 			}
 		}
 	}
@@ -148,18 +143,8 @@ export default function CustomizeGroup({
 	useEffect(() => {
 		if (!active) {
 			setSelectedImages({
-				image: {
-					base64: "",
-					preview: "",
-					error: "",
-					type: "",
-				},
-				banner: {
-					base64: "",
-					preview: "",
-					error: "",
-					type: "",
-				},
+				image: null,
+				banner: null,
 			});
 			setSuccess(false);
 			setLoading(false);
@@ -199,7 +184,7 @@ export default function CustomizeGroup({
 								<Image
 									removeWrapper={true}
 									src={
-										selectedImages.banner.preview ||
+										selectedImages.banner?.preview ||
 										group.banner ||
 										""
 									}
@@ -242,7 +227,7 @@ export default function CustomizeGroup({
 								<Image
 									className="h-[100px] sm:h-[140px] w-[100px] sm:w-[140px] object-cover z-1"
 									src={
-										selectedImages.image.preview ||
+										selectedImages.image?.preview ||
 										group.image ||
 										"/brand/default-group.svg"
 									}
@@ -257,15 +242,6 @@ export default function CustomizeGroup({
 							id="update-profile-form"
 							onSubmit={handleUpdateProfile}
 						>
-							{selectedImages.image.error ||
-								(selectedImages.banner.error && (
-									<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
-										<p className="text-danger">
-											Imagem selecionada muito grande,
-											máximo 4.5 MB
-										</p>
-									</div>
-								))}
 							<Input
 								name="name"
 								placeholder="Nome"

@@ -17,6 +17,8 @@ import Draggable from "../general/Draggable";
 import { image } from "@/public/supportedFormats.json";
 import { createGroup } from "@/lib/db/group/groupManagement";
 import supportedCategories from "@/public/categories.json";
+import type { FileBase64Info } from "@/util/getFile";
+import { toast } from "react-toastify";
 
 interface CreateGroupProps {
 	active: boolean;
@@ -35,18 +37,10 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		groupname: "",
 		categories: "",
 	});
-	const [selectedImages, setSelectedImages] = useState({
-		image: {
-			base64: "",
-			preview: "",
-			error: "",
-		},
-		banner: {
-			base64: "",
-			preview: "",
-			error: "",
-		},
-	});
+	const [selectedImages, setSelectedImages] = useState<{
+		image: FileBase64Info | null;
+		banner: FileBase64Info | null;
+	}>({ image: null, banner: null });
 
 	function matchCategory(e: string) {
 		const category = supportedCategories.find(
@@ -168,11 +162,19 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			case "no-data":
 		}
 
-		if (selectedImages.image.base64) {
-			await uploadGroupImage(data, selectedImages.image.base64);
+		if (selectedImages.image) {
+			await uploadGroupImage(
+				data,
+				selectedImages.image.base64,
+				selectedImages.image.fileType
+			);
 		}
-		if (selectedImages.banner.base64) {
-			await uploadGroupBanner(data, selectedImages.banner.base64);
+		if (selectedImages.banner) {
+			await uploadGroupBanner(
+				data,
+				selectedImages.banner.base64,
+				selectedImages.banner.fileType
+			);
 		}
 
 		setLoading(false);
@@ -189,20 +191,28 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 
 			setSelectedImages((prev) => ({
 				...prev,
-				banner: { ...data, error: "" },
+				banner: { ...data, type: data.fileType },
 			}));
 		} catch (e) {
-			if ((e as { message: string }).message === "image-too-big") {
-				setSelectedImages((prev) => ({
-					banner: { base64: "", preview: "", error: "image-too-big" },
-					image: prev.image,
-				}));
-				setTimeout(() => {
-					setSelectedImages((prev) => ({
-						banner: { base64: "", preview: "", error: "" },
-						image: prev.image,
-					}));
-				}, 3000);
+			switch ((e as { message: string }).message) {
+				case "file-too-large":
+					toast.error(
+						"Imagem selecionada muito grande, máximo 4.5 MB",
+						{
+							autoClose: 3000,
+						}
+					);
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro desconhecido", {
+						autoClose: 3000,
+					});
+					break;
 			}
 		}
 	}
@@ -215,20 +225,28 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 
 			setSelectedImages((prev) => ({
 				...prev,
-				image: { ...data, error: "" },
+				image: { ...data, type: data.fileType },
 			}));
 		} catch (e) {
-			if ((e as { message: string }).message === "image-too-big") {
-				setSelectedImages((prev) => ({
-					image: { base64: "", preview: "", error: "image-too-big" },
-					banner: prev.banner,
-				}));
-				setTimeout(() => {
-					setSelectedImages((prev) => ({
-						image: { base64: "", preview: "", error: "" },
-						banner: prev.banner,
-					}));
-				}, 3000);
+			switch ((e as { message: string }).message) {
+				case "file-too-large":
+					toast.error(
+						"Imagem selecionada muito grande, máximo 4.5 MB",
+						{
+							autoClose: 3000,
+						}
+					);
+					break;
+				case "invalid-file-type":
+					toast.error("Tipo de arquivo inválido", {
+						autoClose: 3000,
+					});
+					break;
+				default:
+					toast.error("Erro desconhecido", {
+						autoClose: 3000,
+					});
+					break;
 			}
 		}
 	}
@@ -236,16 +254,8 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 	useEffect(() => {
 		if (!active) {
 			setSelectedImages({
-				image: {
-					base64: "",
-					preview: "",
-					error: "",
-				},
-				banner: {
-					base64: "",
-					preview: "",
-					error: "",
-				},
+				image: null,
+				banner: null,
 			});
 			setErrors({
 				name: "",
@@ -278,7 +288,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								if (Array.isArray(file)) return;
 
 								setSelectedImages((prev) => ({
-									banner: { ...file, error: "" },
+									banner: { ...file },
 									image: prev.image,
 								}));
 							}}
@@ -287,7 +297,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 							<div className="w-full h-full absolute bg-neutral-500 ">
 								<Image
 									removeWrapper={true}
-									src={selectedImages.banner.preview || ""}
+									src={selectedImages.banner?.preview || ""}
 									className="absolute w-full h-full object-cover z-1"
 								/>
 							</div>
@@ -306,7 +316,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 
 								setSelectedImages((prev) => ({
 									banner: prev.banner,
-									image: { ...file, error: "" },
+									image: { ...file },
 								}));
 							}}
 							acceptedTypes={image}
@@ -323,7 +333,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								<Image
 									className="h-[100px] sm:h-[140px] w-[100px] sm:w-[140px] object-cover z-1"
 									src={
-										selectedImages.image.preview ||
+										selectedImages.image?.preview ||
 										"/brand/default-group.svg"
 									}
 									removeWrapper={true}
@@ -337,15 +347,6 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 							id="update-profile-form"
 							onSubmit={handleUpdateProfile}
 						>
-							{selectedImages.image.error ||
-								(selectedImages.banner.error && (
-									<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
-										<p className="text-danger">
-											Imagem selecionada muito grande,
-											máximo 4.5 MB
-										</p>
-									</div>
-								))}
 							<Input
 								name="groupname"
 								placeholder="Nome do Grupo"

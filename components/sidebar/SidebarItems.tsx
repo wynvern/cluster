@@ -27,7 +27,7 @@ export default function SidebarItems({
 
 	return (
 		<div
-			className="fixed h-dvh  border-for-sidebar flex-col sidebar-container bg-background"
+			className="fixed h-dvh  border-for-sidebar flex-col sidebar-container bg-background hidden sm:flex"
 			style={{ zIndex: "90002" }}
 		>
 			<div className="flex flex-col justify-between h-full sidebar-wrapper py-6">

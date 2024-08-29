@@ -4,46 +4,43 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { compressImage, squareImage } from "../image";
 import { db } from "../db";
-import { postBlob } from "../blob";
-
-const supportedTypes = ["png", "jpeg", "jpg", "webp", "gif"];
+import { createBlob } from "../blob";
 
 export async function uploadUserAvatar(file: string, fileType: string) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
-	// Sharp to fix image
 	const buffer = Buffer.from(file, "base64");
 	const processedImage = await squareImage(buffer);
 
-	const blob = await postBlob(processedImage.toString("base64"), "png");
-
-	// TODO: VAlidade if user has permission
+	const blobUrl = await createBlob(processedImage, "user", {
+		type: fileType,
+		name: `${session.user.id}-profile.${fileType}`,
+	});
 
 	await db.user.update({
 		where: { id: session.user.id },
-		data: { image: blob.urlToMedia },
+		data: { image: blobUrl },
 	});
 
-	return { url: blob.urlToMedia };
+	return { url: blobUrl };
 }
 
 export async function uploadUserBanner(file: string, fileType: string) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
-	// Sharp to fix image
 	const buffer = Buffer.from(file, "base64");
-	const processedImage = await compressImage(buffer);
-
-	const blob = await postBlob(processedImage.toString("base64"), "png");
-
-	// TODO: validate if user has permission
+	const compressedImage = await compressImage(buffer);
+	const blobUrl = await createBlob(compressedImage, "user", {
+		type: fileType,
+		name: `${session.user.id}-banner.${fileType}`,
+	});
 
 	await db.user.update({
 		where: { id: session.user.id },
-		data: { banner: blob.urlToMedia },
+		data: { banner: blobUrl },
 	});
 
-	return "ok";
+	return { url: blobUrl };
 }

@@ -32,7 +32,7 @@ const nextConfig = {
 				pathname: "/**",
 			},
 			{
-				hostname: process.env.BLOB_URL,
+				hostname: "firebasestorage.googleapis.com",
 				protocol: "https",
 				port: "",
 				pathname: "/**",

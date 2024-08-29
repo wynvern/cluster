@@ -4,8 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { compressImage } from "../image";
 import { db } from "../db";
-import { postBlob } from "../blob";
-import supportedFormats from "../../public/supportedFormats.json";
+import { createBlob } from "../blob";
 
 export async function uploadPostMedia(
 	id: string,
@@ -13,18 +12,17 @@ export async function uploadPostMedia(
 ) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
-	const type = media[0].fileType.split("/")[1];
 
 	const newMediaUrls = [];
 
 	for (const mediaItem of media) {
-		let buffer = Buffer.from(mediaItem.base64, "base64");
-		if (supportedFormats.image.includes(type)) {
-			buffer = await compressImage(buffer);
-		}
-
-		const blob = await postBlob(buffer.toString("base64"), type);
-		newMediaUrls.push(blob.urlToMedia);
+		const buffer = Buffer.from(mediaItem.base64, "base64");
+		const compressedImage = await compressImage(buffer);
+		const blobUrl = await createBlob(compressedImage, "post", {
+			type: mediaItem.fileType,
+			name: `${session.user.id}-image.${mediaItem.fileType}`,
+		});
+		newMediaUrls.push(blobUrl);
 	}
 
 	await db.post.update({
@@ -44,13 +42,16 @@ export async function uploadPostDocument(
 
 	for (const file of files) {
 		const buffer = Buffer.from(file.base64, "base64");
-		const blob = await postBlob(buffer.toString("base64"), file.fileType);
+		const blobUrl = await createBlob(buffer, "post", {
+			type: file.fileType,
+			name: `${session.user.id}-file.${file.fileType}`,
+		});
 
 		await db.postDocument.create({
 			data: {
 				postId: id,
 				name: file.fileName,
-				url: blob.urlToMedia,
+				url: blobUrl,
 				type: file.fileType,
 			},
 		});

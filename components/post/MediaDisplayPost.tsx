@@ -15,42 +15,8 @@ export default function MediaDisplayPost({
 
 	const renderMedia = () => {
 		switch (extension) {
-			case "png":
-			case "gif":
-			case "jpg":
-			case "jpeg":
-				return (
-					<>
-						<img
-							src={`${currentMedia}?size=200`}
-							className={
-								"h-full w-full object-cover absolute rounded-large"
-							}
-							alt=""
-							style={{ zIndex: 5, filter: "brightness(74%)" }}
-						/>
-						<div
-							className="absolute w-full h-full rounded-large"
-							style={{ zIndex: 6, backdropFilter: "blur(13px)" }}
-						/>
-						<img
-							src={`${currentMedia}?size=500`}
-							className={"max-h-full h-full object-contain"}
-							alt=""
-							style={{ zIndex: 7 }}
-						/>
-					</>
-				);
-			case "mp4":
-				return (
-					<video controls className={"h-full w-full rounded-large"}>
-						<source src={currentMedia} type="video/mp4" />
-						<track kind="captions" />
-						Your browser does not support the video tag.
-					</video>
-				);
 			default:
-				return null;
+				return;
 		}
 	};
 
@@ -86,7 +52,24 @@ export default function MediaDisplayPost({
 				className="w-full h-auto bg-red flex rounded-large items-center justify-center max-h-[500px]"
 				style={{ aspectRatio: "1000 / 600" }}
 			>
-				{renderMedia()}
+				<img
+					src={`${currentMedia}`}
+					className={
+						"h-full w-full object-cover absolute rounded-large"
+					}
+					alt=""
+					style={{ zIndex: 5, filter: "brightness(74%)" }}
+				/>
+				<div
+					className="absolute w-full h-full rounded-large"
+					style={{ zIndex: 6, backdropFilter: "blur(13px)" }}
+				/>
+				<img
+					src={`${currentMedia}?size=500`}
+					className={"max-h-full h-full object-contain"}
+					alt=""
+					style={{ zIndex: 7 }}
+				/>
 			</div>
 		</div>
 	);

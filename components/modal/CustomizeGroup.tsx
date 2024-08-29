@@ -33,12 +33,14 @@ export default function CustomizeGroup({
 		image: {
 			base64: "",
 			preview: "",
+			type: "",
 			error: "",
 		},
 		banner: {
 			base64: "",
 			preview: "",
 			error: "",
+			type: "",
 		},
 	});
 
@@ -51,10 +53,18 @@ export default function CustomizeGroup({
 		const description = form.get("description") as string;
 
 		if (selectedImages.image.base64) {
-			await uploadGroupImage(group.id, selectedImages.image.base64);
+			await uploadGroupImage(
+				group.id,
+				selectedImages.image.base64,
+				selectedImages.image.type
+			);
 		}
 		if (selectedImages.banner.base64) {
-			await uploadGroupBanner(group.id, selectedImages.banner.base64);
+			await uploadGroupBanner(
+				group.id,
+				selectedImages.banner.base64,
+				selectedImages.banner.type
+			);
 		}
 
 		const data = await updateGroup(group.id, name, description);
@@ -76,17 +86,27 @@ export default function CustomizeGroup({
 
 			setSelectedImages((prev) => ({
 				...prev,
-				banner: { ...data, error: "" },
+				banner: { ...data, error: "", preview: "", type: "" },
 			}));
 		} catch (e) {
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
-					banner: { base64: "", preview: "", error: "image-too-big" },
+					banner: {
+						base64: "",
+						preview: "",
+						error: "image-too-big",
+						type: "",
+					},
 					image: prev.image,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
-						banner: { base64: "", preview: "", error: "" },
+						banner: {
+							base64: "",
+							preview: "",
+							error: "",
+							type: "",
+						},
 						image: prev.image,
 					}));
 				}, 3000);
@@ -102,17 +122,22 @@ export default function CustomizeGroup({
 
 			setSelectedImages((prev) => ({
 				...prev,
-				image: { ...data, error: "" },
+				image: { ...data, error: "", type: data.fileType },
 			}));
 		} catch (e) {
 			if ((e as { message: string }).message === "image-too-big") {
 				setSelectedImages((prev) => ({
-					image: { base64: "", preview: "", error: "image-too-big" },
+					image: {
+						base64: "",
+						preview: "",
+						error: "image-too-big",
+						type: "",
+					},
 					banner: prev.banner,
 				}));
 				setTimeout(() => {
 					setSelectedImages((prev) => ({
-						image: { base64: "", preview: "", error: "" },
+						image: { base64: "", preview: "", error: "", type: "" },
 						banner: prev.banner,
 					}));
 				}, 3000);
@@ -127,11 +152,13 @@ export default function CustomizeGroup({
 					base64: "",
 					preview: "",
 					error: "",
+					type: "",
 				},
 				banner: {
 					base64: "",
 					preview: "",
 					error: "",
+					type: "",
 				},
 			});
 			setSuccess(false);
@@ -158,7 +185,11 @@ export default function CustomizeGroup({
 								if (Array.isArray(file)) return;
 
 								setSelectedImages((prev) => ({
-									banner: { ...file, error: "" },
+									banner: {
+										...file,
+										error: "",
+										type: file.fileType,
+									},
 									image: prev.image,
 								}));
 							}}
@@ -190,7 +221,11 @@ export default function CustomizeGroup({
 
 								setSelectedImages((prev) => ({
 									banner: prev.banner,
-									image: { ...file, error: "" },
+									image: {
+										...file,
+										error: "",
+										type: file.fileType,
+									},
 								}));
 							}}
 							acceptedTypes={supportedFormats.image}

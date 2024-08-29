@@ -4,44 +4,51 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { compressImage, squareImage } from "../image";
 import { db } from "../db";
-import { postBlob } from "../blob";
+import { createBlob } from "../blob";
 
-export async function uploadGroupImage(id: string, file: string) {
+export async function uploadGroupImage(
+	id: string,
+	file: string,
+	fileType: string
+) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
-	// Sharp to fix image
 	const buffer = Buffer.from(file, "base64");
 	const processedImage = await squareImage(buffer);
 
-	const blob = await postBlob(processedImage.toString("base64"), "png");
-
-	// TODO: VAlidade if user has permission
+	const blobUrl = await createBlob(processedImage, "group", {
+		type: fileType,
+		name: `${session.user.id}-profile.${fileType}`,
+	});
 
 	await db.group.update({
 		where: { id },
-		data: { image: blob.urlToMedia },
+		data: { image: blobUrl },
 	});
 
-	return "ok";
+	return { url: blobUrl };
 }
 
-export async function uploadGroupBanner(id: string, file: string) {
+export async function uploadGroupBanner(
+	id: string,
+	file: string,
+	fileType: string
+) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
 
-	// Sharp to fix image
 	const buffer = Buffer.from(file, "base64");
-	const processedImage = await compressImage(buffer);
-
-	const blob = await postBlob(processedImage.toString("base64"), "png");
-
-	// TODO: validate if user has permission
+	const compressedImage = await compressImage(buffer);
+	const blobUrl = await createBlob(compressedImage, "group", {
+		type: fileType,
+		name: `${session.user.id}-banner.${fileType}`,
+	});
 
 	await db.group.update({
 		where: { id },
-		data: { banner: blob.urlToMedia },
+		data: { banner: blobUrl },
 	});
 
-	return "ok";
+	return { url: blobUrl };
 }

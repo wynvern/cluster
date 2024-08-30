@@ -43,20 +43,14 @@ export default function PostCard({
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-center">
-					<UserAvatar avatarURL={post.author.image} />
+					<Link href={`/user/${post.author.username}`}>
+						<UserAvatar avatarURL={post.author.image} />
+					</Link>
 					<div className="flex flex-col">
 						<div className="flex items-center gap-x-2">
-							<Popover className="default-border rounded-large">
-								<PopoverTrigger>
-									<b>{post.author.username}</b>
-								</PopoverTrigger>
-								<PopoverContent>
-									<UserPopover
-										user={post.author}
-										groupname={post.group.groupname}
-									/>
-								</PopoverContent>
-							</Popover>
+							<Link href={`/user/${post.author.username}`}>
+								<b>{post.author.username}</b>
+							</Link>
 							<Tooltip
 								content={new Date(
 									post.createdAt

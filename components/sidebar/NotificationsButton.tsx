@@ -9,7 +9,7 @@ import { Link } from "@nextui-org/react";
 
 interface NotificationProps {
 	previousNotifications: any;
-	hasText: boolean;
+	hasText?: boolean;
 	onClick?: () => void;
 }
 

@@ -68,7 +68,10 @@ export default function ({
 		<Button
 			variant={isFollowing ? "bordered" : "solid"}
 			color="primary"
-			onClick={handleClick}
+			onClick={(e) => {
+				e.stopPropagation();
+				handleClick(e);
+			}}
 			isDisabled={
 				userRole === "owner" || (isJoiningDisabled && !isFollowing)
 			}

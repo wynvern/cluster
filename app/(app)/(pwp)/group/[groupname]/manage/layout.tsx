@@ -1,6 +1,7 @@
 "use client";
 
 import NoPosts from "@/components/card/NoPosts";
+import PageHeader from "@/components/general/PageHeader";
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
@@ -28,7 +29,7 @@ export default function ManageGroup({
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[1200px] h-full relative flex">
 				<div
-					className={`sidebar-border w-1/3 pt-6 ${
+					className={`sidebar-border w-1/3 ${
 						!path.endsWith("manage") && isSmallScreen
 							? "hidden"
 							: ""
@@ -36,16 +37,11 @@ export default function ManageGroup({
 						path.endsWith("manage") && isSmallScreen ? "w-full" : ""
 					}`}
 				>
-					<div className="flex items-center gap-x-4 px-4 sm:px-10 bottom-border pb-10">
-						<Button
-							isIconOnly={true}
-							variant="bordered"
-							onClick={() => router.back()}
-						>
-							<ChevronLeftIcon className="h-6" />
-						</Button>
-						<h2>Gerenciar {params.groupname}</h2>
-					</div>
+					<PageHeader
+						title={`Gerenciar ${params.groupname}`}
+						showBackButton
+						className="bottom-border"
+					/>
 
 					{/* This is the sidebar */}
 					<Link
@@ -92,7 +88,7 @@ export default function ManageGroup({
 					</Link>
 				</div>
 				<b
-					className={`w-2/3 pt-6 ${
+					className={`w-2/3 ${
 						path.endsWith("manage") && isSmallScreen ? "hidden" : ""
 					}`}
 				>

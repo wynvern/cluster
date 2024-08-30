@@ -50,7 +50,7 @@ export default function MediaDisplayPost({
 			</div>
 			<div
 				className="w-full h-auto bg-red flex rounded-large items-center justify-center max-h-[500px]"
-				style={{ aspectRatio: "1000 / 600" }}
+				style={{ aspectRatio: "1000 / 600", overflow: "hidden" }}
 			>
 				<img
 					src={`${currentMedia}`}

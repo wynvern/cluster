@@ -1,6 +1,6 @@
 "use client";
 
-import PostCard from "@/components/card/PostCard";
+import PageHeader from "@/components/general/PageHeader";
 import ScrollPagination from "@/components/general/ScrollPagination";
 import PostList from "@/components/post/PostsList";
 import { fetchUserFeed } from "@/lib/db/feed/feed";
@@ -39,6 +39,7 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 			onBottomReached={fetchMorePosts}
 		>
 			<div>
+				<PageHeader title="Feed" className="bottom-border" />
 				<PostList posts={posts} />
 			</div>
 		</ScrollPagination>

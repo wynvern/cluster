@@ -153,10 +153,12 @@ export default function UserTabs({
 						<NoPosts message="Os grupos que o usuário participa são privados." />
 					</div>
 				) : (
-					<GroupList
-						groups={groups}
-						noGroups="O usuário não está em nenhum grupo"
-					/>
+					<div className="mt-4">
+						<GroupList
+							groups={groups}
+							noGroups="O usuário não está em nenhum grupo"
+						/>
+					</div>
 				)}
 			</Tab>
 		</Tabs>

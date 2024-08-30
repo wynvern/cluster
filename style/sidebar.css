@@ -21,9 +21,20 @@
 }
 
 .sidebar-mobile .sidebar-inside {
-	display: block;
+	opacity: 1;
+	visibility: visible;
 }
 
 .sidebar-wrapper {
 	padding-left: 15.5px;
+}
+
+@media (min-width: 640px) {
+	.sidebar-mobile {
+		display: none;
+	}
+
+	.sidebar-extras {
+		display: none;
+	}
 }

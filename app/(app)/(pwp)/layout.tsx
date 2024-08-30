@@ -8,7 +8,7 @@ export default async function ProtectedPages({
 }) {
 	return (
 		<div className="min-w-full flex">
-			<main className="grow sm:ml-20 mb-14 sm:mb-0 min-h-dvh">
+			<main className="grow sm:ml-20 mb-14 sm:mb-0 min-h-dvh max-w-dvw overflow-hidden">
 				{children}
 			</main>
 			<Sidebar />

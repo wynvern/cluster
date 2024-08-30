@@ -9,10 +9,14 @@ import { Link } from "@nextui-org/react";
 
 interface NotificationProps {
 	previousNotifications: any;
+	hasText: boolean;
+	onClick?: () => void;
 }
 
 export default function NotificationsButton({
 	previousNotifications,
+	hasText = false,
+	onClick,
 }: NotificationProps) {
 	const socket = useSocket();
 	const [notifications, setNotifications] = useState([
@@ -32,7 +36,10 @@ export default function NotificationsButton({
 		<>
 			<Link
 				className="flex items-center gap-x-4"
-				onClick={() => setOpenNotifications(true)}
+				onClick={() => {
+					setOpenNotifications(true);
+					if (onClick) onClick();
+				}}
 			>
 				<div className="relative">
 					{notifications.filter((n) => !n.viewed).length > 0 && (
@@ -53,13 +60,15 @@ export default function NotificationsButton({
 						<BellIcon className="h-7" />
 					)}
 				</div>
-				<div className="sidebar-inside">
-					{openNotifications ? (
-						<b>Notificações</b>
-					) : (
-						<p>Notificações</p>
-					)}
-				</div>
+				{hasText && (
+					<div className="sidebar-inside">
+						{openNotifications ? (
+							<b>Notificações</b>
+						) : (
+							<p>Notificações</p>
+						)}
+					</div>
+				)}
 			</Link>
 
 			<Notifications

@@ -10,7 +10,7 @@
 	"tasks": [
 		{
 			"label": "Create terminals",
-			"dependsOn": ["Cluster", "Blob", "Socket"],
+			"dependsOn": ["Cluster", "Socket"],
 			"group": {
 				"kind": "test",
 				"isDefault": true
@@ -19,31 +19,25 @@
 		{
 			"label": "Cluster",
 			"type": "shell",
-			"command": "yarn dev",
+			"icon": { "color": "terminal.ansiCyan", "id": "server" },
+			"command": "yarn dev; exec bash",
 			"isBackground": true,
 			"problemMatcher": [],
 			"presentation": {
-				"group": "my-group"
-			}
-		},
-		{
-			"label": "Blob",
-			"type": "shell",
-			"command": "cd /home/wynvern/Documents/projects/git-projects/cluster_blob && yarn start",
-			"isBackground": true,
-			"problemMatcher": [],
-			"presentation": {
-				"group": "my-group"
+				"group": "my-group",
+				"close": true
 			}
 		},
 		{
 			"label": "Socket",
 			"type": "shell",
-			"command": "cd /home/wynvern/Documents/projects/git-projects/culster_socket && yarn start",
+			"icon": { "color": "terminal.ansiGreen", "id": "gear" },
+			"command": "cd /home/wynvern/Documents/projects/main/Cluster/cluster-socket && yarn start; exec bash",
 			"isBackground": true,
 			"problemMatcher": [],
 			"presentation": {
-				"group": "my-group"
+				"group": "my-group",
+				"close": true
 			}
 		}
 	]

@@ -1,4 +1,4 @@
-import { Image } from "@nextui-org/react";
+import Image from "next/image";
 
 export default function UserAvatar({
 	avatarURL,
@@ -14,7 +14,8 @@ export default function UserAvatar({
 			}
 			className="h-10 w-10 sm:w-12 sm:h-12 rounded-large"
 			alt="user-image"
-			removeWrapper={true}
+			width={500}
+			height={500}
 		/>
 	);
 }

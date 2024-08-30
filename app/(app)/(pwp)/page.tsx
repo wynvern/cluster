@@ -2,6 +2,7 @@ import PostCard from "@/components/card/PostCard";
 import { fetchUserFeed } from "@/lib/db/feed/feed";
 import HomePage from "./HomeFeedPage";
 import HomeSidebar from "@/components/sidebar/HomeSidebar";
+import PageHeader from "@/components/general/PageHeader";
 
 export default async function HomePageRoot() {
 	const posts = await fetchUserFeed(0);

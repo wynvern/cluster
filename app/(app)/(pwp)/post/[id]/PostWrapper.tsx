@@ -34,6 +34,7 @@ export default function PostWrapper({
 					<PageHeader title="Post" showBackButton={true} />
 					<div className="bottom-border w-full mb-6" />
 					<PostCard
+						disableComments={true}
 						post={post}
 						disableLink={true}
 						disableImages={!isSmallScreen}

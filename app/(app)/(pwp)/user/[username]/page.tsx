@@ -3,6 +3,7 @@ import UserProfile from "./UserProfile";
 import UserContent from "./UserContent";
 import NoPosts from "@/components/card/NoPosts";
 import UserHeader from "./UserHeader";
+import PageHeader from "@/components/general/PageHeader";
 
 interface UserPageProps {
 	params: {
@@ -30,11 +31,22 @@ export default async function UserPage({
 							<NoPosts message="O usuário não existe" />
 						</div>
 					);
+				default:
+					return (
+						<div className="w-full h-full flex items-center justify-center">
+							<NoPosts message="O usuário não foi encontrado." />
+						</div>
+					);
 			}
 		}
 		if (typeof userData !== "string") {
 			return (
 				<>
+					<PageHeader
+						title={`u/${userData.username}`}
+						enableHeightUsage={false}
+						showBackButton={true}
+					/>
 					<UserProfile user={userData} />
 					<UserContent user={userData} />
 				</>
@@ -52,7 +64,6 @@ export default async function UserPage({
 	return (
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[1000px] h-full relative">
-				<UserHeader user={userData} />
 				{renderInnerContent()}
 			</div>
 		</div>

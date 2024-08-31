@@ -6,47 +6,42 @@ import {
 	ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 import { DocumentIcon } from "@heroicons/react/24/solid";
-import {
-	Chip,
-	Image,
-	Link,
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-	Tooltip,
-} from "@nextui-org/react";
+import { Chip, Image, Link, Tooltip } from "@nextui-org/react";
 import PostDropdown from "../post/PostDropdown";
 import BookmarkPost from "../post/BookmarkPost";
 import UserAvatar from "../user/UserAvatar";
-import UserPopover from "../user/UserPopover";
 import { useState } from "react";
 import MediaDisplayPost from "../post/MediaDisplayPost";
 import prettyDate from "@/util/prettyDate";
 import { useImageCarousel } from "@/providers/ImageDisplay";
+// @ts-ignore
+import { Image as NextImage } from "next/image";
 
 export default function PostCard({
 	post,
 	isUserPage = false,
 	disableLink = false,
 	disableImages = false,
+	disableComments = false,
 }: {
 	post: Post;
 	disableImages?: boolean;
 	isUserPage?: boolean;
 	disableLink?: boolean;
+	disableComments?: boolean;
 }) {
 	const [mediaIndex, setMediaIndex] = useState(0);
 	const { openCarousel } = useImageCarousel();
 
 	return (
-		<div className="w-full flex flex-col gap-y-4 px-4 sm:px-10">
+		<div className="w-full flex flex-col gap-y-4 px-4 sm:px-6">
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-center">
 					<Link href={`/user/${post.author.username}`}>
 						<UserAvatar avatarURL={post.author.image} />
 					</Link>
-					<div className="flex flex-col">
+					<div className="flex flex-col gap-y-1">
 						<div className="flex items-center gap-x-2">
 							<Link href={`/user/${post.author.username}`}>
 								<b>{post.author.username}</b>
@@ -63,50 +58,37 @@ export default function PostCard({
 									{prettyDate({ date: post.createdAt })}
 								</p>
 							</Tooltip>
-							{post.pinned && !isUserPage && (
-								<Chip className="bg-success">
-									<div className="flex gap-x-2 items-center">
-										<ArrowUpOnSquareStackIcon className="h-5 w-5" />
-										<p>Pinado</p>
-									</div>
-								</Chip>
-							)}
-							{post.approved && !isUserPage && (
-								<Tooltip
-									content={
-										"Moderadores deste grupo aprovaram este post."
+						</div>
+						<div className="flex gap-x-2 items-center">
+							<Link href={`/group/${post.group.groupname}`}>
+								<Chip
+									className="bg-background border-default p-0 px-0"
+									startContent={
+										<Image
+											as={NextImage}
+											removeWrapper={true}
+											src={
+												post.group.image
+													? `${post.group.image}?size=50`
+													: "/brand/default-group.svg"
+											}
+											className="w-6 h-6"
+										/>
 									}
 								>
-									<Chip className="bg-primary text-secondary px-0">
-										<ShieldCheckIcon className="h-5 w-5" />
-									</Chip>
-								</Tooltip>
-							)}
+									<p className="pl-1">
+										g/{post.group.groupname}
+									</p>
+								</Chip>
+							</Link>
 						</div>
-						<Link href={`/group/${post.group.groupname}`}>
-							<Chip
-								className="bg-background border-default p-0 px-0"
-								startContent={
-									<Image
-										removeWrapper={true}
-										src={
-											post.group.image
-												? `${post.group.image}?size=50`
-												: "/brand/default-group.svg"
-										}
-										className="w-6 h-6"
-									/>
-								}
-							>
-								<p className="pl-1">{post.group.groupname}</p>
-							</Chip>
-						</Link>
 					</div>
 				</div>
 				<div className="flex gap-x-4">
 					<BookmarkPost
 						isBookmarked={post.bookmarks.length >= 1}
 						postId={post.id}
+						defaultBookarkAmmount={post._count.bookmarks}
 					/>
 					<PostDropdown post={post} isUserPage={isUserPage} />
 				</div>
@@ -182,6 +164,68 @@ export default function PostCard({
 					</Link>
 				) : (
 					""
+				)}
+				{post.pinned ||
+					(post.approved && (
+						<div className="flex gap-x-2">
+							{post.pinned && !isUserPage && (
+								// @ts-ignore
+								<Chip className="bg-success" size="sm">
+									<div className="flex gap-x-2 items-center">
+										<ArrowUpOnSquareStackIcon className="h-5 w-5" />
+									</div>
+								</Chip>
+							)}
+							{post.approved && !isUserPage && (
+								<Tooltip
+									content={
+										"Moderadores deste grupo aprovaram este post."
+									}
+								>
+									<Chip
+										className="bg-primary text-secondary px-0"
+										// @ts-ignore
+										size="sm"
+									>
+										<ShieldCheckIcon className="h-5 w-5" />
+									</Chip>
+								</Tooltip>
+							)}
+						</div>
+					))}
+				{!disableComments && (
+					<div className="flex gap-x-3 items-center">
+						<div className="flex">
+							{post.comments.map((c, i) => (
+								<div key={c.author.username} className="-ml-1">
+									<Image
+										as={NextImage}
+										src={
+											c.author.image ||
+											"/brand/default-avatar.svg"
+										}
+										removeWrapper={true}
+										className="w-6 h-6 background-outline"
+									/>
+								</div>
+							))}
+						</div>
+						<div>
+							{post._count.comments > 3 && (
+								<p className="text-tiny">
+									e mais {post._count.comments - 3} pessoa
+									{post._count.comments - 3 > 1
+										? "s"
+										: ""}{" "}
+									comentaram
+								</p>
+							)}
+							{post._count.comments <= 3 &&
+								post._count.comments > 0 && (
+									<p className="text-tiny">comentaram</p>
+								)}
+						</div>
+					</div>
 				)}
 			</div>
 		</div>

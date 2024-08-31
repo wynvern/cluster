@@ -1,5 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { Button } from "@nextui-org/react";
+import { Button, Image } from "@nextui-org/react";
+// @ts-ignore
+import { Image as NextImage } from "next/image";
 
 export default function MediaDisplayPost({
 	media,
@@ -50,25 +52,29 @@ export default function MediaDisplayPost({
 			</div>
 			<div
 				className="w-full h-auto bg-red flex rounded-large items-center justify-center max-h-[500px]"
-				style={{ aspectRatio: "1000 / 600", overflow: "hidden" }}
+				style={{ aspectRatio: "1000 / 500", overflow: "hidden" }}
 			>
-				<img
+				<Image
 					src={`${currentMedia}`}
+					as={NextImage}
 					className={
 						"h-full w-full object-cover absolute rounded-large"
 					}
 					alt=""
+					removeWrapper={true}
 					style={{ zIndex: 5, filter: "brightness(74%)" }}
 				/>
 				<div
 					className="absolute w-full h-full rounded-large"
 					style={{ zIndex: 6, backdropFilter: "blur(13px)" }}
 				/>
-				<img
+				<Image
+					as={NextImage}
 					src={`${currentMedia}?size=500`}
-					className={"max-h-full h-full object-contain"}
+					className={"rounded-none max-h-full h-full object-contain"}
 					alt=""
 					style={{ zIndex: 7 }}
+					removeWrapper={true}
 				/>
 			</div>
 		</div>

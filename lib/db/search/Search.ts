@@ -69,7 +69,7 @@ export async function searchPost(searchParam: string) {
 				},
 			],
 		},
-		select: postSelection(session.user.id),
+		select: { ...postSelection(session.user.id) },
 	});
 
 	if (!posts) return "no-posts";

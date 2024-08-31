@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { postSelection } from "../prismaSelections";
+import type Post from "@/lib/db/post/type";
 
 export async function fetchUserFeed(offset: number) {
 	const session = await getServerSession(authOptions);
@@ -19,5 +20,5 @@ export async function fetchUserFeed(offset: number) {
 		take: 10,
 	});
 
-	return posts;
+	return posts as Post[];
 }

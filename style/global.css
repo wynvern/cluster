@@ -98,7 +98,7 @@ h2 {
 }
 
 h3 {
-	font-size: 1em;
+	font-size: 1.2em;
 	font-weight: 500;
 	line-height: 30px;
 }
@@ -200,4 +200,8 @@ a {
 
 button.text-primary-foreground {
 	font-weight: 600;
+}
+
+.background-outline {
+	outline: 3px solid hsl(var(--nextui-background));
 }

@@ -182,7 +182,7 @@ export default function PostDropdown({
 			placement="right"
 		>
 			<DropdownTrigger>
-				<Button isIconOnly={true} variant="bordered">
+				<Button isIconOnly={true} variant="bordered" size="sm">
 					<EllipsisHorizontalIcon className="h-8" />
 				</Button>
 			</DropdownTrigger>

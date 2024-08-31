@@ -35,10 +35,10 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				</div>
 				<div>
 					<h1 style={{ lineHeight: "40px" }}>{group.name}</h1>
-					<p>
+					<h3>
 						<b>g/</b>
 						{group.groupname}
-					</p>
+					</h3>
 				</div>
 				<div>
 					<p>{group.description}</p>

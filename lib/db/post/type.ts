@@ -40,4 +40,15 @@ export default interface Post {
 		createdAt: Date;
 	}[];
 	createdAt: Date;
+	comments: {
+		author: {
+			username: string | null;
+			image: string | null;
+		};
+	}[];
+	_count: {
+		comments: number;
+		bookmarks: number;
+		postView: number;
+	};
 }

@@ -5,6 +5,7 @@ import GroupContent from "./GroupContent";
 import CreatePostButton from "./CreatePostButton";
 import fetchGroup, { fetchGroupSettings } from "@/lib/db/group/groupManagement";
 import { getMemberRole } from "@/lib/db/group/groupMember";
+import PageHeader from "@/components/general/PageHeader";
 
 interface GroupPageProps {
 	params: {
@@ -26,7 +27,11 @@ export default async function GroupPage({
 	return (
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[1000px] h-full relative">
-				<GroupHeader group={groupData} />
+				<PageHeader
+					showBackButton={true}
+					title={`g/${groupData?.groupname}`}
+					enableHeightUsage={false}
+				/>
 				{groupData ? (
 					<>
 						<GroupProfile group={groupData} />

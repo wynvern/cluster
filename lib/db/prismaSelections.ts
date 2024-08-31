@@ -45,6 +45,19 @@ export function postSelection(userId: string) {
 				image: true,
 			},
 		},
+
+		comments: {
+			take: 3,
+			//orderBy: { createdAt: "desc" },
+			select: { author: { select: { username: true, image: true } } },
+		},
+		_count: {
+			select: {
+				comments: true,
+				bookmarks: true,
+				postView: true,
+			},
+		},
 	};
 }
 

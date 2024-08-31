@@ -53,17 +53,24 @@ function CommentCreator({
 
 	return (
 		<div className="flex gap-x-4 items-start w-full mt-6">
-			<UserAvatar avatarURL={session.data?.user.image} />
+			<UserAvatar size="10" avatarURL={session.data?.user.image} />
 			<Textarea
 				value={newComment.text}
 				onChange={(e: any) => setNewComment({ text: e.target.value })}
 				placeholder="Comente"
 				variant="bordered"
 			/>
-			<Button isIconOnly={true} variant="bordered">
+			<Button
+				isIconOnly={true}
+				variant="bordered"
+				size="sm"
+				className="p-1"
+			>
 				<PhotoIcon className="h-6" />
 			</Button>
 			<Button
+				className="p-1"
+				size="sm"
 				isIconOnly={true}
 				variant="bordered"
 				onClick={() => handleCreatePost()}
@@ -100,12 +107,14 @@ function RenderCommentLevel({
 	};
 
 	return (
-		<div className="w-full relative">
+		<div className="w-full relative ">
 			{comments.map((comment) => (
 				<div
 					key={comment.id}
-					style={{ paddingLeft: `${level}em` }}
-					className="mt-6"
+					style={{ paddingLeft: `${level + 1.5}rem` }}
+					className={`py-4  ${level === 0 && "bottom-border pr-6"} ${
+						level > 0 && "pb-0"
+					}`}
 				>
 					<PostComment
 						comment={comment}
@@ -177,11 +186,16 @@ export default function ChatSection({
 	};
 
 	return (
-		<div className="w-full flex gap-x-4 items-start flex-col px-4">
-			<CommentCreator postId={post.id} addNewComment={addNewComment} />
+		<div className="w-full flex gap-x-4 items-start flex-col ">
+			<div className="px-6 w-full pb-6 bottom-border">
+				<CommentCreator
+					postId={post.id}
+					addNewComment={addNewComment}
+				/>
+			</div>
 			<div className="w-full">
 				{comments.length > 0 ? (
-					<div className="mt-4">
+					<div>
 						<RenderCommentLevel
 							level={0}
 							comments={comments}

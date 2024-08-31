@@ -63,7 +63,7 @@ export async function fetchGroupPosts(
 		select: { ...postSelection(session.user.id) },
 	});
 
-	return posts;
+	return posts as Post[];
 }
 
 // Fetches the bookmarks for the session user for optimization purposes
@@ -79,10 +79,12 @@ export async function fetchUserPosts(
 		orderBy: [{ createdAt: "desc" }],
 		skip: pagination?.skip,
 		take: pagination?.take,
-		select: { ...postSelection(session.user.id) },
+		select: {
+			...postSelection(session.user.id),
+		},
 	});
 
-	return posts;
+	return posts as Post[];
 }
 
 export async function fetchUserBookmarks(
@@ -177,7 +179,7 @@ export async function fetchPostById(postId: string) {
 		select: { ...postSelection(session.user.id) },
 	});
 
-	return post;
+	return post as Post;
 }
 
 export async function deletePost(postId: string) {

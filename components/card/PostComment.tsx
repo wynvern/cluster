@@ -19,7 +19,7 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-start">
-					<UserAvatar avatarURL={comment.author.image} />
+					<UserAvatar size="10" avatarURL={comment.author.image} />
 					<div className="flex flex-col">
 						<div className="flex items-center">
 							<p>
@@ -47,6 +47,8 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 						isIconOnly={true}
 						onClick={() => setReplyActive(true)}
 						variant="bordered"
+						size="sm"
+						className="p-1"
 					>
 						<ChatBubbleBottomCenterIcon className="h-6" />
 					</Button>

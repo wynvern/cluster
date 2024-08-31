@@ -8,7 +8,7 @@ import type Post from "@/lib/db/post/type";
 import { useState } from "react";
 
 export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
-	const [posts, setPosts] = useState(firstPosts);
+	const [posts, setPosts] = useState<Post[]>(firstPosts);
 	const [loading, setLoading] = useState(false);
 	const [offset, setOffset] = useState(10);
 	const [noMoreData, setNoMoreData] = useState(false);
@@ -39,7 +39,7 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 			onBottomReached={fetchMorePosts}
 		>
 			<div>
-				<PageHeader title="Feed" className="bottom-border" />
+				<PageHeader title="Feed" />
 				<PostList posts={posts} />
 			</div>
 		</ScrollPagination>

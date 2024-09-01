@@ -1,6 +1,8 @@
 import type User from "@/lib/db/user/type";
 import { Image } from "@nextui-org/react";
 import UserActions from "./UserActions";
+// @ts-ignore
+import { Image as NextImage } from "next/image";
 
 interface UserProfileProps {
 	user: User;
@@ -15,6 +17,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				style={{ aspectRatio: "1000 / 400" }}
 			>
 				<Image
+					as={NextImage}
 					src={user ? `${user.banner as string}?size=550` : ""}
 					removeWrapper={true}
 					className="rounded-none w-full object-cover"
@@ -22,6 +25,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				/>
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
+						as={NextImage}
 						src={
 							user?.image
 								? `${user.image}?size=400`
@@ -45,9 +49,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 						{user.username}
 					</p>
 				</div>
-				<div>
-					<p>{user.bio}</p>
-				</div>
+				{user.bio && <p>{user.bio}</p>}
 				<div className="flex gap-x-2">
 					<p>
 						Posts <b>{user._count.posts}</b>

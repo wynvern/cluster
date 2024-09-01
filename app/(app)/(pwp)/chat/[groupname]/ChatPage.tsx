@@ -1,6 +1,6 @@
 "use client";
 
-import getFileBase64, { getFilesBase64 } from "@/util/getFile";
+import { getFilesBase64 } from "@/util/getFile";
 import {
 	ChevronDownIcon,
 	PaperAirplaneIcon,
@@ -12,13 +12,14 @@ import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ListMessages } from "./ListMessages";
 import type Group from "@/lib/db/group/type";
-import ChatHeader from "./ChatHeader";
 import { useMessageAttr } from "@/hooks/ChatMessage";
 import type { MessageProps } from "@/lib/db/group/type";
 import { fetchMessages } from "@/lib/db/group/groupChat";
 import { useSocket } from "@/providers/Socket";
 import supportedFormats from "@/public/supportedFormats.json";
 import { toast } from "react-toastify";
+import InfoMessage from "@/components/card/InfoMessage";
+import PageHeader from "@/components/general/PageHeader";
 
 interface FileBase64Info {
 	base64: string;
@@ -26,12 +27,16 @@ interface FileBase64Info {
 	file?: File;
 }
 
+interface MessagePropView extends MessageProps {
+	sent?: boolean;
+}
+
 export default function ChatPage({ group }: { group: Group }) {
 	const [isSending, setIsSending] = useState(false);
 	const [selectedImages, setSelectedImages] = useState<
 		FileBase64Info[] | null
 	>(null);
-	const [messages, setMessages] = useState<MessageProps[]>([]);
+	const [messages, setMessages] = useState<MessagePropView[]>([]);
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
 	const [batchIndex, setBatchIndex] = useState(1);
@@ -44,6 +49,9 @@ export default function ChatPage({ group }: { group: Group }) {
 	const [isAtBottom, setIsAtBottom] = useState(true);
 	const [userTyping, setUserTyping] = useState<
 		{ userId: string; username: string }[]
+	>([]);
+	const [sentMessagesTimestamps, setSentMessagesTimestamps] = useState<
+		number[]
 	>([]);
 
 	// Cooldown System
@@ -146,7 +154,7 @@ export default function ChatPage({ group }: { group: Group }) {
 		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const message = formData.get("message") as string;
 
-		if (message) {
+		if (message || (selectedImages && selectedImages.length > 0)) {
 			verifyCooldown(new Date().valueOf());
 
 			const messageToSend = {
@@ -168,7 +176,9 @@ export default function ChatPage({ group }: { group: Group }) {
 			} as MessageProps;
 
 			socket.emit("sendMessage", messageToSend);
+
 			e.currentTarget.reset();
+			setReplyToMessageContent(null);
 			setSelectedImages(null);
 		}
 		setIsSending(false);
@@ -245,12 +255,23 @@ export default function ChatPage({ group }: { group: Group }) {
 
 	return (
 		<div className="w-full max-h-[calc(100vh)] h-full flex flex-col overflow-hidden">
-			{group?.groupname && <ChatHeader groupname={group.groupname} />}
+			{group?.groupname && (
+				<PageHeader
+					title={group?.groupname}
+					enableHeightUsage={true}
+					showBackButton={true}
+				/>
+			)}
 			<div className="grow flex flex-col overflow-hidden my-4 bottom-border">
 				<ScrollShadow
 					className="w-full h-full px-4 sm:px-10 gap-y-4 flex flex-col overflow-auto relative"
 					onScroll={handleMessageLoadScroll}
 				>
+					{messages.length === 0 && (
+						<div className="w-full h-full flex items-center justify-center">
+							<InfoMessage message="Este grupo ainda não tem nenhuma mensagem. Seja o primeiro a escrever algo!" />
+						</div>
+					)}
 					<ListMessages messages={messages} />
 					<div ref={endOfMessagesRef} className="opacity-0">
 						abc
@@ -295,7 +316,7 @@ export default function ChatPage({ group }: { group: Group }) {
 						</div>
 					)}
 					<Textarea
-						placeholder="mensagem"
+						placeholder="Escreva aqui"
 						variant="bordered"
 						name="message"
 						isDisabled={isSending}
@@ -305,7 +326,7 @@ export default function ChatPage({ group }: { group: Group }) {
 					{selectedImages && selectedImages.length > 0 && (
 						<div className="flex gap-x-2">
 							{selectedImages.map((image, index) => (
-								<div className="relative" key={index}>
+								<div className="relative" key={image.preview}>
 									<Button
 										color="secondary"
 										size="sm"
@@ -343,11 +364,13 @@ export default function ChatPage({ group }: { group: Group }) {
 					isIconOnly={true}
 					isDisabled={isSending}
 					variant="bordered"
+					size="sm"
 					onClick={() => handleSelectImage()}
 				>
 					<PhotoIcon className="h-6" />
 				</Button>
 				<Button
+					size="sm"
 					isIconOnly={true}
 					color="primary"
 					isDisabled={isSending || cooldownActive}

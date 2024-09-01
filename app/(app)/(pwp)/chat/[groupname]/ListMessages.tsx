@@ -1,13 +1,19 @@
-import UserAvatar from "@/components/user/UserAvatar";
 import { Link, Image, Chip } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
 import type { MessageProps } from "@/lib/db/group/type";
 import { useImageCarousel } from "@/providers/ImageDisplay";
-import prettyDate from "@/util/prettyDate";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import PrettyDate from "@/components/general/PrettyDate";
+import UserAvatar from "@/components/user/UserAvatar";
+// @ts-ignore
+import { Image as NextImage } from "next/image";
 
-export function ListMessages({ messages }: { messages: MessageProps[] }) {
+interface MessagePropView extends MessageProps {
+	sent?: boolean;
+}
+
+export function ListMessages({ messages }: { messages: MessagePropView[] }) {
 	const session = useSession();
 	const { openCarousel } = useImageCarousel();
 
@@ -25,6 +31,7 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 					<div
 						key={message.id}
 						className={"message-action-container"}
+						style={{ opacity: !message.sent ? 1 : 0.5 }}
 					>
 						<div className="w-full flex justify-center">
 							{isNewDay && (
@@ -36,27 +43,23 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 							)}
 						</div>
 						<div
-							className={`w-full flex gap-x-2 message-animation ${
+							className={`w-full flex items-center gap-x-2 message-animation ${
 								isUserMessage ? "flex-row-reverse" : ""
 							}`}
 						>
-							<div>
-								<Image
-									removeWrapper={true}
-									src={
-										message.user.image ||
-										"/brand/default-avatar.svg"
-									}
-									className="w-6 h-6"
+							<Link href={`/user/${message.user.username}`}>
+								<UserAvatar
+									avatarURL={message.user.image}
+									size="8"
 								/>
-							</div>
+							</Link>
 							<div
 								className={`flex flex-col gap-y-1 grow ${
 									isUserMessage ? "items-end" : ""
 								}`}
 							>
 								<div
-									className={`w-full flex justify-between items-start ${
+									className={`w-full flex justify-between items-center ${
 										!isUserMessage ? "flex-row-reverse" : ""
 									}`}
 								>
@@ -64,7 +67,7 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 										<MessageActions message={message} />
 									</div>
 									<div
-										className={`flex gap-x-2 ${
+										className={`flex items-center gap-x-2 ${
 											isUserMessage
 												? "flex-row-reverse"
 												: ""
@@ -75,6 +78,9 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 										>
 											<b>{message.user.username}</b>
 										</Link>
+										<PrettyDate
+											date={new Date(message.createdAt)}
+										/>
 										{message.replyToId && (
 											<Chip
 												startContent={
@@ -93,6 +99,16 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 										)}
 									</div>
 								</div>
+							</div>
+						</div>
+						{message.content && (
+							<div
+								className={
+									isUserMessage
+										? "flex items-end justify-end mt-1 mr-10"
+										: "flex items-start mt-1 ml-10"
+								}
+							>
 								<p
 									className={
 										isUserMessage ? "text-rigth" : ""
@@ -101,17 +117,18 @@ export function ListMessages({ messages }: { messages: MessageProps[] }) {
 									{message.content}
 								</p>
 							</div>
-						</div>
+						)}
 						{message.media && message.media.length > 0 && (
 							<div
 								className={
 									isUserMessage
-										? "flex items-end justify-end mr-16 mt-2"
-										: "flex items-start mt-2 ml-16"
+										? "flex items-end justify-end mr-10 mt-2"
+										: "flex items-start mt-2 ml-10"
 								}
 							>
 								<div className="max-w-[300px] max-h-[400px]">
 									<Image
+										as={NextImage}
 										src={message.media[0]}
 										removeWrapper={true}
 										onClick={() =>

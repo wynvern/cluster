@@ -16,13 +16,14 @@ import {
 import Link from "next/link";
 import ProfileDropdown from "./ProfileDropdown";
 import { Image } from "@nextui-org/image";
-import { Button } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import NotificationsButton from "./NotificationsButton";
 import { usePathname } from "next/navigation";
+import { useSidebarStore } from "@/hooks/MobileHomeSidebar";
 
 export default function HomeSidebar() {
-	const [open, setOpen] = useState(false);
+	const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
+	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
 	const path = usePathname();
 
 	useEffect(() => {
@@ -32,38 +33,24 @@ export default function HomeSidebar() {
 	return (
 		<>
 			<div
-				className="fixed top-6 sidebar-extras left-6"
-				style={{ zIndex: "90000" }}
-			>
-				<Button
-					isIconOnly={true}
-					color="secondary"
-					className="border-default"
-					onClick={() => setOpen(true)}
-				>
-					<EllipsisHorizontalCircleIcon className="h-6" />
-				</Button>
-			</div>
-
-			<div
 				style={{
 					zIndex: "90001",
 					backdropFilter: `blur(10px) ${
-						open ? "opacity(1)" : "opacity(0)"
+						isSidebarOpen ? "opacity(1)" : "opacity(0)"
 					}`,
 					transition: "backdrop-filter 200ms",
 				}}
 				className={` fixed w-full h-full sidebar-extras ${
-					open ? "visible" : "hidden"
+					isSidebarOpen ? "visible" : "hidden"
 				}`}
-				onClick={() => setOpen(false)}
-				onKeyDown={() => setOpen(false)}
+				onClick={() => setIsSidebarOpen(false)}
+				onKeyDown={() => setIsSidebarOpen(false)}
 			/>
 
 			<div
 				style={{ zIndex: "90002" }}
 				className={`fixed h-dvh sidebar-mobile border-for-sidebar flex-col sidebar-container bg-background transition-transform duration-300 ${
-					open ? "translate-x-0" : "-translate-x-full"
+					isSidebarOpen ? "translate-x-0" : "-translate-x-full"
 				}`}
 			>
 				<div className="flex flex-col justify-between h-full sidebar-wrapper py-6">
@@ -106,7 +93,7 @@ export default function HomeSidebar() {
 						<NotificationsButton
 							previousNotifications={[]}
 							hasText={true}
-							onClick={() => setOpen(false)}
+							onClick={() => setIsSidebarOpen(false)}
 						/>
 						<Link
 							href="/search"

@@ -1,6 +1,6 @@
 "use client";
 
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import PageHeader from "@/components/general/PageHeader";
 import {
 	ChevronLeftIcon,
@@ -38,52 +38,39 @@ export default function ManageGroup({
 					}`}
 				>
 					<PageHeader
-						title={`Gerenciar ${params.groupname}`}
+						title={`Gerenciar g/${params.groupname}`}
 						showBackButton
 						className="bottom-border"
+						isFixed={false}
+						enableHeightUsage={false}
 					/>
 
 					{/* This is the sidebar */}
 					<Link
-						className="bottom-border px-4 sm:px-10 py-4 flex items-center justify-between"
+						className="px-4 sm:px-10 py-6 bottom-border flex items-center justify-between"
 						href={`/group/${params.groupname}/manage/general`}
 					>
 						<div className="flex">
 							<CubeIcon className="h-6" />
 							<p className="ml-2">Geral</p>
 						</div>
-						<div>
-							<Button isIconOnly={true} color="secondary">
-								<ChevronRightIcon className="h-6" />
-							</Button>
-						</div>
 					</Link>
 					<Link
-						className="bottom-border px-4 sm:px-10 py-4 flex items-center justify-between"
+						className="px-4 sm:px-10 py-6 bottom-border flex items-center justify-between"
 						href={`/group/${params.groupname}/manage/members`}
 					>
 						<div className="flex">
 							<UserIcon className="h-6" />
 							<p className="ml-2">Membros</p>
 						</div>
-						<div>
-							<Button isIconOnly={true} color="secondary">
-								<ChevronRightIcon className="h-6" />
-							</Button>
-						</div>
 					</Link>
 					<Link
-						className="bottom-border px-4 sm:px-10 py-4 flex items-center justify-between"
+						className="px-4 sm:px-10 py-6 bottom-border flex items-center justify-between"
 						href={`/group/${params.groupname}/manage/banned`}
 					>
 						<div className="flex">
 							<NoSymbolIcon className="h-6" />
 							<p className="ml-2">Banidos</p>
-						</div>
-						<div>
-							<Button isIconOnly={true} color="secondary">
-								<ChevronRightIcon className="h-6" />
-							</Button>
 						</div>
 					</Link>
 				</div>
@@ -94,7 +81,7 @@ export default function ManageGroup({
 				>
 					{children === null ? (
 						<div className="w-full h-full flex items-center justify-center">
-							<NoPosts message="Escolha uma categoria para ver suas opções." />
+							<InfoMessage message="Escolha uma categoria para ver suas opções." />
 						</div>
 					) : (
 						children

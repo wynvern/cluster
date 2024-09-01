@@ -17,7 +17,7 @@ export default function UserGroupActions({
 	return (
 		<Dropdown className="default-border shadow-none">
 			<DropdownTrigger>
-				<Button isIconOnly={true} variant="bordered">
+				<Button isIconOnly={true} variant="bordered" size="sm">
 					<EllipsisHorizontalIcon className="h-8" />
 				</Button>
 			</DropdownTrigger>

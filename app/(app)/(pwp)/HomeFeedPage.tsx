@@ -3,8 +3,11 @@
 import PageHeader from "@/components/general/PageHeader";
 import ScrollPagination from "@/components/general/ScrollPagination";
 import PostList from "@/components/post/PostsList";
+import { useSidebarStore } from "@/hooks/MobileHomeSidebar";
 import { fetchUserFeed } from "@/lib/db/feed/feed";
 import type Post from "@/lib/db/post/type";
+import { Bars2Icon } from "@heroicons/react/24/outline";
+import { Button } from "@nextui-org/react";
 import { useState } from "react";
 
 export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
@@ -12,6 +15,7 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 	const [loading, setLoading] = useState(false);
 	const [offset, setOffset] = useState(10);
 	const [noMoreData, setNoMoreData] = useState(false);
+	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
 
 	async function fetchMorePosts() {
 		if (noMoreData) return;
@@ -39,7 +43,17 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 			onBottomReached={fetchMorePosts}
 		>
 			<div>
-				<PageHeader title="Feed" />
+				<PageHeader title="Feed">
+					<Button
+						className="bg-background sidebar-button"
+						variant="bordered"
+						size="sm"
+						isIconOnly={true}
+						onClick={() => setIsSidebarOpen(true)}
+					>
+						<Bars2Icon className="w-6 h-6" />
+					</Button>
+				</PageHeader>
 				<PostList posts={posts} />
 			</div>
 		</ScrollPagination>

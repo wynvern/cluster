@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CategoryHeader from "../CategoryHeader";
 import {
 	Button,
 	CircularProgress,
@@ -13,7 +12,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@nextui-org/react";
-import prettyDate from "@/util/prettyDate";
 import {
 	ChevronDownIcon,
 	ChevronUpIcon,
@@ -29,6 +27,8 @@ import {
 	unpromoteMember,
 } from "@/lib/db/group/groupMember";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
+import PrettyDate from "@/components/general/PrettyDate";
+import PageHeader from "@/components/general/PageHeader";
 
 interface Member {
 	user: {
@@ -153,7 +153,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 
 	return (
 		<div>
-			<CategoryHeader title="Geral" />
+			<PageHeader title="Geral" />
 			<div className="pt-10 px-4 sm:px-10">
 				{members ? (
 					<Table>
@@ -177,7 +177,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 										{rolesDictionary[member.role]}
 									</TableCell>
 									<TableCell>
-										{prettyDate({ date: member.joinedAt })}
+										<PrettyDate date={member.joinedAt} />
 									</TableCell>
 									<TableCell>
 										<div className="flex gap-x-2">

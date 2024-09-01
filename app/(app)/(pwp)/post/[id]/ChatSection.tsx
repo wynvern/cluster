@@ -1,6 +1,6 @@
 "use client";
 
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import PostComment from "@/components/card/PostComment";
 import UserAvatar from "@/components/user/UserAvatar";
 import { createComment } from "@/lib/db/post/comment/comment";
@@ -205,7 +205,7 @@ export default function ChatSection({
 					</div>
 				) : (
 					<div className="mt-12">
-						<NoPosts message="Sem comentários." />
+						<InfoMessage message="Sem comentários." />
 					</div>
 				)}
 			</div>

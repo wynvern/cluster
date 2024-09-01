@@ -144,6 +144,13 @@ header {
 	border-right: 1px solid var(--border);
 }
 
+@media screen and (max-width: 640px) {
+	.side-borders {
+		border-left: none;
+		border-right: none;
+	}
+}
+
 .sidebar-border-mobile {
 	border-top: 1px solid var(--border);
 }

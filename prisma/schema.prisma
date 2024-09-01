@@ -335,7 +335,7 @@ model GroupChat {
 
 model Message {
    id          String     @id @default(cuid())
-   content     String
+   content     String?
    userId      String
    user        User       @relation(fields: [userId], references: [id])
    chatId      String

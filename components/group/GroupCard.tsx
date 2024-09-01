@@ -7,7 +7,10 @@ import FollowUnfollowGroup from "../general/FollowUnfollowGroup";
 
 export default function GroupCard({ group }: { group: GroupCardType }) {
 	return (
-		<Link href={`/group/${group.groupname}`} className="w-[400px]">
+		<Link
+			href={`/group/${group.groupname}`}
+			className="sm:w-[400px] sm:min-w-[400px] w-[300px] min-w-[300px]"
+		>
 			<div className="rounded-large border-default w-full mb-4">
 				<div className="relative bg-neutral-800 rounded-large rounded-b-none">
 					<Image

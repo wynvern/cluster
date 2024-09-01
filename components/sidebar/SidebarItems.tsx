@@ -26,23 +26,18 @@ export default function SidebarItems({
 	const path = usePathname();
 
 	return (
-		<div
-			className="fixed h-dvh  border-for-sidebar flex-col sidebar-container bg-background hidden sm:flex"
-			style={{ zIndex: "90002" }}
-		>
+		<div className="fixed h-dvh  border-for-sidebar flex-col sidebar-container bg-background hidden sm:flex z-40">
 			<div className="flex flex-col justify-between h-full sidebar-wrapper py-6">
 				<div className="flex items-center gap-x-4 pl-[7px]">
-					<Link href="/">
-						<Image
-							alt="logo"
-							className="h-8 w-8 invert-image min-w-8"
-							src="/brand/logo.svg"
-							height={50}
-							width={50}
-							priority={true}
-							draggable={false}
-						/>
-					</Link>
+					<Image
+						alt="logo"
+						className="h-8 w-8 invert-image min-w-8"
+						src="/brand/logo.svg"
+						height={50}
+						width={50}
+						priority={true}
+						draggable={false}
+					/>
 					<div className="sidebar-inside">
 						<h2 className="main-text">Cluster</h2>
 					</div>

@@ -12,10 +12,10 @@ import BookmarkPost from "../post/BookmarkPost";
 import UserAvatar from "../user/UserAvatar";
 import { useState } from "react";
 import MediaDisplayPost from "../post/MediaDisplayPost";
-import prettyDate from "@/util/prettyDate";
 import { useImageCarousel } from "@/providers/ImageDisplay";
 // @ts-ignore
 import { Image as NextImage } from "next/image";
+import PrettyDate from "../general/PrettyDate";
 
 export default function PostCard({
 	post,
@@ -34,7 +34,13 @@ export default function PostCard({
 	const { openCarousel } = useImageCarousel();
 
 	return (
-		<div className="w-full flex flex-col gap-y-4 px-4 sm:px-6">
+		<div className="relative w-full flex flex-col gap-y-4 px-4 sm:px-6">
+			{!disableLink && (
+				<Link
+					href={`/post/${post.id}`}
+					className="absolute bg-transparent w-full h-full max-w-[970px]"
+				/>
+			)}
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-center">
@@ -51,12 +57,7 @@ export default function PostCard({
 									post.createdAt
 								).toLocaleString()}
 							>
-								<p
-									className="second-foreground"
-									suppressHydrationWarning
-								>
-									{prettyDate({ date: post.createdAt })}
-								</p>
+								<PrettyDate date={post.createdAt} />
 							</Tooltip>
 						</div>
 						<div className="flex gap-x-2 items-center">
@@ -193,7 +194,7 @@ export default function PostCard({
 							)}
 						</div>
 					))}
-				{!disableComments && (
+				{!disableComments && post.comments.length > 0 && (
 					<div className="flex gap-x-3 items-center">
 						<div className="flex">
 							{post.comments.map((c, i) => (

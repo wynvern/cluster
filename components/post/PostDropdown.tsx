@@ -169,6 +169,7 @@ export default function PostDropdown({
 			description: "Tem certeza que deseja excluír o post?",
 			onConfirm: () => {
 				deletePost(post.id);
+				window.location.reload();
 			},
 			isDanger: true,
 			onCancel: () => {},

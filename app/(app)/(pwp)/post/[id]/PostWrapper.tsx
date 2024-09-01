@@ -19,12 +19,12 @@ export default function PostWrapper({
 
 	return (
 		<div
-			className={`w-full h-full flex ${
+			className={`w-full h-full flex  ${
 				post.media.length < 1 && "justify-center"
 			}`}
 		>
 			<div
-				className={`h-full ${
+				className={`h-full min-h-dvh ${
 					post.media.length < 1 || isSmallScreen
 						? "w-full max-w-[1000px] side-borders"
 						: "w-1/2 sidebar-border"
@@ -40,7 +40,7 @@ export default function PostWrapper({
 						disableImages={!isSmallScreen}
 					/>
 					<div
-						className={`bottom-border w-full ${
+						className={`bottom-border w-full mt-4 ${
 							isSmallScreen ? "mt-4" : ""
 						}`}
 					/>

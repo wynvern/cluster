@@ -1,7 +1,4 @@
-import {
-	ExclamationTriangleIcon,
-	InformationCircleIcon,
-} from "@heroicons/react/24/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 export default function NoPosts({ message }: { message: string }) {
 	return (

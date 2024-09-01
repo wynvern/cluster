@@ -1,7 +1,7 @@
 import GroupCard from "@/components/group/GroupCard";
 import { ScrollShadow } from "@nextui-org/react";
 import CreateGroupHandler from "./CreateGroupHandler";
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import { fetchRecentGroups } from "@/lib/db/group/groupManagement";
 
 export default async function GroupPage() {
@@ -9,7 +9,7 @@ export default async function GroupPage() {
 
 	return (
 		<div className="flex justify-center w-full h-full">
-			<div className="side-borders w-full max-w-[100vw] sm:max-w-[1000px] h-full relative pt-10">
+			<div className="side-borders w-full max-w-[100vw] sm:max-w-[1000px] h-full relative pt-4">
 				<div className="px-4 sm:px-10 ">
 					<h1>Grupos</h1>
 					<h2>Conecte-se, Colabore e Cresça.</h2>
@@ -19,7 +19,7 @@ export default async function GroupPage() {
 					</p>
 				</div>
 
-				<div className="my-4 sm:my-8 bottom-border w-full" />
+				<div className="my-4 bottom-border w-full" />
 
 				<div className="w-full px-4 sm:px-10 ">
 					<h2 className="mb-4">Recentes</h2>
@@ -35,16 +35,16 @@ export default async function GroupPage() {
 						</ScrollShadow>
 					) : (
 						<div className="h-20 flex items-center justify-center">
-							<NoPosts message="Nenhum grupo recente." />
+							<InfoMessage message="Nenhum grupo recente." />
 						</div>
 					)}
 				</div>
 
-				<div className="my-4 sm:my-8 bottom-border w-full" />
+				<div className="my-4 bottom-border w-full" />
 
 				<div className="w-full px-4 sm:px-10 ">
 					<h2 className="mb-4">Crie o seu</h2>
-					<div className="w-full gap-y-10 border-default rounded-large p-10 flex flex-col justify-between">
+					<div className="w-full gap-y-8 border-default rounded-large p-6 flex flex-col justify-between">
 						<div>
 							<h1>Crie o seu Grupo</h1>
 							<h2>Construa sua Comunidade</h2>

@@ -1,6 +1,6 @@
 "use client";
 
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
@@ -93,7 +93,7 @@ export default function ManageSettings({ children }: { children: ReactNode }) {
 				>
 					{children === null ? (
 						<div className="w-full h-full flex items-center justify-center">
-							<NoPosts message="Escolha uma categoria para ver suas opções." />
+							<InfoMessage message="Escolha uma categoria para ver suas opções." />
 						</div>
 					) : (
 						children

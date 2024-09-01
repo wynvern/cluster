@@ -1,6 +1,6 @@
 "use client";
 
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import ScrollPagination from "@/components/general/ScrollPagination";
 import GroupList from "@/components/group/GroupList";
 import PostsList from "@/components/post/PostsList";
@@ -50,12 +50,12 @@ function UserPostsTab({
 			<PostsList posts={posts} />
 			{noMoreData && initialPosts && initialPosts.length >= 1 && (
 				<div className="mt-4 py-6">
-					<NoPosts message="Fim dos posts." />
+					<InfoMessage message="Fim dos posts." />
 				</div>
 			)}
 			{initialPosts?.length === 0 && (
 				<div className="mt-4 py-6">
-					<NoPosts message="O usuário não tem nenhum post." />
+					<InfoMessage message="O usuário não tem nenhum post." />
 				</div>
 			)}
 		</ScrollPagination>
@@ -72,7 +72,7 @@ function UserBookmarksTab({
 	if (typeof initialBookmarks === "string") {
 		return (
 			<div className="my-6">
-				<NoPosts message="Os salvos desse usuário são privados." />
+				<InfoMessage message="Os salvos desse usuário são privados." />
 			</div>
 		);
 	}
@@ -104,12 +104,12 @@ function UserBookmarksTab({
 			<PostsList posts={posts} />
 			{noMoreData && initialBookmarks && initialBookmarks.length >= 1 && (
 				<div className="mt-4 py-6">
-					<NoPosts message="Fim dos posts salvos." />
+					<InfoMessage message="Fim dos posts salvos." />
 				</div>
 			)}
 			{initialBookmarks?.length === 0 && (
 				<div className="mt-4 py-6">
-					<NoPosts message="O usuário não tem nada salvo." />
+					<InfoMessage message="O usuário não tem nada salvo." />
 				</div>
 			)}
 		</ScrollPagination>
@@ -150,7 +150,7 @@ export default function UserTabs({
 			>
 				{typeof groups === "string" ? (
 					<div className="my-6">
-						<NoPosts message="Os grupos que o usuário participa são privados." />
+						<InfoMessage message="Os grupos que o usuário participa são privados." />
 					</div>
 				) : (
 					<div className="mt-4">

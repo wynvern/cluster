@@ -1,6 +1,6 @@
 "use client";
 
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import PostCard from "@/components/card/PostCard";
 import GroupCard from "@/components/group/GroupCard";
 import type Group from "@/lib/db/group/type";
@@ -144,7 +144,7 @@ export default function SearchPage() {
 						<div className="">
 							{notFound.post && (
 								<div>
-									<NoPosts message="Nenhum post encontrado." />
+									<InfoMessage message="Nenhum post encontrado." />
 								</div>
 							)}
 							<div>
@@ -173,7 +173,7 @@ export default function SearchPage() {
 						<div className="">
 							{notFound.group && (
 								<div>
-									<NoPosts message="Nenhum grupo encontrado." />
+									<InfoMessage message="Nenhum grupo encontrado." />
 								</div>
 							)}
 
@@ -204,7 +204,7 @@ export default function SearchPage() {
 						<div className="">
 							{notFound.user && (
 								<div>
-									<NoPosts message="Nenhum usuário encontrado." />
+									<InfoMessage message="Nenhum usuário encontrado." />
 								</div>
 							)}
 

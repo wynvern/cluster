@@ -1,6 +1,6 @@
 import type { GroupCard as GroupCardType } from "@/lib/db/group/type";
 import GroupCard from "./GroupCard";
-import NoPosts from "../card/NoPosts";
+import InfoMessage from "../card/InfoMessage";
 
 export default function GroupList({
 	groups,
@@ -23,7 +23,7 @@ export default function GroupList({
 			)}
 			{groups && groups.length === 0 && (
 				<div className="mt-16">
-					<NoPosts message={noGroups} />
+					<InfoMessage message={noGroups} />
 				</div>
 			)}
 		</div>

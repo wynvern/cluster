@@ -1,12 +1,12 @@
-import { Tooltip, Chip, Button } from "@nextui-org/react";
+import { Chip, Button } from "@nextui-org/react";
 import Link from "next/link";
 import UserAvatar from "../user/UserAvatar";
 import type RecursiveComments from "@/lib/db/post/comment/type";
-import PrettyDate from "@/util/prettyDate";
 import {
 	ChatBubbleBottomCenterIcon,
 	DocumentIcon,
 } from "@heroicons/react/24/outline";
+import PrettyDate from "../general/PrettyDate";
 
 interface commentCommentProps {
 	comment: RecursiveComments;
@@ -21,21 +21,9 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 				<div className="flex gap-x-4 items-start">
 					<UserAvatar size="10" avatarURL={comment.author.image} />
 					<div className="flex flex-col">
-						<div className="flex items-center">
-							<p>
-								<b>{comment.author.username}</b>{" "}
-								<Tooltip
-									content={new Date(
-										comment.createdAt
-									).toLocaleString()}
-								>
-									<p>
-										{new Date(
-											comment.createdAt
-										).toLocaleString()}
-									</p>
-								</Tooltip>
-							</p>
+						<div className="flex items-center gap-x-2">
+							<b>{comment.author.username}</b>
+							<PrettyDate date={comment.createdAt} />
 						</div>
 						<div>
 							<p>{comment.text}</p>

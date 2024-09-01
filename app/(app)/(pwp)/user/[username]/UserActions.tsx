@@ -75,7 +75,7 @@ export default function UserActions({ user }: { user: User }) {
 				placement="bottom-end"
 			>
 				<DropdownTrigger>
-					<Button isIconOnly={true} variant="bordered">
+					<Button size="sm" isIconOnly={true} variant="bordered">
 						<EllipsisHorizontalIcon className="h-8" />
 					</Button>
 				</DropdownTrigger>

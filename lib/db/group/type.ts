@@ -65,14 +65,14 @@ export interface UserGroupChats {
 				username: string | null;
 			};
 			createdAt: Date;
-			content: string;
+			content: string | null;
 		}[];
 	} | null;
 }
 
 export class MessageProps {
 	id: string;
-	content: string;
+	content: string | null;
 	userId: string;
 	user: {
 		id: string;

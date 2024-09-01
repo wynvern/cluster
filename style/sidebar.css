@@ -37,4 +37,9 @@
 	.sidebar-extras {
 		display: none;
 	}
+
+	.sidebar-button {
+		display: none !important;
+		visibility: hidden;
+	}
 }

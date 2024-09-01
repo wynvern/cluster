@@ -40,44 +40,60 @@ export function ImageCarouselProvider({ children }: { children: ReactNode }) {
 								onClick={closeCarousel}
 								onKeyDown={closeCarousel}
 							/>
-							<div
-								className="absolute left-0 p-10"
-								style={{ zIndex: "999999999999" }}
-							>
-								<Button
-									isDisabled={index === 0}
-									isIconOnly={true}
-									variant="bordered"
-									className="bg-background"
-									onClick={() => setIndex(index - 1)}
-								>
-									<ChevronLeftIcon className="h-6" />
-								</Button>
-							</div>
-							<div
-								className="absolute p-10"
-								style={{ zIndex: "999999999999", right: "0" }}
-							>
-								<Button
-									isIconOnly={true}
-									variant="bordered"
-									className="bg-background"
-									isDisabled={index === images.length - 1}
-									onClick={() => setIndex(index + 1)}
-								>
-									<ChevronRightIcon className="h-6" />
-								</Button>
-							</div>
+							{images.length > 1 && (
+								<>
+									<div
+										className="absolute left-0 p-10"
+										style={{ zIndex: "999999999999" }}
+									>
+										<Button
+											isDisabled={index === 0}
+											isIconOnly={true}
+											variant="bordered"
+											className="bg-background"
+											onClick={() => setIndex(index - 1)}
+										>
+											<ChevronLeftIcon className="h-6" />
+										</Button>
+									</div>
+									<div
+										className="absolute p-10"
+										style={{
+											zIndex: "999999999999",
+											right: "0",
+										}}
+									>
+										<Button
+											isIconOnly={true}
+											variant="bordered"
+											className="bg-background"
+											isDisabled={
+												index === images.length - 1
+											}
+											onClick={() => setIndex(index + 1)}
+										>
+											<ChevronRightIcon className="h-6" />
+										</Button>
+									</div>
+								</>
+							)}
 							<div className="max-h-[40vh]">
 								{/* TODO: Fix image height not being correctly placed */}
-								<Image
+								<img
 									className="rounded-none h-full"
-									removeWrapper={true}
+									style={{
+										maxHeight: "80vh",
+										maxWidth: "90vw",
+										zIndex: "99999999999999999",
+									}}
 									src={images[index]}
-									alt="Image"
+									alt="display-post-image"
 								/>
 							</div>
-							<div className="absolute bottom-0 p-10 flex gap-x-2">
+							<div
+								className="absolute flex gap-x-2"
+								style={{ bottom: "30px" }}
+							>
 								{images.map((i, _) => (
 									<div
 										style={{ zIndex: "99999999999999999" }}

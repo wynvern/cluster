@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { memberHasPermission } from "./groupUtils";
-import { MessageProps } from "./type";
+import type { MessageProps } from "./type";
 
 export async function fetchUserChats() {
 	const session = await getServerSession(authOptions);

@@ -29,7 +29,7 @@ export default function ({ message }: { message: MessageProps }) {
 	function setReplyTo() {
 		setReplyToMessageId({
 			id: message.id,
-			content: message.content,
+			content: message.content || "",
 			authorUsername: message.user.username || "",
 		});
 	}

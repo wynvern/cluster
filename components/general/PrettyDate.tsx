@@ -20,6 +20,21 @@ function prettyDate(date: Date) {
 	return date.toLocaleDateString(); // returns full date
 }
 
-export default function ({ date }: { date: Date }) {
-	return <p>{prettyDate(new Date(date))}</p>;
+export default function ({
+	date,
+	asString,
+}: {
+	date: Date;
+	asString?: boolean;
+}) {
+	switch (asString) {
+		case true:
+			return prettyDate(new Date(date));
+		default:
+			return (
+				<p className="second-foreground text-tiny">
+					{prettyDate(new Date(date))}
+				</p>
+			);
+	}
 }

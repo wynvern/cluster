@@ -1,4 +1,4 @@
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import GroupHeader from "./GroupHeader";
 import GroupProfile from "./GroupProfile";
 import GroupContent from "./GroupContent";
@@ -39,7 +39,7 @@ export default async function GroupPage({
 					</>
 				) : (
 					<div className="w-full h-full flex items-center justify-center">
-						<NoPosts message="Grupo não encontrado." />
+						<InfoMessage message="Grupo não encontrado." />
 					</div>
 				)}
 			</div>

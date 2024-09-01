@@ -10,7 +10,7 @@ import {
 import { cleanUserNotifications, getNotifications } from "@/lib/db/user/user";
 import prettyDate from "@/util/prettyDate";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import NoPosts from "../card/NoPosts";
+import InfoMessage from "../card/InfoMessage";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 
 interface NotificationsProps {
@@ -98,7 +98,7 @@ export default function Notifications({
 				>
 					{Object.values(notifications).length === 0 && (
 						<div className="w-full h-full flex items-center justify-center my-10">
-							<NoPosts message="Nenhuma notificação." />
+							<InfoMessage message="Nenhuma notificação." />
 						</div>
 					)}
 					{loading ? (

@@ -1,7 +1,7 @@
 import fetchUser from "@/lib/db/user/user";
 import UserProfile from "./UserProfile";
 import UserContent from "./UserContent";
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import UserHeader from "./UserHeader";
 import PageHeader from "@/components/general/PageHeader";
 
@@ -22,19 +22,19 @@ export default async function UserPage({
 				case "private-profile":
 					return (
 						<div className="w-full h-full flex items-center justify-center">
-							<NoPosts message="O perfil do usuário é privado." />
+							<InfoMessage message="O perfil do usuário é privado." />
 						</div>
 					);
 				case "no-match":
 					return (
 						<div className="w-full h-full flex items-center justify-center">
-							<NoPosts message="O usuário não existe" />
+							<InfoMessage message="O usuário não existe" />
 						</div>
 					);
 				default:
 					return (
 						<div className="w-full h-full flex items-center justify-center">
-							<NoPosts message="O usuário não foi encontrado." />
+							<InfoMessage message="O usuário não foi encontrado." />
 						</div>
 					);
 			}
@@ -55,7 +55,7 @@ export default async function UserPage({
 		if (!userData) {
 			return (
 				<div className="w-full h-full flex items-center justify-center">
-					<NoPosts message="O usuário não foi encontrado." />
+					<InfoMessage message="O usuário não foi encontrado." />
 				</div>
 			);
 		}

@@ -1,6 +1,6 @@
 "use client";
 
-import NoPosts from "@/components/card/NoPosts";
+import InfoMessage from "@/components/card/InfoMessage";
 import ScrollPagination from "@/components/general/ScrollPagination";
 import PostsList from "@/components/post/PostsList";
 import { fetchGroupPosts } from "@/lib/db/post/post";
@@ -45,12 +45,12 @@ function GroupPosts({
 			<PostsList posts={posts} isUserPage={false} />
 			{noMoreData && initialPosts && initialPosts.length >= 1 && (
 				<div className="mt-4 py-6">
-					<NoPosts message="Fim dos posts." />
+					<InfoMessage message="Fim dos posts." />
 				</div>
 			)}
 			{initialPosts?.length === 0 && (
 				<div className="mt-4 py-6">
-					<NoPosts message="O grupo não tem nenhum post." />
+					<InfoMessage message="O grupo não tem nenhum post." />
 				</div>
 			)}
 		</ScrollPagination>

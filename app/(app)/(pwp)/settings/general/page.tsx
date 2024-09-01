@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CategoryHeader from "../CategoryHeader";
 import { CircularProgress, Switch } from "@nextui-org/react";
-import { updateGroupSetting } from "@/lib/db/group/groupManagement";
 import { fetchUserSettings, updateUserSettings } from "@/lib/db/user/user";
+import PageHeader from "@/components/general/PageHeader";
 
 interface settings {
 	id: string;
@@ -53,7 +52,7 @@ export default function GeneralSettings({
 
 	return (
 		<div>
-			<CategoryHeader title="Geral" />
+			<PageHeader title="Geral" />
 			{settings ? (
 				<>
 					<div className="flex items-center justify-between bottom-border px-4 sm:px-10 py-4">

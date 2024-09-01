@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CategoryHeader from "../CategoryHeader";
 import {
 	Button,
 	CircularProgress,
@@ -15,6 +14,7 @@ import {
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 import { fetchBlockedUsers, unblockUser } from "@/lib/db/user/user";
 import { NoSymbolIcon } from "@heroicons/react/24/outline";
+import PageHeader from "@/components/general/PageHeader";
 
 interface BlockedUser {
 	id: string;
@@ -50,7 +50,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 
 	return (
 		<div>
-			<CategoryHeader title="Geral" />
+			<PageHeader title="Geral" />
 			<div className="pt-10 px-4 sm:px-10">
 				{users ? (
 					<Table>

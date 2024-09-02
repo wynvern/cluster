@@ -20,7 +20,7 @@ export async function uploadPostMedia(
 		const compressedImage = await compressImage(buffer);
 		const blobUrl = await createBlob(compressedImage, "post", {
 			type: mediaItem.fileType,
-			name: `${session.user.id}-image.${mediaItem.fileType}`,
+			name: `${session.user.id}-image-${media.indexOf(mediaItem)}.${mediaItem.fileType}`,
 		});
 		newMediaUrls.push(blobUrl);
 	}
@@ -44,7 +44,7 @@ export async function uploadPostDocument(
 		const buffer = Buffer.from(file.base64, "base64");
 		const blobUrl = await createBlob(buffer, "post", {
 			type: file.fileType,
-			name: `${session.user.id}-file.${file.fileType}`,
+			name: `${session.user.id}-file-${files.indexOf(file)}.${file.fileType}`,
 		});
 
 		await db.postDocument.create({

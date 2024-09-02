@@ -26,11 +26,7 @@ export default async function middleware(req: NextRequest) {
 	const url = new URL(req.url);
 	const session = await getToken({ req });
 
-	console.log("session", session);
-	console.log("url", url.pathname);
-
 	if (excludedPrefixes.some((prefix) => url.pathname.startsWith(prefix))) {
-		console.log("continuing to next middleware", url.pathname);
 		return NextResponse.next();
 	}
 

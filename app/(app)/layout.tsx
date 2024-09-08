@@ -27,14 +27,9 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="pt-BR" className="dark">
-			<head>
-				<meta httpEquiv="Cache-Control" content="public" />
-			</head>
 			<body>
 				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);
 }
-
-export const fetchCache = "force-cache";

@@ -1,5 +1,7 @@
 const nextConfig = {
 	reactStrictMode: true,
+
+	// That truly works, but i need to make all pages public
 	async headers() {
 		return [
 			{

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import "../../style/global.css";
 import Providers from "@/components/Providers";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
 	title: "Cluster",
@@ -28,13 +26,11 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="pt-BR">
+		<html lang="pt-BR" className="dark">
 			<head>
-				<meta http-equiv="cache-control" content="" />
+				<meta httpEquiv="Cache-Control" content="public" />
 			</head>
 			<body>
-				<SpeedInsights />
-				<Analytics />
 				<Providers>{children}</Providers>
 			</body>
 		</html>

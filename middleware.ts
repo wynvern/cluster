@@ -1,19 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { type NextRequest, NextResponse } from "next/server";
 
-const excludedPrefixes = [
-	"/_next",
-	"/api",
-	"/static",
-	"/brand",
-	"/font",
-	"/service-worker",
-	"/manifest",
-	"/external",
-	"/login",
-	"/favicon",
-];
-
 interface RedirectStatement {
 	redirection: {
 		condition: boolean;
@@ -26,12 +13,6 @@ export default async function middleware(req: NextRequest) {
 	const url = new URL(req.url);
 	const session = await getToken({ req });
 
-	if (excludedPrefixes.some((prefix) => url.pathname.startsWith(prefix))) {
-		return NextResponse.next();
-	}
-
-	// Mini API to handle redirects
-	// The route / means any route
 	const redirection: RedirectStatement[] = [
 		{
 			location: "/signin",
@@ -106,6 +87,23 @@ export default async function middleware(req: NextRequest) {
 	);
 }
 
+// TODO: Check if is up to date with all the routes
 export const config = {
-	matcher: ["/:path*"],
+	matcher: [
+		"/",
+		"/signin",
+		"/signup",
+		"/verify-email",
+		"/reset-password",
+		"/complete-profile",
+		"/post/:path*",
+		"/group",
+		"/group/:path*",
+		"/search",
+		"/user/:path*",
+		"/settings",
+		"/settings/:path*",
+		"/chat",
+		"/chat/:path*",
+	],
 };

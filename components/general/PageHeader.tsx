@@ -32,7 +32,12 @@ export default function ({
 			}
 		};
 
+		const handleBeforeUnload = () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+
 		window.addEventListener("scroll", handleScroll);
+		window.addEventListener("beforeunload", handleBeforeUnload);
 
 		// Cleanup event listener on component unmount
 		return () => {

@@ -30,6 +30,12 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 				socketInstance.emit("auth", { token });
 			});
 
+			const handleBeforeUnload = () => {
+				socketInstance.disconnect();
+			};
+
+			window.addEventListener("beforeunload", handleBeforeUnload);
+
 			socketInstance.on("notificationMessage", (data) => {
 				toast.info(
 					`g/${data.message.chat.group.groupname}: ${data.message.content}`,

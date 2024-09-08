@@ -11,6 +11,18 @@ const nextConfig = {
 			],
 		},
 	},
+	headers: () => [
+		{
+			source: "/:path*",
+			headers: [
+				{
+					key: "Cache-Control",
+					value: "no-cache",
+				},
+			],
+		},
+	],
+
 	images: {
 		remotePatterns: [
 			{

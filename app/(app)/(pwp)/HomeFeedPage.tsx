@@ -1,5 +1,6 @@
 "use client";
 
+import InfoMessage from "@/components/card/InfoMessage";
 import PageHeader from "@/components/general/PageHeader";
 import ScrollPagination from "@/components/general/ScrollPagination";
 import PostList from "@/components/post/PostsList";
@@ -42,6 +43,11 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 			noMoreData={noMoreData}
 			onBottomReached={fetchMorePosts}
 		>
+			{posts.length === 0 && (
+				<div className="w-full h-full flex items-center justify-center">
+					<InfoMessage message="Os posts dos grupos que você segue aparecerão aqui." />
+				</div>
+			)}
 			<div>
 				<PageHeader title="Feed">
 					<Button

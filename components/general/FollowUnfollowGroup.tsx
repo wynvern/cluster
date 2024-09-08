@@ -66,6 +66,7 @@ export default function ({
 
 	return (
 		<Button
+			size="sm"
 			variant={isFollowing ? "bordered" : "solid"}
 			color="primary"
 			onClick={(e) => {

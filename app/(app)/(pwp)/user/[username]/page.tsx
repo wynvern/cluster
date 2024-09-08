@@ -2,7 +2,6 @@ import fetchUser from "@/lib/db/user/user";
 import UserProfile from "./UserProfile";
 import UserContent from "./UserContent";
 import InfoMessage from "@/components/card/InfoMessage";
-import UserHeader from "./UserHeader";
 import PageHeader from "@/components/general/PageHeader";
 
 interface UserPageProps {

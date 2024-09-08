@@ -1,5 +1,4 @@
 import InfoMessage from "@/components/card/InfoMessage";
-import GroupHeader from "./GroupHeader";
 import GroupProfile from "./GroupProfile";
 import GroupContent from "./GroupContent";
 import CreatePostButton from "./CreatePostButton";

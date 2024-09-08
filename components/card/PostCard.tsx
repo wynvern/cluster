@@ -52,6 +52,7 @@ export default function PostCard({
 							<Link href={`/user/${post.author.username}`}>
 								<b>{post.author.username}</b>
 							</Link>
+							<p>{post._count.postView}</p>
 							<Tooltip
 								content={new Date(
 									post.createdAt

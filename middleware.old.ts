@@ -25,11 +25,9 @@ interface RedirectStatement {
 export default async function middleware(req: NextRequest) {
 	const url = new URL(req.url);
 	const session = await getToken({ req });
-	const headers = new Headers(req.headers);
-	headers.set("x-current-path", req.nextUrl.pathname);
 
 	if (excludedPrefixes.some((prefix) => url.pathname.startsWith(prefix))) {
-		return NextResponse.next({ headers });
+		return NextResponse.next();
 	}
 
 	// Mini API to handle redirects
@@ -46,6 +44,7 @@ export default async function middleware(req: NextRequest) {
 		{
 			location: "/verify-email",
 			redirection: {
+				// @ts-ignore
 				condition: !session && !session?.emailVerified,
 				to: "/",
 			},
@@ -101,7 +100,7 @@ export default async function middleware(req: NextRequest) {
 			rule.redirection.condition && url.pathname.startsWith(rule.location)
 	);
 
-	if (abc === -1) return NextResponse.next({ headers });
+	if (abc === -1) return NextResponse.next();
 	return NextResponse.redirect(
 		new URL(redirection[abc].redirection.to, req.url)
 	);

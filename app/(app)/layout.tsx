@@ -29,6 +29,9 @@ export default async function RootLayout({
 }>) {
 	return (
 		<html lang="pt-BR">
+			<head>
+				<meta http-equiv="cache-control" content="" />
+			</head>
 			<body>
 				<SpeedInsights />
 				<Analytics />

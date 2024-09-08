@@ -174,6 +174,22 @@ export async function fetchPostById(postId: string) {
 	const session = await getServerSession(authOptions);
 	if (!session) return null;
 
+	await db.postView.upsert({
+		where: {
+			postId_viewerId: {
+				postId: postId,
+				viewerId: session.user.id,
+			},
+		},
+		create: {
+			postId: postId,
+			viewerId: session.user.id,
+		},
+		update: {
+			viewedAt: new Date(),
+		},
+	});
+
 	const post = await db.post.findUnique({
 		where: { id: postId },
 		select: { ...postSelection(session.user.id) },

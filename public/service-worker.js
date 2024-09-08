@@ -91,29 +91,18 @@ self.addEventListener("push", (event) => {
 // Caching
 
 const cacheName = "v1";
-const ignoredPathnames = ["/_next/", "/socket.io/", "/manifest", "/api/auth"];
-const ignoredHostnames = ["chrome-extension", "va.vercel-scripts.com"];
+const acceptedHostname = "firebasestorage.googleapis.com";
 
 self.addEventListener("fetch", (event) => {
 	const url = new URL(event.request.url);
-	const pathname = url.pathname;
 	const hostname = url.hostname;
-	const scheme = url.protocol;
 
-	if (scheme !== "http:" && scheme !== "https:") {
+	// Check if the request is for an image and if the hostname is accepted
+	if (
+		event.request.destination !== "image" ||
+		!acceptedHostname.includes(hostname)
+	)
 		return;
-	}
-
-	if (ignoredPathnames.some((url) => pathname.startsWith(url))) {
-		return;
-	}
-	if (ignoredHostnames.some((url) => hostname.startsWith(url))) {
-		return;
-	}
-
-	if (event.request.method === "POST") {
-		return;
-	}
 
 	event.respondWith(
 		fetch(event.request)
@@ -126,10 +115,7 @@ self.addEventListener("fetch", (event) => {
 			})
 			.catch((err) => {
 				return caches.match(event.request).then((response) => {
-					if (response) {
-					} else {
-					}
-					return response;
+					return response || Promise.reject(err);
 				});
 			})
 	);

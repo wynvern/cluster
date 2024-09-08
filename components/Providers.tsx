@@ -13,18 +13,18 @@ import "react-toastify/dist/ReactToastify.css";
 export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<>
-			<ThemeProvider attribute="class" defaultTheme="dark">
-				<NextUIProvider>
-					<SessionProvider>
-						<ConfirmationModalProvider>
-							<ImageCarouselProvider>
-								<SocketProvider>{children}</SocketProvider>
-							</ImageCarouselProvider>
-							<ServiceWorkerHandler />
-						</ConfirmationModalProvider>
-					</SessionProvider>
-				</NextUIProvider>
-			</ThemeProvider>
+			{/* <ThemeProvider attribute="class" defaultTheme="dark"> */}
+			<NextUIProvider>
+				<SessionProvider>
+					<ConfirmationModalProvider>
+						<ImageCarouselProvider>
+							<SocketProvider>{children}</SocketProvider>
+						</ImageCarouselProvider>
+						<ServiceWorkerHandler />
+					</ConfirmationModalProvider>
+				</SessionProvider>
+			</NextUIProvider>
+			{/* </ThemeProvider> */}
 
 			<ToastContainer
 				stacked={true}

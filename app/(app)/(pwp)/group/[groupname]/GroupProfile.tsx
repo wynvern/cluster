@@ -1,6 +1,8 @@
 import { Chip, Image } from "@nextui-org/react";
 import type Group from "@/lib/db/group/type";
 import GroupActions from "./GroupActions";
+// @ts-ignore
+import { Image as NextImage } from "next/image";
 
 export default async function GroupProfile({ group }: { group: Group }) {
 	return (
@@ -17,6 +19,7 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				/>
 				<div className="absolute -bottom-20 left-4 sm:left-10">
 					<Image
+						as={NextImage}
 						src={
 							group?.image
 								? `${group.image}?size=400`

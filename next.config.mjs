@@ -1,5 +1,18 @@
 const nextConfig = {
 	reactStrictMode: true,
+	async headers() {
+		return [
+			{
+				source: "/",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public",
+					},
+				],
+			},
+		];
+	},
 	swcMinify: true,
 	experimental: {
 		serverActions: {
@@ -11,18 +24,6 @@ const nextConfig = {
 			],
 		},
 	},
-	headers: () => [
-		{
-			source: "/:path*",
-			headers: [
-				{
-					key: "Cache-Control",
-					value: "public",
-				},
-			],
-		},
-	],
-
 	images: {
 		remotePatterns: [
 			{

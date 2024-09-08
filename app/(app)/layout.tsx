@@ -37,4 +37,4 @@ export default async function RootLayout({
 	);
 }
 
-export const fetchCache = "force-no-store";
+export const fetchCache = "force-cache";

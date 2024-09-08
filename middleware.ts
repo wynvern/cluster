@@ -81,7 +81,10 @@ export default async function middleware(req: NextRequest) {
 			rule.redirection.condition && url.pathname.startsWith(rule.location)
 	);
 
-	if (abc === -1) return NextResponse.next();
+	const res = NextResponse.next();
+	res.headers.set("Cache-Control", "public, max-age=0, must-revalidate");
+	if (abc === -1) return res;
+
 	return NextResponse.redirect(
 		new URL(redirection[abc].redirection.to, req.url)
 	);

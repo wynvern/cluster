@@ -1,11 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import url("./clash-display.css");
 @import url("./toast.css");
 @import url("./sidebar.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
 	--second-foreground: #3f3f3f;

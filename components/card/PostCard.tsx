@@ -197,8 +197,8 @@ export default function PostCard({
 				{!disableComments && post.comments.length > 0 && (
 					<div className="flex gap-x-3 items-center">
 						<div className="flex">
-							{post.comments.map((c, i) => (
-								<div key={c.author.username} className="-ml-1">
+							{post.comments.slice(-3).map((c, i) => (
+								<div key={i} className="-ml-1">
 									<Image
 										as={NextImage}
 										src={

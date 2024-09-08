@@ -40,9 +40,9 @@ export async function generateSecretToken() {
 	if (!session) return null;
 
 	const token = generateToken(session.user.id);
-	console.log("Generated Token:", token);
+
 	const encryption = encryptToken(token);
-	console.log("Encrypted Token:", encryption);
+
 	return encryption;
 }
 

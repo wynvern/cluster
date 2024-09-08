@@ -191,7 +191,7 @@ export default function CreatePost({
 			if (file.length + selectedDocuments.length > 6) {
 				return;
 			}
-			console.log(file);
+
 			setSelectedDocuments((prev) => [...prev, ...file]);
 		} catch (error) {
 			switch ((error as { message: string }).message) {

@@ -10,7 +10,7 @@ async function getUserIdsFromChat(chatId: string): Promise<string[]> {
 	});
 
 	if (!groupId) return [];
-	console.log(groupId, "groupId");
+
 	const users = await db.groupMember.findMany({
 		where: { groupId: groupId.groupId },
 		select: { userId: true },
@@ -57,8 +57,6 @@ export async function POST(req: Request) {
 		},
 	});
 
-	console.log(body.media);
-
 	if (body.media.length > 0) {
 		for (const media of body.media) {
 			if (!media) return;
@@ -70,7 +68,6 @@ export async function POST(req: Request) {
 				type: "png",
 			});
 
-			console.log(blob);
 			mediaUrl.push(blob);
 		}
 
@@ -87,7 +84,6 @@ export async function POST(req: Request) {
 	}
 
 	const groupUsers = await getUserIdsFromChat(body.chatId);
-	console.log(groupUsers, "groupUsers");
 
 	return NextResponse.json({
 		message: newMessage,

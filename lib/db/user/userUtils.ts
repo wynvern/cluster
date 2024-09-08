@@ -105,8 +105,6 @@ export async function sendCode(): Promise<string> {
 		where: { email },
 	});
 
-	console.log(existingCode);
-
 	if (existingCode) {
 		const expiryDate = new Date(existingCode.expiry);
 		const currentDate = new Date();
@@ -126,7 +124,6 @@ export async function sendCode(): Promise<string> {
 	});
 
 	if (process.env.NODE_ENV === "development") {
-		console.log("[Dev] Code: ", newCode);
 	}
 
 	sendMail(
@@ -188,7 +185,6 @@ export async function sendResetRequest(email: string) {
 	// Send the link to the user's email...
 
 	if (process.env.NODE_ENV === "development") {
-		console.log("[Dev] Link: ", link);
 	}
 
 	sendMail(

@@ -11,7 +11,7 @@ async function recursiveFetchComments(
 	parentId?: string,
 	level = 0
 ) {
-	if (level > 3) {
+	if (level > 4) {
 		return [];
 	}
 

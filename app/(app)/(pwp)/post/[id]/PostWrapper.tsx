@@ -48,7 +48,7 @@ export default function PostWrapper({
 				</div>
 			</div>
 			{!isSmallScreen && post.media && post.media.length > 0 && (
-				<div className="h-dvh w-1/2 flex items-center justify-center">
+				<div className="h-dvh w-1/2 flex items-center justify-center px-4">
 					<ImageViewer media={post?.media} />
 				</div>
 			)}

@@ -32,7 +32,7 @@
 			"label": "Socket",
 			"type": "shell",
 			"icon": { "color": "terminal.ansiGreen", "id": "gear" },
-			"command": "cd /home/wynvern/Documents/projects/main/Cluster/cluster-socket && yarn start; exec bash",
+			"command": "cd /home/wynvern/Documents/projects/main/Cluster/cluster-socket && bun --bun run start; exec bash",
 			"isBackground": true,
 			"problemMatcher": [],
 			"presentation": {

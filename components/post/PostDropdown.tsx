@@ -90,6 +90,14 @@ export default function PostDropdown({
 	}
 
 	const dropdownItems = [
+		{
+			description: "Compartilhar esse post.",
+			className: "",
+			icon: <ShareIcon className="h-8" aria-label="Pin Post" />,
+			ariaLabel: "share-post",
+			text: "Compartilhar",
+			onClick: sharePost,
+		},
 		// Approve Post action
 		["owner", "moderator"].includes(String(userRole)) && !isUserPage
 			? {
@@ -106,15 +114,6 @@ export default function PostDropdown({
 					onClick: handleApprovePost,
 			  }
 			: null,
-
-		{
-			description: "Compartilhar esse post.",
-			className: "",
-			icon: <ShareIcon className="h-8" aria-label="Pin Post" />,
-			ariaLabel: "share-post",
-			text: "Compartilhar",
-			onClick: sharePost,
-		},
 
 		// Pin Post action
 		["owner", "moderator"].includes(String(userRole)) && !isUserPage

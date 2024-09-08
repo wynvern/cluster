@@ -17,7 +17,7 @@ export default function ({ media }: ImageViewerProps) {
 					<Image
 						src={media[0]}
 						removeWrapper={true}
-						className="w-full h-auto rounded-none"
+						className="w-full h-auto rounded-none max-h-[80vh]"
 					/>
 				</Link>
 			) : (

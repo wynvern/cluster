@@ -26,9 +26,7 @@ export default function HomeSidebar() {
 	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
 	const path = usePathname();
 
-	useEffect(() => {
-		console.log("path", path);
-	}, [path]);
+	useEffect(() => {}, [path]);
 
 	return (
 		<>

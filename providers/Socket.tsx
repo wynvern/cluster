@@ -20,17 +20,13 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 		if (!session.data) return;
 
 		const socketInstance = io(process.env.NEXT_PUBLIC_SOCKET_URL || "");
-		console.log(process.env.NEXT_PUBLIC_SOCKET_URL || "nothing");
 
 		async function run() {
 			setSocket(socketInstance);
 
 			socketInstance.on("connect", async () => {
-				console.log("Connected to socket server");
-				console.log("Emmiting auth");
-
 				const token = await generateSecretToken();
-				console.log(token);
+
 				socketInstance.emit("auth", { token });
 			});
 
@@ -52,7 +48,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 						),
 					}
 				);
-				console.log(data);
 			});
 		}
 

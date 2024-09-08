@@ -64,6 +64,7 @@ export default function SidebarItems({
 					{/* TODO: Load previous notifications */}
 					<NotificationsButton
 						previousNotifications={previousNotifications}
+						hasText={true}
 					/>
 					<Link href="/search" className="flex items-center gap-x-4">
 						<div>

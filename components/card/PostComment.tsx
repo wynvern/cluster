@@ -25,11 +25,9 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 							<b>{comment.author.username}</b>
 							<PrettyDate date={comment.createdAt} />
 						</div>
-						<div>
-							<p>{comment.text}</p>
-						</div>
 					</div>
 				</div>
+
 				<div className="flex gap-x-4">
 					<Button
 						isIconOnly={true}
@@ -41,6 +39,9 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 						<ChatBubbleBottomCenterIcon className="h-6" />
 					</Button>
 				</div>
+			</div>
+			<div className="ml-14">
+				<p className="break-all">{comment.text}</p>
 			</div>
 			<div className="ml-16 flex flex-col">
 				{/* Document */}

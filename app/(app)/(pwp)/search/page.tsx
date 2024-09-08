@@ -79,8 +79,6 @@ export default function SearchPage() {
 			return;
 		}
 
-		console.log(selectedCat);
-
 		setNotFound((prev) => ({ ...prev, user: false }));
 		setResults((prev) => ({ ...prev, users }));
 	}

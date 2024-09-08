@@ -1,6 +1,17 @@
+// initialization and event listeners for service worker
+
+const cacheAssets = ["/"];
+
 const installEvent = () => {
-	self.addEventListener("install", () => {
-		console.warn("service worker installed");
+	self.addEventListener("install", (event) => {
+		event.waitUntil(
+			caches
+				.open(cacheName)
+				.then((cache) => {
+					cache.addAll(cacheAssets);
+				})
+				.then(() => self.skipWaiting())
+		);
 	});
 };
 installEvent();
@@ -33,6 +44,7 @@ const activateEvent = () => {
 			userVisibleOnly: true,
 			applicationServerKey: urlBase64ToUint8Array(vapid),
 		});
+
 		self.clients.matchAll().then((clients) => {
 			for (const client of clients) {
 				client.postMessage({
@@ -40,37 +52,22 @@ const activateEvent = () => {
 				});
 			}
 		});
+
+		event.waitUntil(
+			caches.keys().then((cacheNames) => {
+				return Promise.all(
+					cacheNames.map((cache) => {
+						if (cache !== cacheName) {
+							return caches.delete(cache);
+						}
+					})
+				);
+			})
+		);
 	});
 };
+
 activateEvent();
-
-const cacheName = "v1";
-
-const cacheClone = async (e) => {
-	const res = await fetch(e.request);
-	const resClone = res.clone();
-
-	const cache = await caches.open(cacheName);
-	await cache.put(e.request, resClone);
-	return res;
-};
-
-// For caching
-const fetchEvent = () => {
-	self.addEventListener("fetch", (e) => {
-		if (e.request.method === "GET") {
-			e.respondWith(
-				cacheClone(e)
-					.catch(() => caches.match(e.request))
-					.then((res) => res)
-			);
-		} else {
-			e.respondWith(fetch(e.request));
-		}
-	});
-};
-
-fetchEvent();
 
 // For notifications
 self.addEventListener("push", (event) => {
@@ -88,5 +85,52 @@ self.addEventListener("push", (event) => {
 
 	event.waitUntil(
 		self.registration.showNotification(title, notificationOptions)
+	);
+});
+
+// Caching
+
+const cacheName = "v1";
+const ignoredPathnames = ["/_next/", "/socket.io/", "/manifest", "/api/auth"];
+const ignoredHostnames = ["chrome-extension", "va.vercel-scripts.com"];
+
+self.addEventListener("fetch", (event) => {
+	const url = new URL(event.request.url);
+	const pathname = url.pathname;
+	const hostname = url.hostname;
+	const scheme = url.protocol;
+
+	if (scheme !== "http:" && scheme !== "https:") {
+		return;
+	}
+
+	if (ignoredPathnames.some((url) => pathname.startsWith(url))) {
+		return;
+	}
+	if (ignoredHostnames.some((url) => hostname.startsWith(url))) {
+		return;
+	}
+
+	if (event.request.method === "POST") {
+		return;
+	}
+
+	event.respondWith(
+		fetch(event.request)
+			.then((response) => {
+				const resClone = response.clone();
+				caches.open(cacheName).then((cache) => {
+					cache.put(event.request, resClone);
+				});
+				return response;
+			})
+			.catch((err) => {
+				return caches.match(event.request).then((response) => {
+					if (response) {
+					} else {
+					}
+					return response;
+				});
+			})
 	);
 });

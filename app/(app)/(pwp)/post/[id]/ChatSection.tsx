@@ -6,7 +6,12 @@ import UserAvatar from "@/components/user/UserAvatar";
 import { createComment } from "@/lib/db/post/comment/comment";
 import type RecursiveComments from "@/lib/db/post/comment/type";
 import type Post from "@/lib/db/post/type";
-import { PhotoIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import {
+	PhotoIcon,
+	PaperAirplaneIcon,
+	PlusIcon,
+	MinusIcon,
+} from "@heroicons/react/24/outline";
 import { Button, Textarea } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
@@ -56,7 +61,10 @@ function CommentCreator({
 			<UserAvatar size="10" avatarURL={session.data?.user.image} />
 			<Textarea
 				value={newComment.text}
-				onChange={(e: any) => setNewComment({ text: e.target.value })}
+				onChange={(e: any) => {
+					if (e.target.value.length > 1500) return;
+					setNewComment({ text: e.target.value });
+				}}
 				placeholder="Comente"
 				variant="bordered"
 			/>
@@ -105,17 +113,49 @@ function RenderCommentLevel({
 			[commentId]: !prevActiveReplies[commentId],
 		}));
 	};
+	const [visible, setVisible] = useState(!(level > 2));
 
 	return (
-		<div className="w-full relative ">
+		<div className="w-full relative">
 			{comments.map((comment) => (
 				<div
 					key={comment.id}
-					style={{ paddingLeft: `${level + 1.5}rem` }}
+					style={{
+						paddingLeft: level === 0 ? "4rem" : "1.5rem",
+					}}
 					className={`py-4  ${level === 0 && "bottom-border pr-6"} ${
 						level > 0 && "pb-0"
 					}`}
 				>
+					{comment.children && comment.children.length > 0 && (
+						<div
+							className={`absolute w-10 h-10 flex items-center justify-center ${
+								level === 0 ? "left-4" : "-left-6"
+							}`}
+						>
+							<Button
+								isIconOnly={true}
+								variant="bordered"
+								size="sm"
+								onClick={() => {
+									if (level > 2) {
+										console.log(
+											"too long inside the level"
+										);
+									} else {
+										setVisible(!visible);
+									}
+								}}
+							>
+								{!visible ? (
+									<PlusIcon className="h-5" />
+								) : (
+									<MinusIcon className="h-5" />
+								)}
+							</Button>
+						</div>
+					)}
+
 					<PostComment
 						comment={comment}
 						setReplyActive={() => toggleReplyActive(comment.id)}
@@ -128,14 +168,16 @@ function RenderCommentLevel({
 							setActiveReplies={setActiveReplies}
 						/>
 					)}
-					{comment.children && comment.children.length > 0 && (
-						<RenderCommentLevel
-							level={level + 1}
-							comments={comment.children}
-							postId={postId}
-							addNewComment={addNewComment}
-						/>
-					)}
+					{comment.children &&
+						comment.children.length > 0 &&
+						visible && (
+							<RenderCommentLevel
+								level={level + 1}
+								comments={comment.children}
+								postId={postId}
+								addNewComment={addNewComment}
+							/>
+						)}
 				</div>
 			))}
 		</div>
@@ -186,7 +228,7 @@ export default function ChatSection({
 	};
 
 	return (
-		<div className="w-full flex gap-x-4 items-start flex-col ">
+		<div className="w-full flex gap-x-4 items-start flex-col">
 			<div className="px-6 w-full pb-6 bottom-border">
 				<CommentCreator
 					postId={post.id}

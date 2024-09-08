@@ -26,8 +26,6 @@ export default function getFileBase64(
 				fileType.includes(type)
 			);
 
-			console.log(fileType, acceptedTypes);
-
 			if (file.size > maxSize * 1024 * 1024) {
 				reject(new Error("file-too-large"));
 				return;
@@ -100,7 +98,7 @@ export function getFilesBase64(
 
 				try {
 					const fileBase64Info = await readFileAsBase64(file);
-					console.log(fileBase64Info, "fileBase64Info");
+
 					fileBase64Infos.push(fileBase64Info);
 				} catch (error) {
 					reject(error);

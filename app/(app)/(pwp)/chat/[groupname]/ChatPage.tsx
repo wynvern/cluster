@@ -61,7 +61,6 @@ export default function ChatPage({ group }: { group: Group }) {
 	>([]);
 
 	function verifyCooldown(timestamp: number) {
-		console.log("verifyCooldown");
 		setLastMessagesTimestamps((prev) => [...prev, timestamp]);
 		setTimeout(() => {
 			setLastMessagesTimestamps((prev) =>
@@ -126,7 +125,6 @@ export default function ChatPage({ group }: { group: Group }) {
 		});
 
 		socket.on("typing", (data: { userId: string; username: string }) => {
-			console.log(data);
 			setUserTyping((prev) => [...prev, data]);
 			setTimeout(() => {
 				setUserTyping((prev) =>
@@ -136,7 +134,6 @@ export default function ChatPage({ group }: { group: Group }) {
 		});
 
 		onConnect();
-		console.log("executed");
 
 		return () => {
 			socket.off("receiveMessage");

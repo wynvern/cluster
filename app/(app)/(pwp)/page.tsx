@@ -16,3 +16,5 @@ export default async function HomePageRoot() {
 		</div>
 	);
 }
+
+export const dynamic = "force-dynamic";

@@ -21,14 +21,14 @@ export default function ({
 	isFixed?: boolean;
 }) {
 	const router = useRouter();
-	const [blur, setBlur] = useState(0);
+	const [activeEffect, setActiveEffect] = useState(false);
 
 	useEffect(() => {
 		const handleScroll = () => {
-			if (window.scrollY > 50) {
-				setBlur(10);
+			if (window.scrollY > 10) {
+				setActiveEffect(true);
 			} else {
-				setBlur(0);
+				setActiveEffect(false);
 			}
 		};
 
@@ -51,11 +51,13 @@ export default function ({
 
 			<div
 				style={{
-					backdropFilter: `blur(${blur}px)`,
+					backdropFilter: `blur(${activeEffect ? 10 : 0}px)`,
 				}}
 				className={`${className} ${
 					isFixed && "fixed"
-				} top-0 pt-4 px-4 pb-4 w-full max-w-[1000px] flex gap-x-4 items-center z-40`}
+				} top-0 pt-4 px-4 pb-4 w-full max-w-[998px] flex gap-x-4 ${
+					activeEffect ? "bottom-border" : ""
+				} items-center z-40`}
 			>
 				{children}
 				{showBackButton && (

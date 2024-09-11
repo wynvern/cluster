@@ -19,10 +19,19 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-start">
-					<UserAvatar size="10" avatarURL={comment.author.image} />
+					<Link href={`/user/${comment.author.username}`}>
+						<UserAvatar
+							size="10"
+							avatarURL={comment.author.image}
+						/>
+					</Link>
 					<div className="flex flex-col">
 						<div className="flex items-center gap-x-2">
-							<b>{comment.author.username}</b>
+							<b>
+								<Link href={`/user/${comment.author.username}`}>
+									{comment.author.username}
+								</Link>
+							</b>
 							<PrettyDate date={comment.createdAt} />
 						</div>
 					</div>

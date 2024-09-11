@@ -258,6 +258,60 @@ export async function pinPost({ postId }: { postId: string }) {
 	return "ok";
 }
 
+export async function unpinPost({ postId }: { postId: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: {
+			group: {
+				select: { members: { where: { userId: session.user.id } } },
+			},
+		},
+	});
+
+	if (!post) return "post-not-found";
+
+	if (!["owner", "moderator"].includes(post.group.members[0].role))
+		return "no-permission";
+
+	await db.post.update({
+		where: { id: postId },
+		data: { pinned: false },
+	});
+
+	return "ok";
+}
+
+export async function disapprovePost({ postId }: { postId: string }) {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: {
+			group: {
+				select: { members: { where: { userId: session.user.id } } },
+			},
+		},
+	});
+
+	if (!post) return "post-not-found";
+
+	if (!["owner", "moderator"].includes(post.group.members[0].role))
+		return "no-permission";
+
+	await db.post.update({
+		where: { id: postId },
+		data: { approved: false },
+	});
+
+	return "ok";
+}
+
 export async function approvePost({ postId }: { postId: string }) {
 	const session = await getServerSession(authOptions);
 
@@ -281,6 +335,41 @@ export async function approvePost({ postId }: { postId: string }) {
 		where: { id: postId },
 		data: { approved: true },
 	});
+
+	return "ok";
+}
+
+export async function reportPost(
+	postId: string,
+	title: string,
+	reason: string
+) {
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+
+	const post = await db.post.findUnique({
+		where: { id: postId },
+		select: { id: true },
+	});
+
+	if (!post) return "no-post";
+
+	const alreadyReported = await db.postReport.findFirst({
+		where: { creatorId: session.user.id, postId: postId },
+	});
+
+	if (alreadyReported) return "already-reported";
+
+	const report = await db.postReport.create({
+		data: {
+			title: title,
+			content: reason,
+			creatorId: session.user.id,
+			postId: post.id,
+		},
+	});
+
+	if (!report) return "error";
 
 	return "ok";
 }

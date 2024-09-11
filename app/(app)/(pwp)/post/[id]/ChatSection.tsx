@@ -123,9 +123,9 @@ function RenderCommentLevel({
 					style={{
 						paddingLeft: level === 0 ? "4rem" : "1.5rem",
 					}}
-					className={`py-4  ${level === 0 && "bottom-border pr-6"} ${
-						level > 0 && "pb-0"
-					}`}
+					className={`py-4  ${
+						level === 0 && "bottom-border pr-4 sm:pr-6"
+					} ${level > 0 && "pb-0"}`}
 				>
 					{comment.children && comment.children.length > 0 && (
 						<div
@@ -229,7 +229,7 @@ export default function ChatSection({
 
 	return (
 		<div className="w-full flex gap-x-4 items-start flex-col">
-			<div className="px-6 w-full pb-6 bottom-border">
+			<div className="px-4 sm:px-6 w-full pb-6 bottom-border">
 				<CommentCreator
 					postId={post.id}
 					addNewComment={addNewComment}

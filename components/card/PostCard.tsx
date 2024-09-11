@@ -23,23 +23,56 @@ export default function PostCard({
 	disableLink = false,
 	disableImages = false,
 	disableComments = false,
+	limitText = false,
 }: {
 	post: Post;
 	disableImages?: boolean;
 	isUserPage?: boolean;
 	disableLink?: boolean;
 	disableComments?: boolean;
+	limitText?: boolean;
 }) {
 	const [mediaIndex, setMediaIndex] = useState(0);
 	const { openCarousel } = useImageCarousel();
 
+	function renderContent() {
+		switch (limitText) {
+			case true:
+				return post.content.length > 100
+					? `${post.content.slice(0, 100)}...`
+					: post.content;
+			default:
+				return post.content;
+		}
+	}
+
+	const PinnedChip = () => (
+		// @ts-ignore
+		<Chip className="bg-success" size="sm">
+			<div className="flex gap-x-2 items-center">
+				<ArrowUpOnSquareStackIcon className="h-5 w-5" />
+			</div>
+		</Chip>
+	);
+
+	const ApprovedChip = () => (
+		<Tooltip content={"Moderadores deste grupo aprovaram este post."}>
+			{/* @ts-ignore */}
+			<Chip className="bg-primary text-secondary px-0" size="sm">
+				<ShieldCheckIcon className="h-5 w-5" />
+			</Chip>
+		</Tooltip>
+	);
+
 	return (
-		<div className="relative w-full flex flex-col gap-y-4 px-4 sm:px-6">
+		<div
+			className="relative w-full flex flex-col gap-y-4 px-4 sm:px-6"
+			id={`post-${post.id}`}
+		>
 			{!disableLink && (
-				<Link
-					href={`/post/${post.id}`}
-					className="absolute bg-transparent w-full h-full max-w-[970px]"
-				/>
+				<div className="absolute bg-transparent w-full h-full max-w-[970px] pt-10">
+					<Link href={`/post/${post.id}`} className="w-full h-full" />
+				</div>
 			)}
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
@@ -97,41 +130,20 @@ export default function PostCard({
 			</div>
 			<div className="ml-14 flex flex-col gap-y-4">
 				{/* Content */}
-				{disableLink ? (
-					<div className="max-w-[100%]">
-						<h2
-							style={{ wordWrap: "break-word" }}
-							className="max-w-[100%]"
-						>
-							{post.title}
-						</h2>
-						<div
-							// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-							dangerouslySetInnerHTML={{ __html: post.content }}
-							style={{ wordWrap: "break-word" }}
-							className="max-w-[100%]"
-						/>
-					</div>
-				) : (
-					<Link href={`/post/${post.id}`}>
-						<div className="max-w-[100%]">
-							<h2
-								style={{ wordWrap: "break-word" }}
-								className="max-w-[100%]"
-							>
-								{post.title}
-							</h2>
-							<div
-								// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
-								dangerouslySetInnerHTML={{
-									__html: post.content,
-								}}
-								style={{ wordWrap: "break-word" }}
-								className="max-w-[100%]"
-							/>
-						</div>
-					</Link>
-				)}
+				<div className="max-w-[100%]">
+					<h2
+						style={{ wordWrap: "break-word" }}
+						className="max-w-[100%]"
+					>
+						{post.title}
+					</h2>
+					<div
+						// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+						dangerouslySetInnerHTML={{ __html: renderContent() }}
+						style={{ wordWrap: "break-word" }}
+						className="max-w-[100%]"
+					/>
+				</div>
 				{/* Document */}
 				{post.PostDocument && post.PostDocument.length > 0 ? (
 					<div className="flex gap-x-2">
@@ -167,34 +179,12 @@ export default function PostCard({
 				) : (
 					""
 				)}
-				{post.pinned ||
-					(post.approved && (
-						<div className="flex gap-x-2">
-							{post.pinned && !isUserPage && (
-								// @ts-ignore
-								<Chip className="bg-success" size="sm">
-									<div className="flex gap-x-2 items-center">
-										<ArrowUpOnSquareStackIcon className="h-5 w-5" />
-									</div>
-								</Chip>
-							)}
-							{post.approved && !isUserPage && (
-								<Tooltip
-									content={
-										"Moderadores deste grupo aprovaram este post."
-									}
-								>
-									<Chip
-										className="bg-primary text-secondary px-0"
-										// @ts-ignore
-										size="sm"
-									>
-										<ShieldCheckIcon className="h-5 w-5" />
-									</Chip>
-								</Tooltip>
-							)}
-						</div>
-					))}
+				{(post.pinned || post.approved) && !isUserPage && (
+					<div className="flex gap-x-2">
+						{post.pinned && !isUserPage && <PinnedChip />}
+						{post.approved && !isUserPage && <ApprovedChip />}
+					</div>
+				)}
 				{!disableComments && post.comments.length > 0 && (
 					<div className="flex gap-x-3 items-center">
 						<div className="flex">

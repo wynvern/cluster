@@ -130,14 +130,17 @@ export default function UserTabs({
 		//  @ts-ignore
 		<Tabs
 			variant="underlined"
-			className="w-full bottom-border flex items-center justify-center"
+			className="w-full bottom-border flex items-center justify-center mt-4"
 		>
-			<Tab title={<h3 className="p-2">Posts</h3>} className="px-0 w-full">
+			<Tab
+				title={<h3 className="p-2">Posts</h3>}
+				className="px-0 w-full py-0"
+			>
 				<UserPostsTab initialPosts={initialPosts} user={user} />
 			</Tab>
 			<Tab
 				title={<h3 className="p-2">Salvos</h3>}
-				className="px-0 w-full"
+				className="px-0 w-full py-0"
 			>
 				<UserBookmarksTab
 					user={user}
@@ -146,7 +149,7 @@ export default function UserTabs({
 			</Tab>
 			<Tab
 				title={<h3 className="p-2">Grupos</h3>}
-				className="px-0 w-full"
+				className="px-0 w-full py-0"
 			>
 				{typeof groups === "string" ? (
 					<div className="my-6">

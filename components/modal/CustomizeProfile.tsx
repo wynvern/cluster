@@ -96,9 +96,12 @@ export default function CustomizeProfile({
 		} catch (e) {
 			switch ((e as { message: string }).message) {
 				case "file-too-large":
-					toast.error("Imagem muito grande, máximo 4.5 Mb", {
-						autoClose: 3000,
-					});
+					toast.error(
+						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
+						{
+							autoClose: 3000,
+						}
+					);
 					break;
 				case "invalid-file-type":
 					toast.error("Tipo de arquivo inválido", {
@@ -125,9 +128,12 @@ export default function CustomizeProfile({
 		} catch (e) {
 			switch ((e as { message: string }).message) {
 				case "file-too-large":
-					toast.error("Imagem muito grande, máximo 4.5 Mb", {
-						autoClose: 3000,
-					});
+					toast.error(
+						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
+						{
+							autoClose: 3000,
+						}
+					);
 					break;
 				case "invalid-file-type":
 					toast.error("Tipo de arquivo inválido", {

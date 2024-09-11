@@ -5,7 +5,6 @@ import {
 	MagnifyingGlassIcon,
 	ChatBubbleBottomCenterIcon,
 	UserGroupIcon,
-	EllipsisHorizontalCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
 	HomeIcon as SolidHomeIcon,
@@ -16,7 +15,6 @@ import {
 import Link from "next/link";
 import ProfileDropdown from "./ProfileDropdown";
 import { Image } from "@nextui-org/image";
-import { useEffect } from "react";
 import NotificationsButton from "./NotificationsButton";
 import { usePathname } from "next/navigation";
 import { useSidebarStore } from "@/hooks/MobileHomeSidebar";
@@ -25,8 +23,6 @@ export default function HomeSidebar() {
 	const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
 	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
 	const path = usePathname();
-
-	useEffect(() => {}, [path]);
 
 	return (
 		<>
@@ -158,7 +154,9 @@ export default function HomeSidebar() {
 						</Link>
 					</div>
 					<div>
-						<ProfileDropdown />
+						<ProfileDropdown
+							onClick={() => setIsSidebarOpen(false)}
+						/>
 					</div>
 				</div>
 			</div>

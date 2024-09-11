@@ -37,6 +37,7 @@ export default function PostWrapper({
 						disableComments={true}
 						post={post}
 						disableLink={true}
+						isUserPage={false}
 						disableImages={!isSmallScreen}
 					/>
 					<div

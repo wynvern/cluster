@@ -18,7 +18,7 @@ import {
 import { useSession } from "next-auth/react";
 import UserAvatar from "../user/UserAvatar";
 
-export default function ProfileDropdown() {
+export default function ProfileDropdown({ onClick }: { onClick?: () => void }) {
 	const [signOutModal, setSignOutModal] = useState(false);
 	const session = useSession();
 
@@ -46,10 +46,6 @@ export default function ProfileDropdown() {
 						</DropdownTrigger>
 						{/* @ts-ignore */}
 						<DropdownMenu aria-label="Static Actions">
-							<DropdownItem>
-								Logado como{" "}
-								<b>@{session.data?.user.username}</b>
-							</DropdownItem>
 							<DropdownItem
 								description="Veja seu perfil"
 								startContent={
@@ -81,6 +77,7 @@ export default function ProfileDropdown() {
 								className="text-danger"
 								onClick={() => {
 									setSignOutModal(true);
+									if (onClick) onClick();
 								}}
 								startContent={
 									<ArrowLeftEndOnRectangleIcon

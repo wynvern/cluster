@@ -17,7 +17,7 @@ export async function fetchUserFeed(offset: number) {
 			createdAt: "desc",
 		},
 		skip: offset,
-		take: 10,
+		take: Number.parseInt(process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"),
 	});
 
 	return posts as Post[];

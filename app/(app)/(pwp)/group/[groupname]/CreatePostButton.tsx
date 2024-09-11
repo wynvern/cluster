@@ -3,7 +3,7 @@
 import CreatePost from "@/components/modal/CreatePost";
 import type Group from "@/lib/db/group/type";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { Button } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import { useState } from "react";
 
 export default function CreatePostButton({
@@ -17,17 +17,19 @@ export default function CreatePostButton({
 
 	return (
 		<>
-			<Button
-				id="create-post-button"
-				className="fixed bottom-20 right-8 sm:right-10 z-50 sm:bottom-10"
-				isIconOnly={true}
-				size="lg"
-				color="primary"
-				style={{ display: isUserMember ? "flex" : "none" }}
-				onClick={() => setCreatePostActive(true)}
-			>
-				<PlusIcon className="h-6" />
-			</Button>
+			<Tooltip content="Criar postagem" placement="left">
+				<Button
+					id="create-post-button"
+					className="fixed right-10 z-50 bottom-10"
+					isIconOnly={true}
+					size="lg"
+					color="primary"
+					style={{ display: isUserMember ? "flex" : "none" }}
+					onClick={() => setCreatePostActive(true)}
+				>
+					<PlusIcon className="h-6" />
+				</Button>
+			</Tooltip>
 			<CreatePost
 				active={createPostActive}
 				setActive={setCreatePostActive}

@@ -7,7 +7,10 @@ interface GroupContentProps {
 }
 
 export default async function GroupContent({ group }: GroupContentProps) {
-	const posts = await fetchGroupPosts(group.id, { skip: 0, take: 20 });
+	const posts = await fetchGroupPosts(group.id, {
+		skip: 0,
+		take: Number.parseInt(process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"),
+	});
 
 	return (
 		<div className="w-full">

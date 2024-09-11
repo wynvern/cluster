@@ -200,9 +200,12 @@ export default function ChatPage({ group }: { group: Group }) {
 		} catch (e) {
 			switch ((e as { message: string }).message) {
 				case "file-too-large":
-					toast.error("Arquivo muito grande. Máximo de 4.5MB.", {
-						autoClose: 3000,
-					});
+					toast.error(
+						`Arquivo muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
+						{
+							autoClose: 3000,
+						}
+					);
 					break;
 				case "invalid-file-type":
 					toast.error("Tipo de arquivo inválido.", {

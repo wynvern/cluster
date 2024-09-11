@@ -44,12 +44,12 @@ function GroupPosts({
 		>
 			<PostsList posts={posts} isUserPage={false} />
 			{noMoreData && initialPosts && initialPosts.length >= 1 && (
-				<div className="mt-4 py-6">
+				<div className="py-6">
 					<InfoMessage message="Fim dos posts." />
 				</div>
 			)}
 			{initialPosts?.length === 0 && (
-				<div className="mt-4 py-6">
+				<div className="py-6">
 					<InfoMessage message="O grupo não tem nenhum post." />
 				</div>
 			)}

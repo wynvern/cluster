@@ -77,8 +77,16 @@ export default function GroupActions({ group }: { group: Group }) {
 
 	return (
 		<>
-			<Link href={`/chat/${group.groupname}`}>
-				<Button isIconOnly={true} color="primary" size="sm">
+			<Link
+				href={`/chat/${group.groupname}`}
+				style={{ display: group.isUserMember ? "flex" : "none" }}
+			>
+				<Button
+					isIconOnly={true}
+					color="primary"
+					size="sm"
+					id="enter-group-chat-button"
+				>
 					<ChatBubbleBottomCenterTextIcon className="h-6" />
 				</Button>
 			</Link>

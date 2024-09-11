@@ -22,7 +22,7 @@ export default function Draggable({
 	children,
 	onFileDrag,
 	acceptedTypes,
-	maxSize = 4.5,
+	maxSize = Number.parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || "4.5"),
 	onError,
 	bulk = false,
 }: DraggableProps) {

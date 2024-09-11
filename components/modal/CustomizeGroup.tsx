@@ -86,7 +86,7 @@ export default function CustomizeGroup({
 			switch ((e as { message: string }).message) {
 				case "file-too-large":
 					toast.error(
-						"Imagem selecionada muito grande, máximo 4.5 MB",
+						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
 						}
@@ -120,7 +120,7 @@ export default function CustomizeGroup({
 			switch ((e as { message: string }).message) {
 				case "file-too-large":
 					toast.error(
-						"Imagem selecionada muito grande, máximo 4.5 MB",
+						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
 						}
@@ -180,7 +180,7 @@ export default function CustomizeGroup({
 							}}
 							acceptedTypes={supportedFormats.image}
 						>
-							<div className="w-full h-full absolute bg-neutral-500 ">
+							<div className="w-full h-full absolute bg-neutral-500">
 								<Image
 									removeWrapper={true}
 									src={

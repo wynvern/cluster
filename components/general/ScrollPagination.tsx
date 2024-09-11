@@ -16,7 +16,9 @@ export default function ScrollPagination({
 }: ScrollPaginationProps) {
 	const [skip, setSkip] = useState(0);
 	const bottomRef = useRef<HTMLDivElement>(null);
-	const take = 20; // Sets the amount to take globally
+	const take = Number.parseInt(
+		process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"
+	); // Sets the amount to take globally
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -48,7 +50,7 @@ export default function ScrollPagination({
 			{/* Div to check if needs to load more */}
 			<div ref={bottomRef} />
 			{loading && (
-				<div className="w-full flex items-center justify-center">
+				<div className="w-full flex items-center justify-center h-40">
 					<CircularProgress />
 				</div>
 			)}

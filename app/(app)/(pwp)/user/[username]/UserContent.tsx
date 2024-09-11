@@ -8,8 +8,14 @@ interface UserContentProps {
 }
 
 export default async function UserContent({ user }: UserContentProps) {
-	const posts = await fetchUserPosts(user.id, { skip: 0, take: 20 });
-	const bookmarks = await fetchUserBookmarks(user.id, { skip: 0, take: 20 });
+	const posts = await fetchUserPosts(user.id, {
+		skip: 0,
+		take: Number.parseInt(process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"),
+	});
+	const bookmarks = await fetchUserBookmarks(user.id, {
+		skip: 0,
+		take: Number.parseInt(process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"),
+	});
 	const groups = await fetchUserGroups(user.id);
 
 	return (

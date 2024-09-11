@@ -28,7 +28,7 @@ export default async function GroupPage({
 			<div className="side-borders w-full max-w-[1000px] h-full relative">
 				<PageHeader
 					showBackButton={true}
-					title={`g/${groupData?.groupname}`}
+					title={groupData ? `g/${groupData?.groupname}` : "Voltar"}
 					enableHeightUsage={false}
 				/>
 				{groupData ? (

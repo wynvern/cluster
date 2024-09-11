@@ -16,7 +16,11 @@ export default function PostList({ posts, isUserPage = true }: PostsListProps) {
 			) : (
 				posts.map((post) => (
 					<div key={post.id} className="bottom-border py-4">
-						<PostCard post={post} isUserPage={isUserPage} />
+						<PostCard
+							post={post}
+							isUserPage={isUserPage}
+							limitText={true}
+						/>
 					</div>
 				))
 			)}

@@ -60,10 +60,11 @@ export const authOptions: NextAuthOptions = {
 	],
 	pages: {
 		signIn: "/login",
-		signOut: "/signout",
 	},
 	callbacks: {
-		async jwt({ token, user, trigger, session }) {
+		async jwt({ token, user, trigger, session, account, profile }) {
+			console.log(token, user, session, account, profile);
+
 			if (user) {
 				// Add custom parameters to token
 				token.role = user.role as string;
@@ -89,6 +90,10 @@ export const authOptions: NextAuthOptions = {
 				if (session.emailVerified) {
 					token.emailVerified = session.emailVerified;
 				}
+			}
+
+			if (account?.provider === "google") {
+				token.emailVerified = new Date();
 			}
 
 			return token;

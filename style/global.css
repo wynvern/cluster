@@ -8,7 +8,7 @@
 @tailwind utilities;
 
 :root {
-	--second-foreground: #3f3f3f;
+	--second-foreground: #4e4e4e;
 }
 
 * {
@@ -111,6 +111,7 @@ a {
 @media (max-width: 600px) {
 	h1 {
 		font-size: 1.6em;
+		line-height: 30px;
 	}
 
 	h2 {
@@ -118,7 +119,8 @@ a {
 	}
 
 	h3 {
-		font-size: 0.8em;
+		font-size: 1em;
+		line-height: 20px;
 	}
 
 	p,

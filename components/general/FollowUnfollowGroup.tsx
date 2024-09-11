@@ -52,6 +52,14 @@ export default function ({
 			if (divToHide) {
 				divToHide.style.display = "none";
 			}
+
+			// Hide enter group chat button
+			const divToHide2 = document.getElementById(
+				"enter-group-chat-button"
+			);
+			if (divToHide2) {
+				divToHide2.style.display = "none";
+			}
 		} else {
 			await enterGroup({ groupname });
 			setIsFollowing(true);
@@ -60,6 +68,14 @@ export default function ({
 			const divToShow = document.getElementById("create-post-button");
 			if (divToShow) {
 				divToShow.style.display = "flex";
+			}
+
+			// Show enter group chat button
+			const divToShow2 = document.getElementById(
+				"enter-group-chat-button"
+			);
+			if (divToShow2) {
+				divToShow2.style.display = "flex";
 			}
 		}
 	};

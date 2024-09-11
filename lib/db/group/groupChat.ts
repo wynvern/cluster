@@ -113,6 +113,9 @@ export async function fetchMessages(
 	batchIndex: number
 ): Promise<MessageProps[] | string> {
 	const session = await getServerSession(authOptions);
+	const batchSize = Number.parseInt(
+		process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"
+	);
 	if (!session) return "no-session";
 
 	const totalMessages = await db.message.count({
@@ -123,11 +126,11 @@ export async function fetchMessages(
 		},
 	});
 
-	if (30 * (batchIndex - 1) > totalMessages) {
+	if (batchSize * (batchIndex - 1) > totalMessages) {
 		return "no-more-messages";
 	}
 
-	const skippedMessages = totalMessages - batchIndex * 30;
+	const skippedMessages = totalMessages - batchIndex * batchSize;
 
 	const messages = await db.message.findMany({
 		where: {
@@ -137,9 +140,9 @@ export async function fetchMessages(
 		},
 		skip: skippedMessages < 0 ? 0 : skippedMessages,
 		take:
-			totalMessages - (batchIndex - 1) * 30
-				? 30
-				: (totalMessages % 30) + skippedMessages,
+			totalMessages - (batchIndex - 1) * batchSize
+				? batchSize
+				: (totalMessages % batchSize) + skippedMessages,
 		orderBy: {
 			createdAt: "asc", // Order by latest messages first
 		},

@@ -70,6 +70,7 @@ export default function CreatePost({
 				...newErrors,
 				title: "Título é obrigatório.",
 			};
+			setActiveTab("text");
 			hasError = true;
 		}
 
@@ -78,6 +79,7 @@ export default function CreatePost({
 				...newErrors,
 				content: "Conteúdo é obrigatório.",
 			};
+			setActiveTab("text");
 			hasError = true;
 		}
 
@@ -121,7 +123,7 @@ export default function CreatePost({
 
 		setLoading(false);
 		setSuccess(true);
-		setTimeout(() => window.location.reload(), 3000);
+		setTimeout(() => window.location.reload(), 1000);
 	}
 
 	useEffect(() => {
@@ -139,7 +141,12 @@ export default function CreatePost({
 
 	async function handleSelectMedia() {
 		try {
-			const file = await getFilesBase64(supportedFormats.image, 4.5);
+			const file = await getFilesBase64(
+				supportedFormats.image,
+				Number.parseInt(
+					process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || "4.5"
+				)
+			);
 			if (file.length + selectedMedia.length > 6) {
 				return;
 			}
@@ -147,9 +154,12 @@ export default function CreatePost({
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case "file-too-large":
-					toast.error("Arquivo muito grande. Máximo de 4.5MB.", {
-						autoClose: 3000,
-					});
+					toast.error(
+						`Arquivo muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
+						{
+							autoClose: 3000,
+						}
+					);
 					break;
 				case "invalid-file-type":
 					toast.error("Tipo de arquivo inválido.", {
@@ -196,9 +206,12 @@ export default function CreatePost({
 		} catch (error) {
 			switch ((error as { message: string }).message) {
 				case "file-too-large":
-					toast.error("Arquivo muito grande. Máximo de 4.5MB.", {
-						autoClose: 3000,
-					});
+					toast.error(
+						`Arquivo muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
+						{
+							autoClose: 3000,
+						}
+					);
 					break;
 				case "invalid-file-type":
 					toast.error("Tipo de arquivo inválido.", {
@@ -504,7 +517,7 @@ export default function CreatePost({
 											<div className="h-full w-full flex items-center justify-center">
 												<div className="flex items-center flex-col gap-y-2 my-10">
 													<CloudArrowUpIcon className="h-20 w-20" />
-													<p>
+													<p className="text-center">
 														Arraste ou{" "}
 														<Link
 															onClick={() => {

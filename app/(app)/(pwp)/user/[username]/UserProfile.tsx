@@ -23,7 +23,7 @@ export default async function UserProfile({ user }: UserProfileProps) {
 					className="rounded-none w-full object-cover"
 					style={{ aspectRatio: "1000 / 400" }}
 				/>
-				<div className="absolute -bottom-20 left-4 sm:left-10">
+				<div className="absolute -bottom-20 left-4 sm:left-10 bg-neutral-800 rounded-large">
 					<Image
 						as={NextImage}
 						src={
@@ -38,16 +38,16 @@ export default async function UserProfile({ user }: UserProfileProps) {
 			</div>
 
 			{/* Information */}
-			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-4">
+			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-2 sm:gap-y-4">
 				<div className="w-full h-20 flex items-center justify-end">
 					<UserActions user={user} />
 				</div>
 				<div>
 					<h1 style={{ lineHeight: "40px" }}>{user.name}</h1>
-					<p>
+					<h3 className="second-foreground">
 						<b>u/</b>
 						{user.username}
-					</p>
+					</h3>
 				</div>
 				{user.bio && <p>{user.bio}</p>}
 				<div className="flex gap-x-2">

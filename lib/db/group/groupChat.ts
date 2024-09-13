@@ -110,7 +110,7 @@ export async function createMessage(message: string, groupChatId: string) {
 
 export async function fetchMessages(
 	groupId: string,
-	batchIndex: number
+	loadedMessagesCount: number
 ): Promise<MessageProps[] | string> {
 	const session = await getServerSession(authOptions);
 	const batchSize = Number.parseInt(
@@ -126,11 +126,15 @@ export async function fetchMessages(
 		},
 	});
 
-	if (batchSize * (batchIndex - 1) > totalMessages) {
+	if (loadedMessagesCount >= totalMessages) {
 		return "no-more-messages";
 	}
 
-	const skippedMessages = totalMessages - batchIndex * batchSize;
+	const skippedMessages = Math.max(
+		totalMessages - loadedMessagesCount - batchSize,
+		0
+	);
+	const takeAmount = Math.min(batchSize, totalMessages - loadedMessagesCount);
 
 	const messages = await db.message.findMany({
 		where: {
@@ -138,11 +142,8 @@ export async function fetchMessages(
 				groupId: groupId,
 			},
 		},
-		skip: skippedMessages < 0 ? 0 : skippedMessages,
-		take:
-			totalMessages - (batchIndex - 1) * batchSize
-				? batchSize
-				: (totalMessages % batchSize) + skippedMessages,
+		skip: skippedMessages,
+		take: takeAmount,
 		orderBy: {
 			createdAt: "asc", // Order by latest messages first
 		},

@@ -2,6 +2,7 @@
 @import url("./clash-display.css");
 @import url("./toast.css");
 @import url("./sidebar.css");
+@import url("./load.css");
 
 @tailwind base;
 @tailwind components;

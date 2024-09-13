@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { ListMessages } from "./ListMessages";
 import type Group from "@/lib/db/group/type";
 import { useMessageAttr } from "@/hooks/ChatMessage";
-import type { MessageProps } from "@/lib/db/group/type";
+import type { MessageProps, MessageView } from "@/lib/db/group/type";
 import { fetchMessages } from "@/lib/db/group/groupChat";
 import { useSocket } from "@/providers/Socket";
 import supportedFormats from "@/public/supportedFormats.json";
@@ -27,16 +27,19 @@ interface FileBase64Info {
 	file?: File;
 }
 
-interface MessagePropView extends MessageProps {
-	sent?: boolean;
+const messagesToConfirm: number[] = [];
+let messagesLoaded = 0;
+
+interface ChatPageProps {
+	group: Group;
+	latestMessages: MessageView[];
 }
 
-export default function ChatPage({ group }: { group: Group }) {
-	const [isSending, setIsSending] = useState(false);
+export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 	const [selectedImages, setSelectedImages] = useState<
 		FileBase64Info[] | null
 	>(null);
-	const [messages, setMessages] = useState<MessagePropView[]>([]);
+	const [messages, setMessages] = useState<MessageView[]>(latestMessages);
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
 	const [batchIndex, setBatchIndex] = useState(1);
@@ -50,10 +53,6 @@ export default function ChatPage({ group }: { group: Group }) {
 	const [userTyping, setUserTyping] = useState<
 		{ userId: string; username: string }[]
 	>([]);
-	const [sentMessagesTimestamps, setSentMessagesTimestamps] = useState<
-		number[]
-	>([]);
-
 	// Cooldown System
 	const [cooldownActive, setCooldownActive] = useState(false);
 	const [lastMessagesTimestamps, setLastMessagesTimestamps] = useState<
@@ -81,6 +80,7 @@ export default function ChatPage({ group }: { group: Group }) {
 
 	const socket = useSocket();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const observer = new IntersectionObserver(
 			([entry]) => {
@@ -94,6 +94,8 @@ export default function ChatPage({ group }: { group: Group }) {
 		if (endOfMessagesRef.current) {
 			observer.observe(endOfMessagesRef.current);
 		}
+
+		messagesLoaded = latestMessages.length;
 
 		return () => {
 			if (endOfMessagesRef.current) {
@@ -117,11 +119,41 @@ export default function ChatPage({ group }: { group: Group }) {
 
 			console.warn("connected to socket server");
 			socket.emit("joinRoom", { chatId: group?.GroupChat?.id });
-			loadMessageBatch(group?.id || "", true);
 		}
 
 		socket.on("receiveMessage", (message: MessageProps) => {
-			setMessages((prevMessages) => [...prevMessages, message]);
+			if (
+				messagesToConfirm.includes(
+					new Date(message.createdAt).valueOf()
+				)
+			) {
+				// changes the property notServerConfirmed to false
+				setMessages((prevMessages) => {
+					const index = prevMessages.findIndex(
+						(msg) =>
+							new Date(msg.createdAt).valueOf() ===
+							new Date(message.createdAt).valueOf()
+					);
+					if (index !== -1) {
+						const updatedMessages = [...prevMessages];
+						updatedMessages[index] = {
+							...updatedMessages[index],
+							notServerConfirmed: false,
+						};
+						return updatedMessages;
+					}
+					return prevMessages;
+				});
+				messagesToConfirm.splice(
+					messagesToConfirm.findIndex(
+						(timestamp) =>
+							timestamp === new Date(message.createdAt).valueOf()
+					),
+					1
+				);
+			} else setMessages((prevMessages) => [...prevMessages, message]);
+
+			messagesLoaded++;
 		});
 
 		socket.on("typing", (data: { userId: string; username: string }) => {
@@ -143,11 +175,9 @@ export default function ChatPage({ group }: { group: Group }) {
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
-		if (isSending) return false;
 		if (!socket) return;
 		if (cooldownActive) return;
 
-		setIsSending(true);
 		const formData = new FormData(e.currentTarget as HTMLFormElement);
 		const message = formData.get("message") as string;
 
@@ -170,15 +200,21 @@ export default function ChatPage({ group }: { group: Group }) {
 						: [],
 				replyToId: replyToMessageContent?.id,
 				createdAt: new Date(),
-			} as MessageProps;
+				notServerConfirmed: true,
+				chat: {
+					group: {
+						groupname: group?.groupname || "",
+					},
+				},
+			} as MessageView;
 
+			messagesToConfirm.push(messageToSend.createdAt.valueOf());
 			socket.emit("sendMessage", messageToSend);
-
 			e.currentTarget.reset();
 			setReplyToMessageContent(null);
 			setSelectedImages(null);
+			setMessages((prevMessages) => [...prevMessages, messageToSend]);
 		}
-		setIsSending(false);
 	}
 
 	async function handleSelectImage() {
@@ -222,28 +258,27 @@ export default function ChatPage({ group }: { group: Group }) {
 	}
 
 	async function handleMessageLoadScroll(e: React.UIEvent<HTMLDivElement>) {
-		if (e.currentTarget.scrollTop === 0) {
-			loadMessageBatch(group?.id || "");
+		const scrollContainer = e.currentTarget;
+
+		if (scrollContainer.scrollTop === 0) {
+			const oldScrollHeight = scrollContainer.scrollHeight;
+			await loadMessageBatch(group?.id || "");
+
+			setTimeout(() => {
+				const newScrollHeight = scrollContainer.scrollHeight;
+				scrollContainer.scrollTop = newScrollHeight - oldScrollHeight;
+			}, 0);
 		}
 	}
 
-	async function loadMessageBatch(groupId: string, overwrite = false) {
-		const retreivedMessages = await fetchMessages(
-			groupId,
-			batchIndex + (overwrite ? 0 : 1)
-		);
+	async function loadMessageBatch(groupId: string) {
+		console.log(messagesLoaded, "messagesLoaded");
+		const retreivedMessages = await fetchMessages(groupId, messagesLoaded);
 		if (typeof retreivedMessages === "string") return;
+		messagesLoaded += retreivedMessages.length;
 
-		if (overwrite) {
-			setMessages(retreivedMessages);
-		} else {
-			setMessages((prevMessages) => [
-				...retreivedMessages,
-				...prevMessages,
-			]);
-			setBatchIndex((prev) => prev + 1);
-		}
-		scrollDown();
+		setMessages((prevMessages) => [...retreivedMessages, ...prevMessages]);
+		setBatchIndex((prev) => prev + 1);
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -319,7 +354,6 @@ export default function ChatPage({ group }: { group: Group }) {
 						placeholder="Escreva aqui"
 						variant="bordered"
 						name="message"
-						isDisabled={isSending}
 						classNames={{ inputWrapper: "border-none" }}
 						max={1000}
 					/>
@@ -362,7 +396,6 @@ export default function ChatPage({ group }: { group: Group }) {
 				</div>
 				<Button
 					isIconOnly={true}
-					isDisabled={isSending}
 					variant="bordered"
 					size="sm"
 					onClick={() => handleSelectImage()}
@@ -373,7 +406,7 @@ export default function ChatPage({ group }: { group: Group }) {
 					size="sm"
 					isIconOnly={true}
 					color="primary"
-					isDisabled={isSending || cooldownActive}
+					isDisabled={cooldownActive}
 					type="submit"
 				>
 					<PaperAirplaneIcon className="h-6" />

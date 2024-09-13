@@ -62,9 +62,7 @@ export const authOptions: NextAuthOptions = {
 		signIn: "/login",
 	},
 	callbacks: {
-		async jwt({ token, user, trigger, session, account, profile }) {
-			console.log(token, user, session, account, profile);
-
+		async jwt({ token, user, trigger, session, account }) {
 			if (user) {
 				// Add custom parameters to token
 				token.role = user.role as string;

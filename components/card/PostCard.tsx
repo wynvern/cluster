@@ -85,14 +85,13 @@ export default function PostCard({
 							<Link href={`/user/${post.author.username}`}>
 								<b>{post.author.username}</b>
 							</Link>
-							<p>{post._count.postView}</p>
-							<Tooltip
-								content={new Date(
-									post.createdAt
-								).toLocaleString()}
-							>
-								<PrettyDate date={post.createdAt} />
-							</Tooltip>
+							<PrettyDate date={post.createdAt} />
+
+							<p className="second-foreground">
+								{" · "}
+								{post._count.postView} view
+								{post._count.postView > 1 && "s"}
+							</p>
 						</div>
 						<div className="flex gap-x-2 items-center">
 							<Link href={`/group/${post.group.groupname}`}>

@@ -57,7 +57,7 @@ export default function NotificationsButton({
 					{openNotifications ? (
 						<BoldBellIcon className="h-7" />
 					) : (
-						<BellIcon className="h-7" />
+						<BellIcon className="h-7 second-foreground" />
 					)}
 				</div>
 				{hasText && (
@@ -65,7 +65,7 @@ export default function NotificationsButton({
 						{openNotifications ? (
 							<b>Notificações</b>
 						) : (
-							<p>Notificações</p>
+							<b className="second-foreground">Notificações</b>
 						)}
 					</div>
 				)}

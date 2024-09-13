@@ -1,7 +1,7 @@
 import { Link, Image, Chip } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
-import type { MessageProps } from "@/lib/db/group/type";
+import type { MessageProps, MessageView } from "@/lib/db/group/type";
 import { useImageCarousel } from "@/providers/ImageDisplay";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import PrettyDate from "@/components/general/PrettyDate";
@@ -9,11 +9,7 @@ import UserAvatar from "@/components/user/UserAvatar";
 // @ts-ignore
 import { Image as NextImage } from "next/image";
 
-interface MessagePropView extends MessageProps {
-	sent?: boolean;
-}
-
-export function ListMessages({ messages }: { messages: MessagePropView[] }) {
+export function ListMessages({ messages }: { messages: MessageView[] }) {
 	const session = useSession();
 	const { openCarousel } = useImageCarousel();
 
@@ -31,7 +27,9 @@ export function ListMessages({ messages }: { messages: MessagePropView[] }) {
 					<div
 						key={message.id}
 						className={"message-action-container"}
-						style={{ opacity: !message.sent ? 1 : 0.5 }}
+						style={{
+							opacity: !message.notServerConfirmed ? 1 : 0.5,
+						}}
 					>
 						<div className="w-full flex justify-center">
 							{isNewDay && (
@@ -110,9 +108,10 @@ export function ListMessages({ messages }: { messages: MessagePropView[] }) {
 								}
 							>
 								<p
-									className={
-										isUserMessage ? "text-rigth" : ""
-									}
+									className={`${
+										isUserMessage ? "text-right" : ""
+									}`}
+									style={{ wordBreak: "break-all" }}
 								>
 									{message.content}
 								</p>

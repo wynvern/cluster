@@ -1,5 +1,6 @@
 import fetchGroup from "@/lib/db/group/groupManagement";
 import ChatPage from "./ChatPage";
+import { fetchMessages } from "@/lib/db/group/groupChat";
 
 export default async function ({ params }: { params: { groupname: string } }) {
 	const group = await fetchGroup({ groupname: params.groupname });
@@ -8,5 +9,10 @@ export default async function ({ params }: { params: { groupname: string } }) {
 		return <p>Grupo não encontrado</p>;
 	}
 
-	return <ChatPage group={group} />;
+	let latestMessges = await fetchMessages(group.id, 0);
+	console.log(latestMessges, "latest", group.id);
+
+	if (typeof latestMessges === "string") latestMessges = [];
+
+	return <ChatPage group={group} latestMessages={latestMessges} />;
 }

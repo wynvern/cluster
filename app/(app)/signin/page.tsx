@@ -6,14 +6,15 @@ import {
 	EnvelopeIcon,
 	KeyIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Input, Link } from "@nextui-org/react";
+import { Button, Image, Input, Link, Progress } from "@nextui-org/react";
 import { type SignInResponse, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import PasswordInput from "@/components/auth/PasswordInput";
 import GoogleLoginButton from "@/components/auth/GLoginButton";
 import ErrorBox from "@/components/general/ErrorBox";
+import LogoTitle from "@/components/general/LogoTitle";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);
@@ -28,6 +29,7 @@ export default function Login() {
 		message: "",
 		active: false,
 	});
+	const [progress, setProgress] = useState(0);
 
 	function validateForm(email: string, password: string, numberval: string) {
 		const errors = {
@@ -124,95 +126,142 @@ export default function Login() {
 		setLoading(false);
 	}
 
+	useEffect(() => {
+		setTimeout(() => {
+			setProgress(50);
+
+			setTimeout(() => {
+				setProgress(100);
+			}, 1000);
+		}, 1000);
+	}, []);
+
 	return (
-		<AuthModalWrapper title="Entrar">
-			<form className="gap-y-6 flex flex-col" onSubmit={handleLogin}>
-				<Input
-					placeholder="Email"
-					type="text"
-					name="email"
-					color="default"
-					variant="bordered"
-					classNames={{ inputWrapper: "h-12" }}
-					startContent={
-						<EnvelopeIcon className="h-6 text-neutral-500" />
-					}
-					isInvalid={inputEmailVal.active}
-					errorMessage={inputEmailVal.message}
-					onValueChange={() => {
-						setInputEmailVal({
-							message: "",
-							active: false,
-						});
-						setGeneralError("");
-					}}
-				/>
-				<PasswordInput
-					placeholder="Senha"
-					color="default"
-					variant="bordered"
-					name="password"
-					classNames={{ inputWrapper: "h-12" }}
-					startContent={<KeyIcon className="h-6 text-neutral-500" />}
-					isInvalid={inputPasswordVal.active}
-					errorMessage={inputPasswordVal.message}
-					onValueChange={() => {
-						setInputPasswordVal({
-							message: "",
-							active: false,
-						});
-						setGeneralError("");
-					}}
-				/>
-				<Input
-					name="numberval"
-					type="text"
-					placeholder="Número de Telefone"
-					className="absolute left-0 -top-40"
-				/>
-
-				<ErrorBox
-					error={generalError}
-					isVisible={Boolean(generalError)}
-				/>
-
-				<div>
-					<p>
-						<Link href="/reset-password">Esqueceu sua senha?</Link>
-					</p>
-				</div>
-
-				<div className="flex justify-between items-center">
-					<div>
-						<p className="text-center">
-							<Link href="/signup">Crie uma conta</Link>
-						</p>
+		<>
+			<div className={"w-dvw h-dvh flex justify-between absolute"}>
+				<div className="grow h-full object-cover sidebar-border hidden sm:hidden relative md:block">
+					<Image
+						src="/brand/background-5.png"
+						className="w-full h-full rounded-none object-cover"
+						removeWrapper={true}
+					/>
+					<div className="absolute bottom-10 left-10 z-10 invert">
+						<LogoTitle />
 					</div>
-
-					<Button
-						type="submit"
-						color={success ? "success" : "primary"}
-						isDisabled={loading || success}
-						isLoading={loading}
-						className="h-12"
-						startContent={
-							loading ? (
-								""
-							) : success ? (
-								<CheckIcon className="h-6" />
-							) : (
-								<ArrowLeftEndOnRectangleIcon className="h-6" />
-							)
-						}
-					>
-						Entrar
-					</Button>
 				</div>
-			</form>
-			<div className="flex flex-col gap-y-6 items-center">
-				<p className="text-center">Ou</p>
-				<GoogleLoginButton />
+				<div className="h-full min-w-[600px] grow">
+					<AuthModalWrapper title="Entrar">
+						<form
+							className="gap-y-6 flex flex-col"
+							onSubmit={handleLogin}
+						>
+							<Input
+								placeholder="Email"
+								type="text"
+								name="email"
+								color="default"
+								variant="bordered"
+								classNames={{ inputWrapper: "h-12" }}
+								startContent={
+									<EnvelopeIcon className="h-6 text-neutral-500" />
+								}
+								isInvalid={inputEmailVal.active}
+								errorMessage={inputEmailVal.message}
+								onValueChange={() => {
+									setInputEmailVal({
+										message: "",
+										active: false,
+									});
+									setGeneralError("");
+								}}
+							/>
+							<PasswordInput
+								placeholder="Senha"
+								color="default"
+								variant="bordered"
+								name="password"
+								classNames={{ inputWrapper: "h-12" }}
+								startContent={
+									<KeyIcon className="h-6 text-neutral-500" />
+								}
+								isInvalid={inputPasswordVal.active}
+								errorMessage={inputPasswordVal.message}
+								onValueChange={() => {
+									setInputPasswordVal({
+										message: "",
+										active: false,
+									});
+									setGeneralError("");
+								}}
+							/>
+							<Input
+								name="numberval"
+								type="text"
+								placeholder="Número de Telefone"
+								className="absolute left-0 -top-40"
+							/>
+
+							<ErrorBox
+								error={generalError}
+								isVisible={Boolean(generalError)}
+							/>
+
+							<div>
+								<p>
+									<Link href="/reset-password">
+										Esqueceu sua senha?
+									</Link>
+								</p>
+							</div>
+
+							<div className="flex justify-between items-center">
+								<div>
+									<p className="text-center">
+										<Link href="/signup">
+											Crie uma conta
+										</Link>
+									</p>
+								</div>
+
+								<Button
+									type="submit"
+									color={success ? "success" : "primary"}
+									isDisabled={loading || success}
+									isLoading={loading}
+									className="h-12"
+									startContent={
+										loading ? (
+											""
+										) : success ? (
+											<CheckIcon className="h-6" />
+										) : (
+											<ArrowLeftEndOnRectangleIcon className="h-6" />
+										)
+									}
+								>
+									Entrar
+								</Button>
+							</div>
+						</form>
+						<div className="flex flex-col gap-y-6 items-center">
+							<p className="text-center">Ou</p>
+							<GoogleLoginButton />
+						</div>
+					</AuthModalWrapper>
+				</div>
 			</div>
-		</AuthModalWrapper>
+
+			<div
+				className={`absolute loader-modal w-dvw h-dvh bg-background flex items-center justify-center z-50  ${
+					progress === 100 ? "loaded-modal" : ""
+				}`}
+			>
+				<div className="flex gap-y-8 items-center flex-col">
+					<Image src="/brand/logo.svg" />
+					{/* @ts-ignore */}
+					<Progress value={progress} size={"sm"} className="w-40" />
+				</div>
+			</div>
+		</>
 	);
 }

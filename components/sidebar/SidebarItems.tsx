@@ -48,17 +48,17 @@ export default function SidebarItems({
 							{path === "/" ? (
 								<SolidHomeIcon className="h-7" />
 							) : (
-								<HomeIcon className="h-7" />
+								<HomeIcon className="h-7 second-foreground" />
 							)}
 						</div>
-						<div className="sidebar-inside">
-							{path === "/" ? (
-								<p>
-									<b>Home</b>
-								</p>
-							) : (
-								<p>Home</p>
-							)}
+						<div
+							className={`sidebar-inside ${
+								path === "/" ? "" : "second-foreground"
+							}`}
+						>
+							<p>
+								<b>Home</b>
+							</p>
 						</div>
 					</Link>
 					{/* TODO: Load previous notifications */}
@@ -71,17 +71,19 @@ export default function SidebarItems({
 							{path.includes("/search") ? (
 								<SolidMagnifyingGlassIcon className="h-7" />
 							) : (
-								<MagnifyingGlassIcon className="h-7" />
+								<MagnifyingGlassIcon className="h-7 second-foreground" />
 							)}
 						</div>
-						<div className="sidebar-inside">
-							{path.startsWith("/search") ? (
-								<p>
-									<b>Pesquisa</b>
-								</p>
-							) : (
-								<p>Pesquisa</p>
-							)}
+						<div
+							className={`sidebar-inside ${
+								path.startsWith("/search")
+									? ""
+									: "second-foreground"
+							}`}
+						>
+							<p>
+								<b>Pesquisa</b>
+							</p>
 						</div>
 					</Link>
 					<Link href="/chat" className="flex items-center gap-x-4">
@@ -89,17 +91,19 @@ export default function SidebarItems({
 							{path.includes("/chat") ? (
 								<SolidChatBubbleBottomCenterIcon className="h-7" />
 							) : (
-								<ChatBubbleBottomCenterIcon className="h-7" />
+								<ChatBubbleBottomCenterIcon className="h-7 second-foreground" />
 							)}
 						</div>
-						<div className="sidebar-inside">
-							{path.startsWith("/chat") ? (
-								<p>
-									<b>Chat</b>
-								</p>
-							) : (
-								<p>Chat</p>
-							)}
+						<div
+							className={`sidebar-inside ${
+								path.startsWith("/chat")
+									? ""
+									: "second-foreground"
+							}`}
+						>
+							<p>
+								<b>Chat</b>
+							</p>
 						</div>
 					</Link>
 					<Link href="/group" className="flex items-center gap-x-4">
@@ -107,17 +111,17 @@ export default function SidebarItems({
 							{path === "/group" ? (
 								<SolidUserGroupIcon className="h-7" />
 							) : (
-								<UserGroupIcon className="h-7" />
-							)}{" "}
-						</div>
-						<div className="sidebar-inside">
-							{path === "/group" ? (
-								<p>
-									<b>Grupos</b>
-								</p>
-							) : (
-								<p>Grupos</p>
+								<UserGroupIcon className="h-7 second-foreground" />
 							)}
+						</div>
+						<div
+							className={`sidebar-inside ${
+								path === "/group" ? "" : "second-foreground"
+							}`}
+						>
+							<p>
+								<b>Grupos</b>
+							</p>
 						</div>
 					</Link>
 				</div>

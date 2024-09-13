@@ -2,14 +2,16 @@
 
 import InfoMessage from "@/components/card/InfoMessage";
 import PageHeader from "@/components/general/PageHeader";
-import type { UserGroupChats } from "@/lib/db/group/type";
+import type { MessageProps, UserGroupChats } from "@/lib/db/group/type";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Input, Link, Image, user } from "@nextui-org/react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 // @ts-ignore
 import { Image as NextImage } from "next/image";
 import { useMediaQuery } from "react-responsive";
+import { useSocket } from "@/providers/Socket";
+import GroupChatDropdown from "./GroupChatDropdown";
 
 interface ChatWrapperProps {
 	children: React.ReactNode;
@@ -25,18 +27,55 @@ export default function ChatWrapper({
 	const isSmallScreenQuery = useMediaQuery({ maxWidth: 1000 });
 	const [shownUserGroups, setShownUserGroups] =
 		useState<UserGroupChats[]>(userGroups);
+	const socket = useSocket();
+	const router = useRouter();
 
 	useEffect(() => {
 		setIsSmallScreen(isSmallScreenQuery);
 	}, [isSmallScreenQuery]);
+	const [lastMessages, setLastMessages] = useState<{
+		[chatId: string]: {
+			username: string;
+			content: string;
+		} | null;
+	}>({});
 
 	function handleSearch(value: string) {
 		setShownUserGroups(
-			userGroups.filter((group) =>
-				group.groupname.toLowerCase().includes(value.toLowerCase())
+			userGroups.filter(
+				(group) =>
+					group.groupname
+						.toLowerCase()
+						.includes(value.toLowerCase()) ||
+					group.name?.toLowerCase().includes(value.toLowerCase())
 			)
 		);
 	}
+
+	useEffect(() => {
+		if (!socket) return;
+
+		socket.on(
+			"notificationMessage",
+			(message: { message: MessageProps }) => {
+				console.log("message", message);
+				setLastMessages((prev) => ({
+					...prev,
+					[message.message.chatId]: {
+						username: message.message.user.username || "Anônimo",
+						content: message.message.content || "Imagem",
+					},
+				}));
+			}
+		);
+	}, [socket]);
+
+	const truncateMessage = (message: string, maxLength: number) => {
+		if (message.length > maxLength) {
+			return `${message.substring(0, maxLength)}...`;
+		}
+		return message;
+	};
 
 	return (
 		<div className="flex justify-center w-full h-full">
@@ -49,11 +88,10 @@ export default function ChatWrapper({
 					}`}
 				>
 					<PageHeader title="Chat" />
-					<div className="px-4 pb-10 bottom-border">
+					<div className="px-4 pb-4 bottom-border">
 						<Input
 							placeholder="Pesquisar grupos"
 							variant="bordered"
-							classNames={{ inputWrapper: "h-14" }}
 							startContent={
 								<MagnifyingGlassIcon className="h-6" />
 							}
@@ -69,12 +107,20 @@ export default function ChatWrapper({
 							</div>
 						)}
 						{shownUserGroups.map((group) => (
-							<Link
+							<div
 								key={group.id}
-								className="bottom-border w-full"
-								href={`/chat/${group.groupname}`}
+								className="relative bottom-border flex w-full items-center justify-between px-4 py-4 gap-x-4"
 							>
-								<div className="flex w-full items-center px-4 py-6 gap-x-4">
+								<div
+									className="absolute z-10 w-full h-full cursor-pointer"
+									onClick={() =>
+										router.push(`/chat/${group.groupname}`)
+									}
+									onKeyDown={() =>
+										router.push(`/chat/${group.groupname}`)
+									}
+								/>
+								<div className="flex items-center gap-x-3">
 									<div>
 										<Image
 											as={NextImage}
@@ -83,19 +129,51 @@ export default function ChatWrapper({
 												"/brand/default-group.svg"
 											}
 											removeWrapper={true}
-											className="h-12 w-12"
+											className="h-12 w-12 z-1"
 										/>
 									</div>
 									<div className="flex flex-col">
 										<div className="flex gap-x-1 flex-col">
-											<h3 className="font-semibold">
-												{group.name}
-											</h3>
-											<p>{group.groupname}</p>
+											<div className="flex items-center gap-x-1">
+												<h3 className="font-semibold">
+													{group.name}
+												</h3>
+												<p className="second-foreground">
+													g/{group.groupname}
+												</p>
+											</div>
+											{group.GroupChat?.id &&
+												lastMessages[
+													group.GroupChat.id
+												] && (
+													<p>
+														<b>
+															u/
+															{
+																lastMessages[
+																	group
+																		.GroupChat
+																		.id
+																]?.username
+															}
+															:{" "}
+														</b>
+														{truncateMessage(
+															lastMessages[
+																group.GroupChat
+																	.id
+															]?.content || "",
+															15
+														)}
+													</p>
+												)}
 										</div>
 									</div>
 								</div>
-							</Link>
+								<div>
+									<GroupChatDropdown group={group} />
+								</div>
+							</div>
 						))}
 					</div>
 				</div>

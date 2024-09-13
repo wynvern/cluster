@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
 import { db } from "./db";
 import * as webPush from "web-push";
-import { url } from "inspector";
 
 webPush.setVapidDetails(
 	"mailto:wynvernn@gmail.com",

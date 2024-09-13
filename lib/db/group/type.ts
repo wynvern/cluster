@@ -130,3 +130,7 @@ export interface BannedMember {
 	bannedAt: Date;
 	reason: string | null;
 }
+
+export interface MessageView extends MessageProps {
+	notServerConfirmed?: boolean;
+}

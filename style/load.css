@@ -1,0 +1,26 @@
+.loader-modal {
+	display: flex;
+}
+
+.loaded-modal {
+	animation: fadeOutBlur 0.4s forwards;
+	transition: all;
+}
+
+@keyframes fadeOutBlur {
+	0% {
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(10px);
+		visibility: visible;
+		opacity: 1;
+	}
+	0% {
+		backdrop-filter: blur(10px);
+	}
+	100% {
+		background: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(0px);
+		visibility: hidden;
+		opacity: 0;
+	}
+}

@@ -30,14 +30,14 @@ export default function SidebarMobile({
 					{path === "/" ? (
 						<SolidHomeIcon className="h-7" />
 					) : (
-						<HomeIcon className="h-7" />
+						<HomeIcon className="h-7 second-foreground" />
 					)}
 				</Link>
 				<Link href="/search">
 					{path.includes("/search") ? (
 						<SolidMagnifyingGlassIcon className="h-7" />
 					) : (
-						<MagnifyingGlassIcon className="h-7" />
+						<MagnifyingGlassIcon className="h-7 second-foreground" />
 					)}
 				</Link>
 				<NotificationsButton
@@ -47,14 +47,14 @@ export default function SidebarMobile({
 					{path.includes("/chat") ? (
 						<SolidChatBubbleBottomCenterIcon className="h-7" />
 					) : (
-						<ChatBubbleBottomCenterIcon className="h-7" />
+						<ChatBubbleBottomCenterIcon className="h-7 second-foreground" />
 					)}
 				</Link>
 				<Link href="/group">
 					{path === "/group" ? (
 						<SolidUserGroupIcon className="h-7" />
 					) : (
-						<UserGroupIcon className="h-7" />
+						<UserGroupIcon className="h-7 second-foreground" />
 					)}
 				</Link>
 			</div>

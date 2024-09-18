@@ -244,28 +244,17 @@ export default function CustomizeGroup({
 						>
 							<Input
 								name="name"
-								placeholder="Nome"
+								label="Nome"
 								variant="bordered"
-								classNames={{ inputWrapper: "h-14" }}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
 								max={50}
 								defaultValue={group.name || ""}
 							/>
 							<Textarea
 								name="description"
-								placeholder="Descrição"
+								label="Descrição"
 								variant="bordered"
-								classNames={{
-									innerWrapper: "py-[9px]",
-									input: "mt-[2px]",
-								}}
 								max={200}
 								defaultValue={group.description || ""}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
 							/>
 						</form>
 					</div>

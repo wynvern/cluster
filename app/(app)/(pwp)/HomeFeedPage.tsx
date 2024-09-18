@@ -60,7 +60,7 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 						<Bars2Icon className="w-6 h-6" />
 					</Button>
 				</PageHeader>
-				<PostList posts={posts} />
+				<PostList posts={posts} isUserPage={false} />
 			</div>
 		</ScrollPagination>
 	);

@@ -7,9 +7,16 @@ import {
 	PhotoIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Button, ScrollShadow, Image, Textarea } from "@nextui-org/react";
+import {
+	Button,
+	ScrollShadow,
+	Image,
+	Textarea,
+	CircularProgress,
+} from "@nextui-org/react";
+import _ from "lodash";
 import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ListMessages } from "./ListMessages";
 import type Group from "@/lib/db/group/type";
 import { useMessageAttr } from "@/hooks/ChatMessage";
@@ -29,20 +36,29 @@ interface FileBase64Info {
 
 const messagesToConfirm: number[] = [];
 let messagesLoaded = 0;
+let lastMessagesTimestamps: number[] = [];
+let cooldownActive = false;
 
 interface ChatPageProps {
 	group: Group;
 	latestMessages: MessageView[];
+	isChatDisabledDefault: boolean;
 }
 
-export default function ChatPage({ group, latestMessages }: ChatPageProps) {
+export default function ChatPage({
+	group,
+	latestMessages,
+	isChatDisabledDefault,
+}: ChatPageProps) {
 	const [selectedImages, setSelectedImages] = useState<
 		FileBase64Info[] | null
 	>(null);
+	const [isChatDisabled, setIsChatDisabled] = useState<boolean>(
+		isChatDisabledDefault
+	);
 	const [messages, setMessages] = useState<MessageView[]>(latestMessages);
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
-	const [batchIndex, setBatchIndex] = useState(1);
 	const replyToMessageContent = useMessageAttr(
 		(state) => state.replyToMessage
 	);
@@ -50,30 +66,25 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 		(state) => state.setReplyToMessageContent
 	);
 	const [isAtBottom, setIsAtBottom] = useState(true);
-	const [userTyping, setUserTyping] = useState<
-		{ userId: string; username: string }[]
-	>([]);
-	// Cooldown System
-	const [cooldownActive, setCooldownActive] = useState(false);
-	const [lastMessagesTimestamps, setLastMessagesTimestamps] = useState<
-		number[]
-	>([]);
+	const [loading, setLoading] = useState(true);
+	const [topLoading, setTopLoading] = useState(false);
+	const [whoIsTyping, setWhoIsTyping] = useState<string[]>([]);
 
 	function verifyCooldown(timestamp: number) {
-		setLastMessagesTimestamps((prev) => [...prev, timestamp]);
+		lastMessagesTimestamps.push(timestamp);
 		setTimeout(() => {
-			setLastMessagesTimestamps((prev) =>
-				prev.filter((time) => time !== timestamp)
+			lastMessagesTimestamps = lastMessagesTimestamps.filter(
+				(time) => time !== timestamp
 			);
 		}, 5000);
 
-		if (lastMessagesTimestamps.length > 2) {
-			setCooldownActive(true);
+		if (lastMessagesTimestamps.length > 5 && !cooldownActive) {
+			cooldownActive = true;
 			toast.warn("Você está enviando mensagens muito rápido.", {
 				autoClose: 10000,
 			});
 			setTimeout(() => {
-				setCooldownActive(false);
+				cooldownActive = false;
 			}, 10000);
 		}
 	}
@@ -96,6 +107,11 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 		}
 
 		messagesLoaded = latestMessages.length;
+
+		setTimeout(() => {
+			scrollDown();
+			setLoading(false);
+		}, 2500);
 
 		return () => {
 			if (endOfMessagesRef.current) {
@@ -121,7 +137,34 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 			socket.emit("joinRoom", { chatId: group?.GroupChat?.id });
 		}
 
+		socket.on(
+			"chatEnabledStatusClient",
+			(data: { chatId: string; status: boolean }) => {
+				console.log(data);
+				setIsChatDisabled(!data.status);
+			}
+		);
+
+		socket.on("whoIsTyping", (data) => {
+			const typingUsers = data.filter(
+				(user: string) => user !== session.data?.user?.username
+			);
+			setWhoIsTyping(typingUsers);
+		});
+
+		socket.on("deleteChatMessage", ({ id }: { id: string }) => {
+			console.log("messages to delete");
+			setMessages((prevMessages) =>
+				prevMessages.filter((msg) => msg.id !== id)
+			);
+		});
+
 		socket.on("receiveMessage", (message: MessageProps) => {
+			console.log(
+				messagesToConfirm,
+				new Date(message.createdAt).valueOf()
+			);
+
 			if (
 				messagesToConfirm.includes(
 					new Date(message.createdAt).valueOf()
@@ -138,6 +181,7 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 						const updatedMessages = [...prevMessages];
 						updatedMessages[index] = {
 							...updatedMessages[index],
+							...message,
 							notServerConfirmed: false,
 						};
 						return updatedMessages;
@@ -154,15 +198,6 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 			} else setMessages((prevMessages) => [...prevMessages, message]);
 
 			messagesLoaded++;
-		});
-
-		socket.on("typing", (data: { userId: string; username: string }) => {
-			setUserTyping((prev) => [...prev, data]);
-			setTimeout(() => {
-				setUserTyping((prev) =>
-					prev.filter((user) => user.userId !== data.userId)
-				);
-			}, 2000);
 		});
 
 		onConnect();
@@ -204,6 +239,7 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 				chat: {
 					group: {
 						groupname: group?.groupname || "",
+						id: group?.id || "",
 					},
 				},
 			} as MessageView;
@@ -213,7 +249,13 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 			e.currentTarget.reset();
 			setReplyToMessageContent(null);
 			setSelectedImages(null);
-			setMessages((prevMessages) => [...prevMessages, messageToSend]);
+			setMessages((prevMessages) => [
+				...prevMessages,
+				{
+					...messageToSend,
+					media: selectedImages?.map((image) => image.preview) || [],
+				},
+			]);
 		}
 	}
 
@@ -272,13 +314,11 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 	}
 
 	async function loadMessageBatch(groupId: string) {
-		console.log(messagesLoaded, "messagesLoaded");
 		const retreivedMessages = await fetchMessages(groupId, messagesLoaded);
 		if (typeof retreivedMessages === "string") return;
 		messagesLoaded += retreivedMessages.length;
 
 		setMessages((prevMessages) => [...retreivedMessages, ...prevMessages]);
-		setBatchIndex((prev) => prev + 1);
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -288,130 +328,190 @@ export default function ChatPage({ group, latestMessages }: ChatPageProps) {
 		}
 	}, [messages]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	const emitTypingEvent = useCallback(
+		_.throttle(() => {
+			if (!socket) return;
+
+			socket.emit("typing", {
+				chatId: group?.GroupChat?.id,
+				userId: session.data?.user?.id,
+				username: session.data?.user?.username,
+			});
+		}, 2000),
+		[socket]
+	);
+
+	function formatWhoIsTyping() {
+		if (whoIsTyping.length === 0) return "";
+		if (whoIsTyping.length === 1) return `${whoIsTyping[0]} está digitando`;
+		if (whoIsTyping.length === 2)
+			return `${whoIsTyping[0]} e ${whoIsTyping[1]} estão digitando`;
+		if (whoIsTyping.length === 3)
+			return `${whoIsTyping[0]}, ${whoIsTyping[1]} e ${whoIsTyping[2]} estão digitando`;
+		return `${whoIsTyping[0]}, ${whoIsTyping[1]}, ${
+			whoIsTyping[2]
+		} e mais ${whoIsTyping.length - 3} estão digitando`;
+	}
+
 	return (
-		<div className="w-full max-h-[calc(100vh)] h-full flex flex-col overflow-hidden">
-			{group?.groupname && (
-				<PageHeader
-					title={group?.groupname}
-					enableHeightUsage={true}
-					showBackButton={true}
-				/>
-			)}
-			<div className="grow flex flex-col overflow-hidden my-4 bottom-border">
-				<ScrollShadow
-					className="w-full h-full px-4 sm:px-10 gap-y-4 flex flex-col overflow-auto relative"
-					onScroll={handleMessageLoadScroll}
-				>
-					{messages.length === 0 && (
-						<div className="w-full h-full flex items-center justify-center">
-							<InfoMessage message="Este grupo ainda não tem nenhuma mensagem. Seja o primeiro a escrever algo!" />
-						</div>
-					)}
-					<ListMessages messages={messages} />
-					<div ref={endOfMessagesRef} className="opacity-0">
-						abc
-					</div>
-				</ScrollShadow>
-				{!isAtBottom && (
-					<div className="absolute bottom-40 right-10">
-						<Button
-							isIconOnly={true}
-							onClick={() => scrollDown()}
-							color="secondary"
-							className="default-border"
-						>
-							<ChevronDownIcon className="h-6" />
-						</Button>
-					</div>
-				)}
-			</div>
-			<form
-				onSubmit={handleSubmit}
-				onKeyDown={(e: React.KeyboardEvent<HTMLFormElement>) => {
-					if (e.key === "Enter" && !e.shiftKey) {
-						e.preventDefault();
-						handleSubmit(e);
-					}
-				}}
-				className="w-full px-4 sm:px-10 flex gap-x-4 transition-height duration-200 mb-6 "
+		<>
+			<div
+				className={`absolute bg-background sidebar-border w-full h-full z-40 max-w-[800px] flex items-center justify-center ${
+					loading ? "visible" : "hidden"
+				}`}
 			>
-				<div className="flex flex-col grow gap-y-2">
-					{replyToMessageContent?.id && (
-						<div className="p-2 rounded-large items-center default-border flex">
-							<Button
-								isIconOnly={true}
-								color="secondary"
-								onClick={() => setReplyToMessageContent(null)}
-							>
-								<XMarkIcon className="h-6" />
-							</Button>
-							<div className="flex gap-x-1 text-tiny">
-								{`Respondendo ${replyToMessageContent?.authorUsername}: ${replyToMessageContent?.content}`}
-							</div>
-						</div>
-					)}
-					<Textarea
-						placeholder="Escreva aqui"
-						variant="bordered"
-						name="message"
-						classNames={{ inputWrapper: "border-none" }}
-						max={1000}
+				<CircularProgress />
+			</div>
+
+			<div className="w-full max-h-[calc(100vh)] h-full flex flex-col overflow-hidden">
+				{group?.groupname && (
+					<PageHeader
+						title={group?.groupname}
+						enableHeightUsage={true}
+						showBackButton={true}
 					/>
-					{selectedImages && selectedImages.length > 0 && (
-						<div className="flex gap-x-2">
-							{selectedImages.map((image, index) => (
-								<div className="relative" key={image.preview}>
-									<Button
-										color="secondary"
-										size="sm"
-										isIconOnly={true}
-										className="absolute z-50 left-2 top-2"
-										onClick={() => {
-											const newSelectedImages =
-												selectedImages.filter(
-													(_, i) => i !== index
-												);
-											setSelectedImages(
-												newSelectedImages
-											);
-										}}
-									>
-										<XMarkIcon className="h-4" />
-									</Button>
-									<Image
-										src={image.preview}
-										removeWrapper={true}
-										className="w-auto h-20 max-w-20 object-cover"
-									/>
-								</div>
-							))}
+				)}
+				<div className="grow flex flex-col overflow-hidden my-4 bottom-border relative">
+					<ScrollShadow
+						className="w-full h-full px-4 sm:px-10 gap-y-4 flex flex-col overflow-auto relative"
+						onScroll={handleMessageLoadScroll}
+					>
+						{messages.length === 0 && (
+							<div className="w-full h-full flex items-center justify-center">
+								<InfoMessage message="Este grupo ainda não tem nenhuma mensagem. Seja o primeiro a escrever algo!" />
+							</div>
+						)}
+						<ListMessages messages={messages} />
+						<div ref={endOfMessagesRef} className="opacity-0">
+							abc
+						</div>
+					</ScrollShadow>
+					<div className="w-full absolute bottom-2 left-10">
+						{whoIsTyping.length > 0 && (
+							<div className="text-white text-xs px-2">
+								<p className="second-foreground">
+									{formatWhoIsTyping()}
+								</p>
+							</div>
+						)}
+					</div>
+					{!isAtBottom && (
+						<div className="absolute bottom-10 right-10">
+							<Button
+								size="sm"
+								isIconOnly={true}
+								onClick={() => scrollDown()}
+								color="secondary"
+								className="default-border"
+							>
+								<ChevronDownIcon className="h-6" />
+							</Button>
 						</div>
 					)}
-					{userTyping.length > 0 &&
-						userTyping.map((user) => (
-							<div key={user.userId}>
-								<p>{user.username} está digitando...</p>
-							</div>
-						))}
 				</div>
-				<Button
-					isIconOnly={true}
-					variant="bordered"
-					size="sm"
-					onClick={() => handleSelectImage()}
+
+				<form
+					onSubmit={handleSubmit}
+					onKeyDown={(e: React.KeyboardEvent<HTMLFormElement>) => {
+						if (e.key === "Enter" && !e.shiftKey) {
+							e.preventDefault();
+							handleSubmit(e);
+						}
+					}}
+					className="w-full px-4 sm:px-10 flex gap-x-4 transition-height duration-200 mb-6 "
 				>
-					<PhotoIcon className="h-6" />
-				</Button>
-				<Button
-					size="sm"
-					isIconOnly={true}
-					color="primary"
-					isDisabled={cooldownActive}
-					type="submit"
-				>
-					<PaperAirplaneIcon className="h-6" />
-				</Button>
-			</form>
-		</div>
+					<div className="flex flex-col grow gap-y-2">
+						{replyToMessageContent?.id && (
+							<div className="p-2 rounded-large items-center default-border flex">
+								<Button
+									isIconOnly={true}
+									color="secondary"
+									onClick={() =>
+										setReplyToMessageContent(null)
+									}
+								>
+									<XMarkIcon className="h-6" />
+								</Button>
+								<div className="flex gap-x-1 text-tiny">
+									{`Respondendo ${replyToMessageContent?.authorUsername}: ${replyToMessageContent?.content}`}
+								</div>
+							</div>
+						)}
+						<Textarea
+							placeholder={
+								isChatDisabled
+									? "Chat desabilitado. Somente moderadores podem mandar mensagens."
+									: "Escreva aqui"
+							}
+							variant="bordered"
+							isDisabled={isChatDisabled}
+							name="message"
+							classNames={{ inputWrapper: "border-none" }}
+							onChange={(
+								e: React.ChangeEvent<HTMLInputElement>
+							) => {
+								if (e.target.value.length > 0) {
+									emitTypingEvent();
+								}
+							}}
+							max={1000}
+						/>
+						{selectedImages && selectedImages.length > 0 && (
+							<div className="flex gap-x-2">
+								{selectedImages.map((image, index) => (
+									<div
+										className="relative"
+										key={image.preview}
+									>
+										<Button
+											color="secondary"
+											size="sm"
+											isIconOnly={true}
+											isDisabled={isChatDisabled}
+											className="absolute z-50 left-2 top-2"
+											onClick={() => {
+												const newSelectedImages =
+													selectedImages.filter(
+														(_, i) => i !== index
+													);
+												setSelectedImages(
+													newSelectedImages
+												);
+											}}
+										>
+											<XMarkIcon className="h-4" />
+										</Button>
+										<Image
+											src={image.preview}
+											removeWrapper={true}
+											className="w-auto h-20 max-w-20 object-cover"
+										/>
+									</div>
+								))}
+							</div>
+						)}
+					</div>
+					<Button
+						isIconOnly={true}
+						variant="bordered"
+						size="sm"
+						isDisabled={isChatDisabled}
+						onClick={() => handleSelectImage()}
+					>
+						<PhotoIcon className="h-6" />
+					</Button>
+					<Button
+						size="sm"
+						isIconOnly={true}
+						color="primary"
+						isDisabled={cooldownActive || isChatDisabled}
+						type="submit"
+					>
+						<PaperAirplaneIcon className="h-6" />
+					</Button>
+				</form>
+			</div>
+		</>
 	);
 }

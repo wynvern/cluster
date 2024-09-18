@@ -133,4 +133,10 @@ export interface BannedMember {
 
 export interface MessageView extends MessageProps {
 	notServerConfirmed?: boolean;
+	chat: {
+		group: {
+			groupname: string;
+			id?: string;
+		};
+	};
 }

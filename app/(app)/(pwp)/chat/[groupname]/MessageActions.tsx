@@ -3,12 +3,14 @@ import { deleteMessage } from "@/lib/db/group/groupChat";
 import { memberHasPermission } from "@/lib/db/group/groupUtils";
 import type { MessageProps } from "@/lib/db/group/type";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
+import { useSocket } from "@/providers/Socket";
 import {
 	ArrowUturnLeftIcon,
 	EllipsisHorizontalIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
 import {
+	Button,
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
@@ -17,6 +19,7 @@ import {
 } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function ({ message }: { message: MessageProps }) {
 	const { confirm } = useConfirmationModal();
@@ -25,6 +28,7 @@ export default function ({ message }: { message: MessageProps }) {
 	const setReplyToMessageId = useMessageAttr(
 		(state) => state.setReplyToMessageContent
 	);
+	const socket = useSocket();
 
 	function setReplyTo() {
 		setReplyToMessageId({
@@ -41,6 +45,15 @@ export default function ({ message }: { message: MessageProps }) {
 			onCancel: () => {},
 			onConfirm: async () => {
 				await deleteMessage(message.id);
+				if (socket) {
+					socket.emit("deleteMessage", {
+						id: message.id,
+						chatId: message.chatId,
+					});
+				}
+				toast.success("Mensagem excluída com sucesso", {
+					autoClose: 3000,
+				});
 			},
 		});
 	}
@@ -54,6 +67,14 @@ export default function ({ message }: { message: MessageProps }) {
 			onClick: handleDeleteMessage,
 			needAdmin: true,
 			needUserOwner: true,
+		},
+		{
+			title: "Responder",
+			description: "Responder mensagem",
+			startContent: <ArrowUturnLeftIcon className="h-6" />,
+			onClick: setReplyTo,
+			needAdmin: false,
+			needUserOwner: false,
 		},
 	];
 
@@ -72,15 +93,12 @@ export default function ({ message }: { message: MessageProps }) {
 	}, [session.data?.user]);
 
 	return (
-		<div className="flex items-center gap-x-4 message-actions">
-			<Link onClick={setReplyTo}>
-				<ArrowUturnLeftIcon className="h-4" />
-			</Link>
+		<div className="flex items-center gap-x-4 ml-2">
 			<Dropdown>
 				<DropdownTrigger>
-					<Link>
+					<Button size="sm" color="secondary" isIconOnly={true}>
 						<EllipsisHorizontalIcon className="h-6" />
-					</Link>
+					</Button>
 				</DropdownTrigger>
 				{/* @ts-ignore */}
 				<DropdownMenu>

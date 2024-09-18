@@ -19,7 +19,6 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				<Image
 					as={NextImage}
 					src={user ? `${user.banner as string}?size=550` : ""}
-					removeWrapper={true}
 					className="rounded-none w-full object-cover"
 					style={{ aspectRatio: "1000 / 400" }}
 				/>
@@ -31,7 +30,6 @@ export default async function UserProfile({ user }: UserProfileProps) {
 								? `${user.image}?size=400`
 								: "/brand/default-avatar.svg"
 						}
-						removeWrapper={true}
 						className="h-[100px] sm:h-60 object-cover aspect-square"
 					/>
 				</div>

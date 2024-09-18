@@ -31,6 +31,7 @@ import Draggable from "../general/Draggable";
 import MarkdownIt from "markdown-it";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface CreatePostProps {
 	active: boolean;
@@ -48,6 +49,7 @@ export default function CreatePost({
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [activeTab, setActiveTab] = useState("text");
+	const router = useRouter();
 	const [selectedMedia, setSelectedMedia] = useState<FileBase64Info[]>([]);
 	const [selectedDocuments, setSelectedDocuments] = useState<
 		FileBase64Info[]
@@ -112,18 +114,24 @@ export default function CreatePost({
 			group.id
 		);
 
-		switch (data) {
-			case "no-session":
-				setErrors({
-					...errors,
-					content: "Você precisa estar logado para criar um post.",
-				});
-				break;
+		if (typeof data === "string") {
+			switch (data) {
+				case "no-session":
+					setErrors({
+						...errors,
+						content:
+							"Você precisa estar logado para criar um post.",
+					});
+					break;
+				default:
+					toast.error("Erro ao criar post.", { autoClose: 3000 });
+			}
+			return;
 		}
 
 		setLoading(false);
 		setSuccess(true);
-		setTimeout(() => window.location.reload(), 1000);
+		router.push(`/post/${data.id}`);
 	}
 
 	useEffect(() => {

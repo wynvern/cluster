@@ -45,6 +45,9 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 								isUserMessage ? "flex-row-reverse" : ""
 							}`}
 						>
+							<div>
+								<MessageActions message={message} />
+							</div>
 							<Link href={`/user/${message.user.username}`}>
 								<UserAvatar
 									avatarURL={message.user.image}
@@ -53,17 +56,14 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 							</Link>
 							<div
 								className={`flex flex-col gap-y-1 grow ${
-									isUserMessage ? "items-end" : ""
+									isUserMessage ? "items-end" : "items-start"
 								}`}
 							>
 								<div
-									className={`w-full flex justify-between items-center ${
+									className={`flex items-center ${
 										!isUserMessage ? "flex-row-reverse" : ""
 									}`}
 								>
-									<div>
-										<MessageActions message={message} />
-									</div>
 									<div
 										className={`flex items-center gap-x-2 ${
 											isUserMessage
@@ -103,8 +103,8 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 							<div
 								className={
 									isUserMessage
-										? "flex items-end justify-end mt-1 mr-10"
-										: "flex items-start mt-1 ml-10"
+										? "flex items-end justify-end mt-1 mr-20 pr-2"
+										: "flex items-start mt-1 ml-20 pl-2"
 								}
 							>
 								<p
@@ -121,8 +121,8 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 							<div
 								className={
 									isUserMessage
-										? "flex items-end justify-end mr-10 mt-2"
-										: "flex items-start mt-2 ml-10"
+										? "flex items-end justify-end mr-20 mt-2 pr-2"
+										: "flex items-start mt-2 ml-20 pl-2"
 								}
 							>
 								<div className="max-w-[300px] max-h-[400px]">

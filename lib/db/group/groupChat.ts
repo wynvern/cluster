@@ -73,8 +73,9 @@ export async function deleteMessage(messageId: string) {
 		"moderator"
 	);
 
-	if (message?.userId !== session.user.id && !groupPermission)
-		return "not-authorized";
+	if (!groupPermission && message?.userId !== session.user.id) {
+		return "no-permission";
+	}
 
 	if (!message) return "not-found";
 

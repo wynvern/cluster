@@ -66,7 +66,7 @@ export default function PostCard({
 
 	return (
 		<div
-			className="relative w-full flex flex-col gap-y-4 px-4 sm:px-6"
+			className="relative w-full flex flex-col gap-y-4 px-3 sm:px-6"
 			id={`post-${post.id}`}
 		>
 			{!disableLink && (
@@ -76,9 +76,9 @@ export default function PostCard({
 			)}
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
-				<div className="flex gap-x-4 items-center">
+				<div className="flex gap-x-3 items-center">
 					<Link href={`/user/${post.author.username}`}>
-						<UserAvatar avatarURL={post.author.image} />
+						<UserAvatar avatarURL={post.author.image} size="10" />
 					</Link>
 					<div className="flex flex-col gap-y-1">
 						<div className="flex items-center gap-x-2">

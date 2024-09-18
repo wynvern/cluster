@@ -78,82 +78,80 @@ export default function ReportPost({
 	}, [active]);
 
 	return (
-		<div>
-			<BaseModal
-				title={"Reportar post"}
-				size="xl"
-				active={active}
-				setActive={setActive}
-				body={
-					<>
-						<form
-							onSubmit={handleReportPost}
-							className="flex gap-y-3 flex-col"
-							id="report-post"
-						>
-							<Input
-								name="title"
-								label="Título"
-								variant="bordered"
-								classNames={{ inputWrapper: "h-14" }}
-								max={100}
-								errorMessage={inputError.title}
-								isInvalid={inputError.title !== ""}
-								onValueChange={() => {
-									setInputError((prev) => ({
-										...prev,
-										title: "",
-									}));
-								}}
-							/>
-							<Textarea
-								variant="bordered"
-								label="Razão"
-								name="reason"
-								max={500}
-								errorMessage={inputError.reason}
-								isInvalid={inputError.reason !== ""}
-								onValueChange={() => {
-									setInputError((prev) => ({
-										...prev,
-										reason: "",
-									}));
-								}}
-							/>
-						</form>
-					</>
-				}
-				footer={
-					<>
-						<Button
+		<BaseModal
+			title={"Reportar post"}
+			size="xl"
+			active={active}
+			setActive={setActive}
+			body={
+				<>
+					<form
+						onSubmit={handleReportPost}
+						className="flex gap-y-3 flex-col"
+						id="report-post"
+					>
+						<Input
+							name="title"
+							label="Título"
 							variant="bordered"
-							startContent={<XMarkIcon className="h-6" />}
-							onClick={() => setActive(false)}
-						>
-							Cancelar
-						</Button>
-						<Button
-							color={success ? "success" : "danger"}
-							type="submit"
-							form="report-post"
-							isLoading={loading}
-							isDisabled={loading || success}
-							aria-label="salvar-perfil"
-							startContent={
-								loading ? (
-									""
-								) : success ? (
-									<CheckIcon className="h-6" />
-								) : (
-									<FlagIcon className="h-6" />
-								)
-							}
-						>
-							Reportar
-						</Button>
-					</>
-				}
-			/>
-		</div>
+							classNames={{ inputWrapper: "h-14" }}
+							max={100}
+							errorMessage={inputError.title}
+							isInvalid={inputError.title !== ""}
+							onValueChange={() => {
+								setInputError((prev) => ({
+									...prev,
+									title: "",
+								}));
+							}}
+						/>
+						<Textarea
+							variant="bordered"
+							label="Razão"
+							name="reason"
+							max={500}
+							errorMessage={inputError.reason}
+							isInvalid={inputError.reason !== ""}
+							onValueChange={() => {
+								setInputError((prev) => ({
+									...prev,
+									reason: "",
+								}));
+							}}
+						/>
+					</form>
+				</>
+			}
+			footer={
+				<>
+					<Button
+						variant="bordered"
+						startContent={<XMarkIcon className="h-6" />}
+						onClick={() => setActive(false)}
+					>
+						Cancelar
+					</Button>
+					<Button
+						color={success ? "success" : "danger"}
+						type="submit"
+						form="report-post"
+						isLoading={loading}
+						isDisabled={loading || success}
+						aria-label="salvar-perfil"
+						startContent={
+							loading ? (
+								""
+							) : success ? (
+								<CheckIcon className="h-6" />
+							) : (
+								<FlagIcon className="h-6" />
+							)
+						}
+					>
+						Reportar
+					</Button>
+				</>
+			}
+		/>
 	);
 }

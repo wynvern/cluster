@@ -44,7 +44,7 @@ export async function createPost(
 		}
 	}
 
-	return "post-created";
+	return data;
 }
 
 // Fetches the bookmarks for the session user for optimization purposes

@@ -1,5 +1,7 @@
 import { createBlob } from "@/lib/blob";
 import { db } from "@/lib/db";
+import { fetchGroupSettings } from "@/lib/db/group/groupManagement";
+import { memberHasPermission } from "@/lib/db/group/groupUtils";
 import { compressImage } from "@/lib/image";
 import { NextResponse } from "next/server";
 
@@ -22,6 +24,24 @@ async function getUserIdsFromChat(chatId: string): Promise<string[]> {
 export async function POST(req: Request) {
 	const body = await req.json();
 	const mediaUrl = [];
+	console.log(body);
+
+	const permission = await memberHasPermission(
+		body.userId,
+		body.chat.group.groupname,
+		"moderator"
+	);
+	const groupSettings = await fetchGroupSettings({
+		groupname: body.chat.group.groupname,
+	});
+
+	console.log(permission, body.userId);
+
+	if (!permission && !groupSettings?.chatEnabled) {
+		return NextResponse.json({
+			error: "You do not have permission to send messages in this chat",
+		});
+	}
 
 	const newMessage = await db.message.create({
 		data: {

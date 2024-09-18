@@ -68,6 +68,16 @@ export default function ChatWrapper({
 				}));
 			}
 		);
+
+		socket.on("receiveMessage", (message: MessageProps) => {
+			setLastMessages((prev) => ({
+				...prev,
+				[message.chatId]: {
+					username: message.user.username || "Anônimo",
+					content: message.content || "Imagem",
+				},
+			}));
+		});
 	}, [socket]);
 
 	const truncateMessage = (message: string, maxLength: number) => {
@@ -79,7 +89,7 @@ export default function ChatWrapper({
 
 	return (
 		<div className="flex justify-center w-full h-full">
-			<div className="side-borders w-full max-w-[1200px] h-full relative flex">
+			<div className="side-borders w-full max-w-[1200px] h-full relative flex resize-x">
 				<div
 					className={`w-1/3 ${
 						isSmallScreen && path.endsWith("chat") ? "w-full" : ""

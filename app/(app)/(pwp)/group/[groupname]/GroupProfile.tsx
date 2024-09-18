@@ -3,8 +3,18 @@ import type Group from "@/lib/db/group/type";
 import GroupActions from "./GroupActions";
 // @ts-ignore
 import { Image as NextImage } from "next/image";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { memberHasPermission } from "@/lib/db/group/groupUtils";
 
 export default async function GroupProfile({ group }: { group: Group }) {
+	const session = await getServerSession(authOptions);
+	const isModerator = await memberHasPermission(
+		session?.user.id || "",
+		group.groupname,
+		"moderator"
+	);
+
 	return (
 		<div className="w-full">
 			{/* Banner */}
@@ -34,7 +44,7 @@ export default async function GroupProfile({ group }: { group: Group }) {
 			{/* Information */}
 			<div className="w-full px-4 sm:px-10 flex flex-col gap-y-2 sm:gap-y-4">
 				<div className="w-full h-20 flex items-center justify-end gap-x-4">
-					<GroupActions group={group} />
+					<GroupActions group={group} isModerator={isModerator} />
 				</div>
 				<div>
 					<h1 style={{ lineHeight: "40px" }}>{group.name}</h1>

@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type Group from "./type";
 import { memberHasPermission } from "./groupUtils";
+import { io } from "socket.io-client";
 
 // Checks if the groupname is valid
 function isValidGroupname(str: string) {
@@ -230,9 +231,6 @@ export async function reportGroup(
 
 // Fetches the settings of a group
 export async function fetchGroupSettings({ groupname }: { groupname: string }) {
-	const session = await getServerSession(authOptions);
-	if (!session) return null;
-
 	const groupSettings = await db.groupSetting.findFirst({
 		where: { group: { groupname } },
 	});
@@ -247,10 +245,12 @@ export async function updateGroupSetting({
 	groupname,
 	memberPosting,
 	memberJoining,
+	chatEnabled,
 }: {
 	groupname: string;
 	memberPosting: boolean;
 	memberJoining: boolean;
+	chatEnabled: boolean;
 }) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
@@ -266,8 +266,26 @@ export async function updateGroupSetting({
 
 	await db.groupSetting.update({
 		where: { groupId: group.id },
-		data: { memberPosting, memberJoining },
+		data: { memberPosting, memberJoining, chatEnabled },
 	});
 
+	emitChatEnabledStatus({ status: chatEnabled, groupname });
+
 	return "ok";
+}
+
+async function emitChatEnabledStatus({
+	status,
+	groupname,
+}: {
+	status: boolean;
+	groupname: string;
+}) {
+	const chatId = await db.groupChat.findFirst({
+		where: { group: { groupname } },
+		select: { id: true },
+	});
+	// TODO: Validate if the actual server is sending this emit
+	const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "");
+	socket.emit("chatEnabledStatus", { chatId: chatId?.id, status });
 }

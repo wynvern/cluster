@@ -1,5 +1,6 @@
 import ReportGroup from "@/components/modal/ReportGroup";
 import {
+	ArrowUpRightIcon,
 	BellIcon,
 	EllipsisHorizontalIcon,
 	FlagIcon,
@@ -27,9 +28,22 @@ export default function GroupChatDropdown({ group }: { group: any }) {
 				{/* @ts-ignore */}
 				<DropdownMenu>
 					<DropdownItem
+						description="Ir para a página do grupo."
+						startContent={
+							<ArrowUpRightIcon
+								className="h-6"
+								aria-label="Sign Out"
+							/>
+						}
+						aria-label="go to group"
+						href={`/group/${group.groupname}`}
+					>
+						Ir para o grupo
+					</DropdownItem>
+					<DropdownItem
 						description="Silenciar grupo"
 						startContent={
-							<BellIcon className="h-8" aria-label="Sign Out" />
+							<BellIcon className="h-6" aria-label="Sign Out" />
 						}
 						aria-label="mute group"
 					>
@@ -38,7 +52,7 @@ export default function GroupChatDropdown({ group }: { group: any }) {
 					<DropdownItem
 						description="Reportar grupo"
 						startContent={
-							<FlagIcon className="h-8" aria-label="Sign Out" />
+							<FlagIcon className="h-6" aria-label="Sign Out" />
 						}
 						aria-label="report group"
 						onClick={() => setReportGroup(true)}

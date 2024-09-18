@@ -36,6 +36,7 @@ export default function GeneralSettings({
 				groupname: params.groupname,
 				memberJoining: groupSettings.memberJoining,
 				memberPosting: groupSettings.memberPosting,
+				chatEnabled: groupSettings.chatEnabled,
 			});
 	}
 
@@ -114,6 +115,7 @@ export default function GeneralSettings({
 										...groupSettings,
 										chatEnabled: selected,
 									});
+									console.log(selected);
 								}}
 								isSelected={groupSettings?.chatEnabled || false}
 							/>

@@ -80,6 +80,7 @@ export async function createComment({
 					title: `u/${session.user.username} comentou em seu post`,
 					body: `${text.slice(0, 50)}`,
 					url: `/post/${postId}`,
+					image: session.user.image || "/brand/default-avatar.svg",
 				},
 			});
 		}
@@ -99,6 +100,7 @@ export async function createComment({
 					title: `u/${session.user.username} respondeu seu comentário`,
 					body: `${text.slice(0, 50)}`,
 					url: `/post/${postId}`,
+					image: session.user.image || "/brand/default-avatar.svg",
 				},
 			});
 		}

@@ -20,8 +20,10 @@ import { usePathname } from "next/navigation";
 
 export default function SidebarItems({
 	previousNotifications,
+	userData,
 }: {
 	previousNotifications: any;
+	userData: any;
 }) {
 	const path = usePathname();
 
@@ -126,7 +128,7 @@ export default function SidebarItems({
 					</Link>
 				</div>
 				<div>
-					<ProfileDropdown />
+					<ProfileDropdown userData={userData} />
 				</div>
 			</div>
 		</div>

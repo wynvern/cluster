@@ -18,18 +18,27 @@ import {
 import { useSession } from "next-auth/react";
 import UserAvatar from "../user/UserAvatar";
 
-export default function ProfileDropdown({ onClick }: { onClick?: () => void }) {
+export default function ProfileDropdown({
+	onClick,
+	userData,
+}: {
+	onClick?: () => void;
+	userData: any;
+}) {
 	const [signOutModal, setSignOutModal] = useState(false);
-	const session = useSession();
+	console.log(userData);
 
 	return (
 		<>
 			<div className="flex w-full justify-between items-center pr-4">
 				<div className="flex gap-x-4 items-center">
-					<UserAvatar avatarURL={session.data?.user.image} />
+					<UserAvatar avatarURL={userData.image} />
 					<div className="flex flex-col">
-						<p className=" sidebar-inside">
-							u/{session.data?.user.username}
+						<b className="sidebar-inside min-w-[200px]">
+							{userData.name}
+						</b>
+						<p className="second-foreground sidebar-inside">
+							u/{userData.username}
 						</p>
 					</div>
 				</div>
@@ -55,7 +64,7 @@ export default function ProfileDropdown({ onClick }: { onClick?: () => void }) {
 									/>
 								}
 								aria-label="View profile"
-								href={`/user/${session.data?.user.username}`}
+								href={`/user/${userData.username}`}
 							>
 								Perfil
 							</DropdownItem>

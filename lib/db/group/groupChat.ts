@@ -52,7 +52,6 @@ export async function deleteMessage(messageId: string) {
 	const message = await db.message.findFirst({
 		where: {
 			id: messageId,
-			userId: session.user.id,
 		},
 		include: {
 			chat: {

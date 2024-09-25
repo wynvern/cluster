@@ -6,6 +6,7 @@ import { BellIcon as BoldBellIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import Notifications from "../modal/Notifications";
 import { Link } from "@nextui-org/react";
+import { dimissNotifications } from "@/lib/notification";
 
 interface NotificationProps {
 	previousNotifications: any;
@@ -19,18 +20,30 @@ export default function NotificationsButton({
 	onClick,
 }: NotificationProps) {
 	const socket = useSocket();
-	const [notifications, setNotifications] = useState([
-		...previousNotifications,
-	]);
+	const [notifications, setNotifications] = useState(previousNotifications);
 	const [openNotifications, setOpenNotifications] = useState(false);
 
 	useEffect(() => {
 		if (!socket) return;
 
 		socket.on("newNotification", (data) => {
-			setNotifications((prev) => [...prev, data]);
+			console.log(data);
+			setNotifications((prev) => [...prev, data.message]);
 		});
 	}, [socket]);
+
+	useEffect(() => {
+		async function handler() {
+			if (openNotifications) {
+				setNotifications((prev) =>
+					prev.map((n) => ({ ...n, viewed: true }))
+				);
+				dimissNotifications();
+			}
+		}
+
+		handler();
+	}, [openNotifications]);
 
 	return (
 		<>
@@ -51,7 +64,9 @@ export default function NotificationsButton({
 								scale: "0.9",
 							}}
 						>
-							<b>{notifications.length}</b>
+							<b>
+								{notifications.filter((n) => !n.viewed).length}
+							</b>
 						</div>
 					)}
 					{openNotifications ? (
@@ -72,6 +87,7 @@ export default function NotificationsButton({
 			</Link>
 
 			<Notifications
+				defaultNotifications={notifications}
 				isActive={openNotifications}
 				setIsActive={setOpenNotifications}
 			/>

@@ -19,7 +19,7 @@ import NotificationsButton from "./NotificationsButton";
 import { usePathname } from "next/navigation";
 import { useSidebarStore } from "@/hooks/MobileHomeSidebar";
 
-export default function HomeSidebar() {
+export default function HomeSidebar({ userData }: { userData: any }) {
 	const isSidebarOpen = useSidebarStore((state) => state.isSidebarOpen);
 	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
 	const path = usePathname();
@@ -159,6 +159,7 @@ export default function HomeSidebar() {
 					<div>
 						<ProfileDropdown
 							onClick={() => setIsSidebarOpen(false)}
+							userData={userData}
 						/>
 					</div>
 				</div>

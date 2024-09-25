@@ -44,16 +44,26 @@ export default function ({ message }: { message: MessageProps }) {
 			description: "Tem certeza que deseja excluír essa mensagem?",
 			onCancel: () => {},
 			onConfirm: async () => {
-				await deleteMessage(message.id);
-				if (socket) {
-					socket.emit("deleteMessage", {
-						id: message.id,
-						chatId: message.chatId,
-					});
+				const r = await deleteMessage(message.id);
+				switch (r) {
+					case "ok":
+						{
+							if (socket) {
+								socket.emit("deleteMessage", {
+									id: message.id,
+									chatId: message.chatId,
+								});
+							}
+							toast.success("Mensagem excluída com sucesso", {
+								autoClose: 3000,
+							});
+						}
+						break;
+					default:
+						toast.error("Erro ao excluir mensagem", {
+							autoClose: 3000,
+						});
 				}
-				toast.success("Mensagem excluída com sucesso", {
-					autoClose: 3000,
-				});
 			},
 		});
 	}
@@ -94,7 +104,8 @@ export default function ({ message }: { message: MessageProps }) {
 
 	return (
 		<div className="flex items-center gap-x-4 ml-2">
-			<Dropdown>
+			{/* @ts-ignore */}
+			<Dropdown backdrop="blur">
 				<DropdownTrigger>
 					<Button size="sm" color="secondary" isIconOnly={true}>
 						<EllipsisHorizontalIcon className="h-6" />

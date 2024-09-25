@@ -93,3 +93,19 @@ async function sendLiveSocketNotification({
 		message,
 	});
 }
+
+export async function dimissNotifications() {
+	const session = await getServerSession(authOptions);
+	if (!session?.user.id || !session.user) return false;
+
+	await db.notification.updateMany({
+		where: {
+			userId: session.user.id,
+		},
+		data: {
+			viewed: true,
+		},
+	});
+
+	return "ok";
+}

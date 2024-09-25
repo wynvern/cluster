@@ -71,16 +71,13 @@ activateEvent();
 
 // For notifications
 self.addEventListener("push", (event) => {
-	const data = event.data.json();
-	const title = data.title;
-	const body = data.body;
-	const icon = "/brand/logo.svg";
-	const image = data.image;
+	const { title, body, image, url } = event.data.json();
 	const notificationOptions = {
-		body: body,
+		body,
 		tag: "simple-push-notification-example",
-		icon: icon,
-		image: image,
+		icon: "/brand/logo.svg",
+		image,
+		data: { url },
 	};
 
 	event.waitUntil(

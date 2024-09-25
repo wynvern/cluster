@@ -19,7 +19,8 @@ export default function GroupChatDropdown({ group }: { group: any }) {
 
 	return (
 		<>
-			<Dropdown>
+			{/* @ts-ignore */}
+			<Dropdown backdrop="blur">
 				<DropdownTrigger>
 					<Button isIconOnly={true} variant="bordered" s size="sm">
 						<EllipsisHorizontalIcon className="h-6" />

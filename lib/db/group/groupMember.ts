@@ -44,6 +44,7 @@ export async function banMember({
 		message: {
 			title: `Você foi banido do grupo ${groupname}`,
 			body: `Motivo: ${reason}`,
+			image: group.image || undefined,
 		},
 	});
 

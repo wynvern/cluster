@@ -81,11 +81,17 @@ export default async function middleware(req: NextRequest) {
 			rule.redirection.condition && url.pathname.startsWith(rule.location)
 	);
 
-	if (abc === -1) return NextResponse.next();
+	if (abc === -1) {
+		return setCacheControl(NextResponse.next());
+	}
 
-	return NextResponse.redirect(
-		new URL(redirection[abc].redirection.to, req.url)
-	);
+	const redirectUrl = new URL(redirection[abc].redirection.to, req.url);
+	return setCacheControl(NextResponse.redirect(redirectUrl));
+}
+
+function setCacheControl(response: NextResponse): NextResponse {
+	response.headers.set("Cache-Control", "public, max-age=60");
+	return response;
 }
 
 // TODO: Check if is up to date with all the routes

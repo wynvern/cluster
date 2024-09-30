@@ -28,15 +28,15 @@ export default function NotificationsButton({
 
 		socket.on("newNotification", (data) => {
 			console.log(data);
-			setNotifications((prev) => [...prev, data.message]);
+			setNotifications((prev: any) => [...prev, data.message]);
 		});
 	}, [socket]);
 
 	useEffect(() => {
 		async function handler() {
 			if (openNotifications) {
-				setNotifications((prev) =>
-					prev.map((n) => ({ ...n, viewed: true }))
+				setNotifications((prev: any) =>
+					prev.map((n: any) => ({ ...n, viewed: true }))
 				);
 				dimissNotifications();
 			}
@@ -55,7 +55,7 @@ export default function NotificationsButton({
 				}}
 			>
 				<div className="relative">
-					{notifications.filter((n) => !n.viewed).length > 0 && (
+					{notifications.filter((n: any) => !n.viewed).length > 0 && (
 						<div
 							className="rounded-full bg-red-600 text-white flex items-center justify-center absolute w-5 h-5 text-sm right-[-3px] top-[-7px]"
 							style={{
@@ -65,7 +65,10 @@ export default function NotificationsButton({
 							}}
 						>
 							<b>
-								{notifications.filter((n) => !n.viewed).length}
+								{
+									notifications.filter((n: any) => !n.viewed)
+										.length
+								}
 							</b>
 						</div>
 					)}

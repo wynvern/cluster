@@ -214,15 +214,13 @@ export async function deletePost(postId: string) {
 
 	if (!post) return "post-not-found";
 
-	if (
-		post.authorId !== session.user.id ||
-		!(await memberHasPermission(
-			session.user.id,
-			post.group.groupname,
-			"moderator"
-		))
-	)
-		return "unauthorized";
+	const permission = await memberHasPermission(
+		session.user.id,
+		post.group.groupname,
+		"moderator"
+	);
+
+	if (!permission && post.authorId !== session.user.id) return "unauthorized";
 
 	await db.post.delete({
 		where: { id: postId },

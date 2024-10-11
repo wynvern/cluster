@@ -6,7 +6,7 @@ import {
 	EnvelopeIcon,
 	KeyIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Image, Input, Link, Progress } from "@nextui-org/react";
+import { Button, Image, Input, Link } from "@nextui-org/react";
 import { type SignInResponse, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +15,8 @@ import PasswordInput from "@/components/auth/PasswordInput";
 import GoogleLoginButton from "@/components/auth/GLoginButton";
 import ErrorBox from "@/components/general/ErrorBox";
 import LogoTitle from "@/components/general/LogoTitle";
+import { useMediaQuery } from "react-responsive";
+import { toast } from "react-toastify";
 
 export default function Login() {
 	const [loading, setLoading] = useState(false);
@@ -30,6 +32,7 @@ export default function Login() {
 		active: false,
 	});
 	const [progress, setProgress] = useState(0);
+	const isSmallScreen = useMediaQuery({ maxWidth: 700 });
 
 	function validateForm(email: string, password: string, numberval: string) {
 		const errors = {
@@ -114,9 +117,9 @@ export default function Login() {
 				});
 				break;
 			case "different-sign-in-provider":
-				setGeneralError(
-					"Este email está conectado com outro provedor."
-				);
+				toast.error("Você já está logado com outro provedor.", {
+					autoClose: 3000,
+				});
 				break;
 			default:
 				setSuccess(true);
@@ -141,16 +144,16 @@ export default function Login() {
 			<div className={"w-dvw h-dvh flex justify-between absolute"}>
 				<div className="grow h-full object-cover sidebar-border hidden sm:hidden relative md:block">
 					<Image
-						src="/brand/background-5.png"
+						src="/brand/background.jpg"
 						className="w-full h-full rounded-none object-cover"
 						removeWrapper={true}
 					/>
-					<div className="absolute bottom-10 left-10 z-10 invert">
+					<div className="absolute bottom-10 left-10 z-10">
 						<LogoTitle />
 					</div>
 				</div>
-				<div className="h-full min-w-[600px] grow">
-					<AuthModalWrapper title="Entrar">
+				<div className="h-full lg:min-w-[600px] md:min-w-[600px] grow">
+					<AuthModalWrapper title="Entrar" hideLogo={!isSmallScreen}>
 						<form
 							className="gap-y-6 flex flex-col"
 							onSubmit={handleLogin}
@@ -161,7 +164,6 @@ export default function Login() {
 								name="email"
 								color="default"
 								variant="bordered"
-								classNames={{ inputWrapper: "h-12" }}
 								startContent={
 									<EnvelopeIcon className="h-6 text-neutral-500" />
 								}
@@ -180,7 +182,6 @@ export default function Login() {
 								color="default"
 								variant="bordered"
 								name="password"
-								classNames={{ inputWrapper: "h-12" }}
 								startContent={
 									<KeyIcon className="h-6 text-neutral-500" />
 								}
@@ -228,7 +229,6 @@ export default function Login() {
 									color={success ? "success" : "primary"}
 									isDisabled={loading || success}
 									isLoading={loading}
-									className="h-12"
 									startContent={
 										loading ? (
 											""
@@ -248,18 +248,6 @@ export default function Login() {
 							<GoogleLoginButton />
 						</div>
 					</AuthModalWrapper>
-				</div>
-			</div>
-
-			<div
-				className={`absolute loader-modal w-dvw h-dvh bg-background flex items-center justify-center z-50  ${
-					progress === 100 ? "loaded-modal" : ""
-				}`}
-			>
-				<div className="flex gap-y-8 items-center flex-col">
-					<Image src="/brand/logo.svg" />
-					{/* @ts-ignore */}
-					<Progress value={progress} size={"sm"} className="w-40" />
 				</div>
 			</div>
 		</>

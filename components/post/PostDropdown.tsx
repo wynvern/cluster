@@ -230,7 +230,7 @@ export default function PostDropdown({
 		(session && session.data?.user.id === post.authorId) ||
 		(["owner", "moderator"].includes(String(userRole)) && !isUserPage)
 			? {
-					description: "Deletar esse post.",
+					description: "Deletar este post.",
 					className:
 						["moderator", "owner"].includes(String(userRole)) &&
 						session.data?.user.id !== post.authorId
@@ -261,16 +261,32 @@ export default function PostDropdown({
 		await confirm({
 			title: "Excluír post",
 			description: "Tem certeza que deseja excluír o post?",
-			onConfirm: () => {
-				deletePost(post.id);
+			onConfirm: async () => {
+				const result = await deletePost(post.id);
+				console.log(result, "result");
 				// Delete div with id post.id
-				const postElement = document.getElementById(`post-${post.id}`);
-				if (postElement?.parentElement) {
-					postElement.parentElement.remove();
-				}
-				toast.success("Post excluído com sucesso", { autoClose: 3000 });
-				if (window.location.pathname === `/post/${post.id}`) {
-					router.back();
+				switch (result) {
+					case "ok": {
+						const postElement = document.getElementById(
+							`post-${post.id}`
+						);
+						if (postElement?.parentElement) {
+							postElement.parentElement.remove();
+						}
+						toast.success("Post excluído com sucesso", {
+							autoClose: 3000,
+						});
+						if (window.location.pathname === `/post/${post.id}`) {
+							router.back();
+						}
+						break;
+					}
+					default: {
+						toast.error("Erro ao excluir post", {
+							autoClose: 3000,
+						});
+						break;
+					}
 				}
 			},
 			isDanger: true,

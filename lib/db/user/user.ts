@@ -364,3 +364,26 @@ export async function updateUserSettings({
 
 	return "ok";
 }
+
+export async function fetchUserReports() {
+	const session = await getServerSession(authOptions);
+	if (!session) return "no-session";
+
+	const reports = await db.userReport.findMany({
+		select: {
+			content: true,
+			title: true,
+			createdAt: true,
+			reportedUser: {
+				select: {
+					id: true,
+					name: true,
+					username: true,
+					image: true,
+				},
+			},
+		},
+	});
+
+	return reports;
+}

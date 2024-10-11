@@ -9,21 +9,10 @@ import type Post from "@/lib/db/post/type";
 import { searchGroup, searchPost, searchUser } from "@/lib/db/search/Search";
 import type User from "@/lib/db/user/type";
 import { Image, Input, Tab, Tabs, user } from "@nextui-org/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import _ from "lodash";
 
-function debounce(func: any, wait: number) {
-	let timeout: string | number | NodeJS.Timeout | undefined;
-
-	return function executedFunction(...args: any[]) {
-		const later = () => {
-			clearTimeout(timeout);
-			func(...args);
-		};
-
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-	};
-}
+let searchString = "";
 
 export default function SearchPage() {
 	const [selectedCat, setSelectedCat] = useState<
@@ -46,6 +35,7 @@ export default function SearchPage() {
 	}>({});
 
 	async function handleSearch(searchParam: string) {
+		console.log("searchParam", searchParam);
 		const selectedKey = ["post", "group", "user", "comment"][
 			Number.parseInt(selectedCat.split(".")[1])
 		];
@@ -113,14 +103,21 @@ export default function SearchPage() {
 		setResults((prev) => ({ ...prev, posts }));
 	}
 
+	const makeSearch = useCallback(
+		_.throttle(() => handleSearch(searchString), 1000),
+		[]
+	);
+
 	return (
 		<div className="flex justify-center w-full h-full">
 			<div className="side-borders w-full max-w-[100vw] sm:max-w-[1000px] h-full relative pt-10">
 				<div className="px-4 sm:px-10 pb-4">
 					<Input
 						placeholder="Pesquisar"
-						onChange={(e: any) => {
-							debounce(handleSearch(e.target.value), 1000);
+						onValueChange={(e: string) => {
+							searchString = e;
+							console.log("searchString", searchString);
+							makeSearch();
 						}}
 					/>
 				</div>

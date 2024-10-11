@@ -3,6 +3,7 @@
 import AuthModalWrapper from "@/components/auth/AuthModalWrapper";
 import GoogleLoginButton from "@/components/auth/GLoginButton";
 import PasswordInput from "@/components/auth/PasswordInput";
+import LogoTitle from "@/components/general/LogoTitle";
 import { createUser } from "@/lib/db/user/user";
 import {
 	CheckIcon,
@@ -10,6 +11,7 @@ import {
 	KeyIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
+import { Image } from "@nextui-org/react";
 import { Button, Input, Link } from "@nextui-org/react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -114,6 +116,7 @@ export default function SignUp() {
 		setLoading(false);
 	}
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (session.data?.user.id) {
 			router.push("/");
@@ -121,86 +124,109 @@ export default function SignUp() {
 	}, [session]);
 
 	return (
-		<AuthModalWrapper title="Criar conta">
-			<form className="gap-y-6 flex flex-col" onSubmit={handleSignUp}>
-				<Input
-					placeholder="Email"
-					type="text"
-					name="email"
-					isInvalid={Boolean(inputError.email)}
-					errorMessage={inputError.email}
-					classNames={{ inputWrapper: "h-12" }}
-					startContent={
-						<EnvelopeIcon className="h-6 text-neutral-500" />
-					}
-					onValueChange={() => {
-						setInputError({ ...inputError, email: "" });
-					}}
-					variant="bordered"
-				/>
-				<PasswordInput
-					placeholder="Senha"
-					name="password"
-					isInvalid={Boolean(inputError.password)}
-					errorMessage={inputError.password}
-					startContent={<KeyIcon className="h-6 text-neutral-500" />}
-					variant="bordered"
-					classNames={{ inputWrapper: "h-12" }}
-					onValueChange={() => {
-						setInputError({ ...inputError, password: "" });
-					}}
-				/>
-				<PasswordInput
-					placeholder="Senha novamente"
-					name="repeat-password"
-					variant="bordered"
-					classNames={{ inputWrapper: "h-12" }}
-					startContent={<KeyIcon className="h-6 text-neutral-500" />}
-					isInvalid={Boolean(inputError.repeatPassword)}
-					errorMessage={inputError.repeatPassword}
-					onValueChange={() => {
-						setInputError({
-							...inputError,
-							repeatPassword: "",
-						});
-					}}
-				/>
-				<Input
-					name="numberval"
-					type="text"
-					placeholder="Número de Telefone"
-					className="absolute left-0 -top-40"
-				/>
-
-				<div className="flex justify-between items-center">
-					<div>
-						<p className="text-center">
-							<Link href="/signin">Fazer Login</Link>
-						</p>
+		<>
+			<div className={"w-dvw h-dvh flex justify-between absolute"}>
+				<div className="grow h-full object-cover sidebar-border hidden sm:hidden relative md:block">
+					<Image
+						src="/brand/background.jpg"
+						className="w-full h-full rounded-none object-cover"
+						removeWrapper={true}
+					/>
+					<div className="absolute bottom-10 left-10 z-10">
+						<LogoTitle />
 					</div>
-					<Button
-						type="submit"
-						color={success ? "success" : "primary"}
-						isLoading={loading}
-						isDisabled={loading || success}
-						startContent={
-							loading ? (
-								""
-							) : success ? (
-								<CheckIcon className="h-6" />
-							) : (
-								<PencilSquareIcon className="h-6" />
-							)
-						}
-					>
-						Criar Conta
-					</Button>
 				</div>
-			</form>
-			<div className="flex flex-col gap-y-6 items-center">
-				<p className="text-center">Ou</p>
-				<GoogleLoginButton />
+				<div className="h-full lg:min-w-[600px] md:min-w-[600px] grow">
+					<AuthModalWrapper title="Criar conta">
+						<form
+							className="gap-y-6 flex flex-col"
+							onSubmit={handleSignUp}
+						>
+							<Input
+								placeholder="Email"
+								type="text"
+								name="email"
+								isInvalid={Boolean(inputError.email)}
+								errorMessage={inputError.email}
+								startContent={
+									<EnvelopeIcon className="h-6 text-neutral-500" />
+								}
+								onValueChange={() => {
+									setInputError({ ...inputError, email: "" });
+								}}
+								variant="bordered"
+							/>
+							<PasswordInput
+								placeholder="Senha"
+								name="password"
+								isInvalid={Boolean(inputError.password)}
+								errorMessage={inputError.password}
+								startContent={
+									<KeyIcon className="h-6 text-neutral-500" />
+								}
+								variant="bordered"
+								onValueChange={() => {
+									setInputError({
+										...inputError,
+										password: "",
+									});
+								}}
+							/>
+							<PasswordInput
+								placeholder="Senha novamente"
+								name="repeat-password"
+								variant="bordered"
+								startContent={
+									<KeyIcon className="h-6 text-neutral-500" />
+								}
+								isInvalid={Boolean(inputError.repeatPassword)}
+								errorMessage={inputError.repeatPassword}
+								onValueChange={() => {
+									setInputError({
+										...inputError,
+										repeatPassword: "",
+									});
+								}}
+							/>
+							<Input
+								name="numberval"
+								type="text"
+								placeholder="Número de Telefone"
+								className="absolute left-0 -top-40"
+							/>
+
+							<div className="flex justify-between items-center">
+								<div>
+									<p className="text-center">
+										<Link href="/signin">Fazer Login</Link>
+									</p>
+								</div>
+								<Button
+									type="submit"
+									color={success ? "success" : "primary"}
+									isLoading={loading}
+									isDisabled={loading || success}
+									startContent={
+										loading ? (
+											""
+										) : success ? (
+											<CheckIcon className="h-6" />
+										) : (
+											<PencilSquareIcon className="h-6" />
+										)
+									}
+								>
+									Criar Conta
+								</Button>
+							</div>
+						</form>
+						<div className="flex flex-col gap-y-6 items-center">
+							<p className="text-center">Ou</p>
+							<GoogleLoginButton />
+						</div>
+					</AuthModalWrapper>
+				</div>
 			</div>
-		</AuthModalWrapper>
+		</>
 	);
 }

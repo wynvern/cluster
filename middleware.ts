@@ -90,7 +90,6 @@ export default async function middleware(req: NextRequest) {
 }
 
 function setCacheControl(response: NextResponse): NextResponse {
-	response.headers.set("Cache-Control", "public, max-age=60");
 	return response;
 }
 

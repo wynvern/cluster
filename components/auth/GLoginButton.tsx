@@ -9,9 +9,8 @@ export default function GoogleLoginButton() {
 	const [loadingGoogle, setLoadingGoogle] = useState(false);
 
 	async function signInGoogle() {
-		const result = await signIn("google", {
-			callbackUrl: "/",
-		});
+		const result = await signIn("google", { callbackUrl: "/" });
+		console.log(result);
 	}
 
 	return (
@@ -20,7 +19,7 @@ export default function GoogleLoginButton() {
 				setLoadingGoogle(true);
 				signInGoogle();
 			}}
-			className="max-w-fit h-12"
+			className="max-w-fit"
 			variant="bordered"
 			isLoading={loadingGoogle}
 			startContent={

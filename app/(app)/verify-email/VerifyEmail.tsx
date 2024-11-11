@@ -64,7 +64,7 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 		<AuthModalWrapper
 			title="Verificar email"
 			subtitle={`Digite o código enviado para o email ${privateEmail(
-				session.data?.user?.email || ""
+				session.data?.user?.email || "",
 			)}`}
 		>
 			<form className="gap-y-6 flex flex-col" onSubmit={handleVerifyCode}>
@@ -79,10 +79,7 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 					variant="bordered"
 				/>
 				<div className="flex items-center justify-between">
-					<Link
-						onClick={() => signOut()}
-						className="w-full text-center"
-					>
+					<Link onClick={() => signOut()} className="w-full text-center">
 						Sair
 					</Link>{" "}
 					<Button

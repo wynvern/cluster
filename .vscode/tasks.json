@@ -32,12 +32,15 @@
 			"label": "Socket",
 			"type": "shell",
 			"icon": { "color": "terminal.ansiGreen", "id": "gear" },
-			"command": "cd /home/wynvern/Documents/projects/main/Cluster/cluster-socket && bun --bun run start; exec bash",
+			"command": "yarn start",
 			"isBackground": true,
 			"problemMatcher": [],
 			"presentation": {
 				"group": "my-group",
 				"close": true
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/../cluster-socket"
 			}
 		}
 	]

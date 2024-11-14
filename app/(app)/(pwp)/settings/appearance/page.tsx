@@ -46,14 +46,15 @@ export default function ({ params }: { params: { groupname: string } }) {
 
 	return (
 		<div>
-			<PageHeader title="Geral" />
+			<PageHeader showBackButton={true} title="Geral" />
 			{settings ? (
 				<>
 					<div className="flex items-center justify-between bottom-border px-4 sm:px-10 py-4">
 						<div>
 							<h2>Tema</h2>
 							<p className="font-normal">
-								Escolha o tema da aplicação.
+								Escolha o tema da aplicação. Alterne entre o modo claro e
+								escuro.
 							</p>
 						</div>
 						<div>
@@ -66,11 +67,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 									});
 									setTheme(selected ? "dark" : "light");
 								}}
-								isSelected={
-									settings?.theme === "dark"
-										? true
-										: false || false
-								}
+								isSelected={settings?.theme === "dark" ? true : false || false}
 							/>
 						</div>
 					</div>

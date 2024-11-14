@@ -7,6 +7,9 @@ import {
 	DocumentIcon,
 } from "@heroicons/react/24/outline";
 import PrettyDate from "../general/PrettyDate";
+import { useImageCarousel } from "@/providers/ImageDisplay";
+import MediaDisplayPost from "../post/MediaDisplayPost";
+import { useState } from "react";
 
 interface commentCommentProps {
 	comment: RecursiveComments;
@@ -14,16 +17,16 @@ interface commentCommentProps {
 }
 
 export default function ({ comment, setReplyActive }: commentCommentProps) {
+	const { openCarousel } = useImageCarousel();
+	const [mediaIndex, setMediaIndex] = useState(0);
+
 	return (
 		<div className="w-full flex flex-col">
 			<div className="w-full justify-between flex items-start">
 				{/* Author */}
 				<div className="flex gap-x-4 items-start">
 					<Link href={`/user/${comment.author.username}`}>
-						<UserAvatar
-							size="10"
-							avatarURL={comment.author.image}
-						/>
+						<UserAvatar size="10" avatarURL={comment.author.image} />
 					</Link>
 					<div className="flex flex-col">
 						<div className="flex items-center gap-x-2">
@@ -57,9 +60,7 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 				{comment.document && comment.document.length > 0 ? (
 					<div className="flex gap-x-2">
 						{comment.document.map((doc, index) => {
-							const docName = new URL(doc).pathname
-								.split("/")
-								.pop();
+							const docName = new URL(doc).pathname.split("/").pop();
 							if (!docName) return null;
 							const docNameWithoutSuffix = docName
 								.split("-")
@@ -82,9 +83,19 @@ export default function ({ comment, setReplyActive }: commentCommentProps) {
 				)}
 				{/* Image */}
 				{comment.media && comment.media.length > 0 ? (
-					<div>
-						<p>temp</p>
-					</div>
+					<Link
+						href={""}
+						className="mt-4"
+						onClick={() => {
+							openCarousel(comment.media, mediaIndex);
+						}}
+					>
+						<MediaDisplayPost
+							setIndex={(i) => setMediaIndex(i)}
+							media={comment.media}
+							index={mediaIndex}
+						/>
+					</Link>
 				) : (
 					""
 				)}

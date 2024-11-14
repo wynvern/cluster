@@ -5,11 +5,14 @@ import type RecursiveComments from "./type";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { sendNotification } from "@/lib/notification";
+import { FileBase64Info } from "@/util/getFile";
+import { createBlob } from "@/lib/blob";
+import { compressImage } from "@/lib/image";
 
 async function recursiveFetchComments(
 	postId: string,
 	parentId?: string,
-	level = 0
+	level = 0,
 ) {
 	if (level > 4) {
 		return [];
@@ -40,7 +43,7 @@ async function recursiveFetchComments(
 		comment.children = await recursiveFetchComments(
 			postId,
 			comment.id,
-			level + 1
+			level + 1,
 		);
 	}
 	return comments;
@@ -90,10 +93,7 @@ export async function createComment({
 			select: { authorId: true },
 		});
 
-		if (
-			parentComment?.authorId &&
-			parentComment.authorId !== session.user.id
-		) {
+		if (parentComment?.authorId && parentComment.authorId !== session.user.id) {
 			sendNotification({
 				receiverUserId: parentComment?.authorId,
 				message: {
@@ -106,13 +106,29 @@ export async function createComment({
 		}
 	}
 
+	let newMediaUrls = [];
+
+	if (media) {
+		newMediaUrls = [];
+
+		for (const mediaItem of media) {
+			const buffer = Buffer.from(mediaItem, "base64");
+			const compressedImage = await compressImage(buffer);
+			const blobUrl = await createBlob(compressedImage, "comment", {
+				type: "image/jpeg", // Assuming the media type is jpeg, adjust as necessary
+				name: `${session.user.id}-image-${media.indexOf(mediaItem)}.jpeg`,
+			});
+			newMediaUrls.push(blobUrl);
+		}
+	}
+
 	return await db.comment.create({
 		data: {
 			text,
 			authorId: session?.user.id,
 			postId,
 			parentId,
-			media,
+			media: newMediaUrls,
 			document,
 		},
 		include: {

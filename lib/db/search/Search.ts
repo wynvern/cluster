@@ -8,7 +8,6 @@ import {
 	postSelection,
 	userSelection,
 } from "../prismaSelections";
-import { title } from "process";
 
 export async function searchUser(searchParam: string) {
 	const session = await getServerSession(authOptions);
@@ -16,10 +15,20 @@ export async function searchUser(searchParam: string) {
 
 	const users = await db.user.findMany({
 		where: {
-			username: {
-				contains: searchParam,
-				mode: "insensitive",
-			},
+			OR: [
+				{
+					username: {
+						contains: searchParam,
+						mode: "insensitive",
+					},
+				},
+				{
+					name: {
+						contains: searchParam,
+						mode: "insensitive",
+					},
+				},
+			],
 		},
 		select: userSelection(),
 	});
@@ -35,10 +44,20 @@ export async function searchGroup(searchParam: string) {
 
 	const groups = await db.group.findMany({
 		where: {
-			groupname: {
-				contains: searchParam,
-				mode: "insensitive",
-			},
+			OR: [
+				{
+					groupname: {
+						contains: searchParam,
+						mode: "insensitive",
+					},
+				},
+				{
+					name: {
+						contains: searchParam,
+						mode: "insensitive",
+					},
+				},
+			],
 		},
 		select: groupSelection(),
 	});

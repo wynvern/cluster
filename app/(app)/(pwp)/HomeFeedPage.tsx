@@ -14,7 +14,9 @@ import { useState } from "react";
 export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 	const [posts, setPosts] = useState<Post[]>(firstPosts);
 	const [loading, setLoading] = useState(false);
-	const [offset, setOffset] = useState(10);
+	const [offset, setOffset] = useState(
+		Number.parseInt(process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"),
+	);
 	const [noMoreData, setNoMoreData] = useState(false);
 	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
 
@@ -25,7 +27,10 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 
 		const newPosts = await fetchUserFeed(offset);
 		if (typeof newPosts === "string") return;
-		setOffset(offset + 10);
+		setOffset(
+			offset +
+				Number.parseInt(process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"),
+		);
 
 		if (newPosts.length === 0) {
 			setNoMoreData(true);
@@ -61,6 +66,11 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 					</Button>
 				</PageHeader>
 				<PostList posts={posts} isUserPage={false} />
+				{!loading && (
+					<div className="my-6">
+						<InfoMessage message="Não há mais posts para mostrar." />
+					</div>
+				)}
 			</div>
 		</ScrollPagination>
 	);

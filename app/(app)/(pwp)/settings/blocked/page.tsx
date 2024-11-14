@@ -50,35 +50,39 @@ export default function ({ params }: { params: { groupname: string } }) {
 
 	return (
 		<div>
-			<PageHeader title="Geral" />
-			<div className="pt-10 px-4 sm:px-10">
+			<PageHeader showBackButton={true} title="Geral" />
+			<div className="pt-10 px-4 sm:px-10 flex items-center justify-center">
 				{users ? (
-					<Table>
-						<TableHeader>
-							<TableColumn>Nome de usuário</TableColumn>
-							<TableColumn>Ações</TableColumn>
-						</TableHeader>
-						<TableBody>
-							{users.map((user) => (
-								<TableRow key={user.id}>
-									<TableCell>{user.username}</TableCell>
-									<TableCell>
-										<div className="flex gap-x-2">
-											<Button
-												isIconOnly={true}
-												color="danger"
-												onClick={() =>
-													handleUnblockUser(user)
-												}
-											>
-												<NoSymbolIcon className="h-6" />
-											</Button>
-										</div>
-									</TableCell>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
+					<>
+						{users.length > 0 ? (
+							<Table>
+								<TableHeader>
+									<TableColumn>Nome de usuário</TableColumn>
+									<TableColumn>Ações</TableColumn>
+								</TableHeader>
+								<TableBody>
+									{users.map((user) => (
+										<TableRow key={user.id}>
+											<TableCell>{user.username}</TableCell>
+											<TableCell>
+												<div className="flex gap-x-2">
+													<Button
+														isIconOnly={true}
+														color="danger"
+														onClick={() => handleUnblockUser(user)}
+													>
+														<NoSymbolIcon className="h-6" />
+													</Button>
+												</div>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						) : (
+							<p>Nenhum usuário bloqueado</p>
+						)}
+					</>
 				) : (
 					<div>
 						<CircularProgress />

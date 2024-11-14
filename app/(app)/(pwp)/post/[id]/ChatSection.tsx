@@ -6,6 +6,9 @@ import UserAvatar from "@/components/user/UserAvatar";
 import { createComment } from "@/lib/db/post/comment/comment";
 import type RecursiveComments from "@/lib/db/post/comment/type";
 import type Post from "@/lib/db/post/type";
+import { type FileBase64Info, getFilesBase64 } from "@/util/getFile";
+import supportedFormats from "@/public/supportedFormats.json";
+
 import {
 	PhotoIcon,
 	PaperAirplaneIcon,
@@ -15,6 +18,7 @@ import {
 import { Button, Textarea } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { useToast } from "react-toastify";
 
 interface ChatSectionProps {
 	post: Post;
@@ -34,14 +38,16 @@ function CommentCreator({
 }) {
 	const [newComment, setNewComment] = useState({ text: "" });
 	const session = useSession();
+	const [selectedMedia, setSelectedMedia] = useState<FileBase64Info[]>([]);
 
 	async function handleCreatePost() {
-		if (!newComment.text) return;
+		if (!newComment.text && !selectedMedia.length) return;
 
 		const createdComment = await createComment({
 			text: newComment.text,
 			postId,
 			parentId,
+			media: selectedMedia.map((media) => media.base64),
 		});
 		if (typeof createdComment === "string") {
 			return;
@@ -54,25 +60,63 @@ function CommentCreator({
 		}
 		addNewComment(createdComment, parentId);
 		setNewComment({ text: "" });
+		setSelectedMedia([]);
+	}
+
+	async function addImage() {
+		if (selectedMedia.length >= 4) return;
+
+		const file = await getFilesBase64(supportedFormats.image);
+
+		if (!file) return;
+
+		if (Array.isArray(file)) {
+			setSelectedMedia([...selectedMedia, ...file]);
+		}
 	}
 
 	return (
 		<div className="flex gap-x-4 items-start w-full mt-6">
 			<UserAvatar size="10" avatarURL={session.data?.user.image} />
-			<Textarea
-				value={newComment.text}
-				onChange={(e: any) => {
-					if (e.target.value.length > 1500) return;
-					setNewComment({ text: e.target.value });
-				}}
-				placeholder="Comente"
-				variant="bordered"
-			/>
+			<div className="grow">
+				<Textarea
+					value={newComment.text}
+					onChange={(e: any) => {
+						if (e.target.value.length > 1500) return;
+						setNewComment({ text: e.target.value });
+					}}
+					placeholder="Comente"
+					variant="bordered"
+				/>
+				<div>
+					{selectedMedia.map((media, index) => (
+						<div key={media.preview} className="h-40 w-auto relative">
+							<Button
+								isIconOnly={true}
+								onClick={() => {
+									setSelectedMedia((prev) =>
+										prev.filter((_, i) => i !== index),
+									);
+								}}
+								className="absolute top-4 left-4"
+							>
+								X
+							</Button>
+							<img
+								src={media.preview}
+								alt="imagasae"
+								className="h-40 w-auto rounded mt-4"
+							/>
+						</div>
+					))}
+				</div>
+			</div>
 			<Button
 				isIconOnly={true}
 				variant="bordered"
 				size="sm"
 				className="p-1"
+				onClick={addImage}
 			>
 				<PhotoIcon className="h-6" />
 			</Button>
@@ -82,7 +126,7 @@ function CommentCreator({
 				isIconOnly={true}
 				variant="bordered"
 				onClick={() => handleCreatePost()}
-				disabled={newComment.text === ""}
+				disabled={!newComment.text && !selectedMedia.length}
 			>
 				<PaperAirplaneIcon className="h-6" />
 			</Button>
@@ -139,9 +183,7 @@ function RenderCommentLevel({
 								size="sm"
 								onClick={() => {
 									if (level > 2) {
-										console.log(
-											"too long inside the level"
-										);
+										console.log("too long inside the level");
 									} else {
 										setVisible(!visible);
 									}
@@ -168,16 +210,14 @@ function RenderCommentLevel({
 							setActiveReplies={setActiveReplies}
 						/>
 					)}
-					{comment.children &&
-						comment.children.length > 0 &&
-						visible && (
-							<RenderCommentLevel
-								level={level + 1}
-								comments={comment.children}
-								postId={postId}
-								addNewComment={addNewComment}
-							/>
-						)}
+					{comment.children && comment.children.length > 0 && visible && (
+						<RenderCommentLevel
+							level={level + 1}
+							comments={comment.children}
+							postId={postId}
+							addNewComment={addNewComment}
+						/>
+					)}
 				</div>
 			))}
 		</div>
@@ -193,13 +233,10 @@ export default function ChatSection({
 		useState<RecursiveComments[]>(initialComments);
 
 	// Function to add a new comment to the state
-	const addNewComment = (
-		newComment: RecursiveComments,
-		parentId?: string
-	) => {
+	const addNewComment = (newComment: RecursiveComments, parentId?: string) => {
 		setComments((prevComments) => {
 			const updateCommentsRecursively = (
-				comments: RecursiveComments[]
+				comments: RecursiveComments[],
 			): RecursiveComments[] => {
 				return comments.map((comment) => {
 					if (comment.id === parentId) {
@@ -211,9 +248,7 @@ export default function ChatSection({
 					if (comment.children) {
 						return {
 							...comment,
-							children: updateCommentsRecursively(
-								comment.children
-							),
+							children: updateCommentsRecursively(comment.children),
 						};
 					}
 					return comment;
@@ -230,10 +265,7 @@ export default function ChatSection({
 	return (
 		<div className="w-full flex gap-x-4 items-start flex-col">
 			<div className="px-4 sm:px-6 w-full pb-6 bottom-border">
-				<CommentCreator
-					postId={post.id}
-					addNewComment={addNewComment}
-				/>
+				<CommentCreator postId={post.id} addNewComment={addNewComment} />
 			</div>
 			<div className="w-full">
 				{comments.length > 0 ? (

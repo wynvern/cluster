@@ -1,5 +1,5 @@
-import { CircularProgress, Spinner } from "@nextui-org/react";
-import { type ReactNode, useEffect, useState, useRef } from "react";
+import { CircularProgress } from "@nextui-org/react";
+import { type ReactNode, useEffect, useState } from "react";
 
 interface ScrollPaginationProps {
 	onBottomReached: (skip: number, take: number) => void;
@@ -15,40 +15,34 @@ export default function ScrollPagination({
 	noMoreData,
 }: ScrollPaginationProps) {
 	const [skip, setSkip] = useState(0);
-	const bottomRef = useRef<HTMLDivElement>(null);
 	const take = Number.parseInt(
-		process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40"
+		process.env.NEXT_PUBLIC_BATCH_FETCH_SIZE || "40",
 	); // Sets the amount to take globally
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		const handleBottomReached = async () => {
+		const handleScroll = () => {
 			if (noMoreData || loading) return;
 
-			setSkip((prevSkip) => prevSkip + take);
-			onBottomReached(skip + take, take);
-		};
+			const scrollTop = document.documentElement.scrollTop;
+			const scrollHeight = document.documentElement.scrollHeight;
+			const clientHeight = document.documentElement.clientHeight;
 
-		const observer = new IntersectionObserver((entries) => {
-			if (entries[0].isIntersecting) handleBottomReached();
-		});
-
-		if (bottomRef.current) {
-			observer.observe(bottomRef.current);
-		}
-
-		return () => {
-			if (bottomRef.current) {
-				observer.unobserve(bottomRef.current);
+			if (scrollTop + clientHeight >= scrollHeight - 5) {
+				setSkip((prevSkip) => prevSkip + take);
+				onBottomReached(skip + take, take);
 			}
 		};
-	}, [loading, noMoreData, skip]);
+
+		window.addEventListener("scroll", handleScroll);
+
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	}, [loading, noMoreData, skip, take, onBottomReached]);
 
 	return (
 		<>
 			{children}
-			{/* Div to check if needs to load more */}
-			<div ref={bottomRef} />
 			{loading && (
 				<div className="w-full flex items-center justify-center h-40">
 					<CircularProgress />

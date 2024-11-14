@@ -84,14 +84,8 @@ export default function HomeSidebar({ userData }: { userData: any }) {
 							</div>
 						</Link>
 						{/* TODO: Load previous notifications */}
-						<NotificationsButton
-							previousNotifications={[]}
-							hasText={true}
-						/>
-						<Link
-							href="/search"
-							className="flex items-center gap-x-4"
-						>
+						<NotificationsButton previousNotifications={[]} hasText={true} />
+						<Link href="/search" className="flex items-center gap-x-4">
 							<div>
 								{path.includes("/search") ? (
 									<SolidMagnifyingGlassIcon className="h-7" />
@@ -101,9 +95,7 @@ export default function HomeSidebar({ userData }: { userData: any }) {
 							</div>
 							<div
 								className={`sidebar-inside ${
-									path.startsWith("/search")
-										? ""
-										: "second-foreground"
+									path.startsWith("/search") ? "" : "second-foreground"
 								}`}
 							>
 								<p>
@@ -111,10 +103,7 @@ export default function HomeSidebar({ userData }: { userData: any }) {
 								</p>
 							</div>
 						</Link>
-						<Link
-							href="/chat"
-							className="flex items-center gap-x-4"
-						>
+						<Link href="/chat" className="flex items-center gap-x-4">
 							<div>
 								{path.includes("/chat") ? (
 									<SolidChatBubbleBottomCenterIcon className="h-7" />
@@ -124,9 +113,7 @@ export default function HomeSidebar({ userData }: { userData: any }) {
 							</div>
 							<div
 								className={`sidebar-inside ${
-									path.startsWith("/chat")
-										? ""
-										: "second-foreground"
+									path.startsWith("/chat") ? "" : "second-foreground"
 								}`}
 							>
 								<p>
@@ -134,10 +121,7 @@ export default function HomeSidebar({ userData }: { userData: any }) {
 								</p>
 							</div>
 						</Link>
-						<Link
-							href="/group"
-							className="flex items-center gap-x-4"
-						>
+						<Link href="/group" className="flex items-center gap-x-4">
 							<div>
 								{path === "/group" ? (
 									<SolidUserGroupIcon className="h-7" />

@@ -1,24 +1,5 @@
 const nextConfig = {
 	reactStrictMode: true,
-
-	// That truly works, but i need to make all pages public
-	async headers() {
-		return [
-			{
-				source: "/:path*{/}?",
-				headers: [
-					{
-						key: "cache-control",
-						value: "public, max-age=3600",
-					},
-					{
-						key: "Cache-Control",
-						value: "public, max-age=3600",
-					},
-				],
-			},
-		];
-	},
 	swcMinify: true,
 	experimental: {
 		serverActions: {

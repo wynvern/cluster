@@ -30,6 +30,7 @@ function UserPostsTab({
 	const [noMoreData, setNoMoreData] = useState(false);
 
 	async function fetchMorePosts(skip: number, take: number) {
+		alert("TO BUSCANDO POSTS PORRA");
 		setLoading(true);
 		const data = await fetchUserPosts(user.id, { skip, take });
 		if (data.length === 0) {
@@ -123,7 +124,7 @@ export default function UserTabs({
 	user,
 }: UserTabsProps) {
 	const [groups, setGroups] = useState<GroupCard[] | null | string>(
-		initialGroups
+		initialGroups,
 	);
 
 	return (
@@ -132,25 +133,13 @@ export default function UserTabs({
 			variant="underlined"
 			className="w-full bottom-border flex items-center justify-center mt-4"
 		>
-			<Tab
-				title={<h3 className="p-2">Posts</h3>}
-				className="px-0 w-full py-0"
-			>
+			<Tab title={<h3 className="p-2">Posts</h3>} className="px-0 w-full py-0">
 				<UserPostsTab initialPosts={initialPosts} user={user} />
 			</Tab>
-			<Tab
-				title={<h3 className="p-2">Salvos</h3>}
-				className="px-0 w-full py-0"
-			>
-				<UserBookmarksTab
-					user={user}
-					initialBookmarks={initialBookmarks}
-				/>
+			<Tab title={<h3 className="p-2">Salvos</h3>} className="px-0 w-full py-0">
+				<UserBookmarksTab user={user} initialBookmarks={initialBookmarks} />
 			</Tab>
-			<Tab
-				title={<h3 className="p-2">Grupos</h3>}
-				className="px-0 w-full py-0"
-			>
+			<Tab title={<h3 className="p-2">Grupos</h3>} className="px-0 w-full py-0">
 				{typeof groups === "string" ? (
 					<div className="my-6">
 						<InfoMessage message="Os grupos que o usuário participa são privados." />

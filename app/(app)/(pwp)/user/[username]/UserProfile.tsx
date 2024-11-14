@@ -1,14 +1,19 @@
+"use client";
+
 import type User from "@/lib/db/user/type";
 import { Image } from "@nextui-org/react";
 import UserActions from "./UserActions";
 // @ts-ignore
 import { Image as NextImage } from "next/image";
+import { useImageCarousel } from "@/providers/ImageDisplay";
 
 interface UserProfileProps {
 	user: User;
 }
 
-export default async function UserProfile({ user }: UserProfileProps) {
+export default function UserProfile({ user }: UserProfileProps) {
+	const { openCarousel } = useImageCarousel();
+
 	return (
 		<div className="w-full">
 			{/* Banner */}
@@ -17,6 +22,9 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				style={{ aspectRatio: "1000 / 400" }}
 			>
 				<Image
+					onClick={() => {
+						if (user?.banner) openCarousel([user.banner]);
+					}}
 					as={NextImage}
 					src={user ? `${user.banner as string}?size=550` : ""}
 					className="rounded-none w-full object-cover"
@@ -24,6 +32,9 @@ export default async function UserProfile({ user }: UserProfileProps) {
 				/>
 				<div className="absolute -bottom-20 left-4 sm:left-10 bg-neutral-800 rounded-large">
 					<Image
+						onClick={() => {
+							if (user?.image) openCarousel([user.image]);
+						}}
 						as={NextImage}
 						src={
 							user?.image

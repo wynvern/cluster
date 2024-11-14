@@ -52,17 +52,16 @@ export default function GeneralSettings({
 
 	return (
 		<div>
-			<PageHeader title="Geral" />
+			<PageHeader showBackButton={true} title="Geral" />
 			{settings ? (
 				<>
 					<div className="flex items-center justify-between bottom-border px-4 sm:px-10 py-4">
 						<div>
 							<h2>Perfil privado</h2>
 							<p className="font-normal">
-								Esta configuração faz com que seu perfil seja
-								invisível, onde nenhum usuário, exceto
-								moderadores dos grupos em que participa, possam
-								ver o seu perfil.
+								Esta configuração faz com que seu perfil seja invisível, onde
+								nenhum usuário, exceto moderadores dos grupos em que participa,
+								possam ver o seu perfil.
 							</p>
 						</div>
 						<div>
@@ -82,9 +81,8 @@ export default function GeneralSettings({
 						<div>
 							<h2>Salvos privados</h2>
 							<p className="font-normal">
-								Quando habilitado, nenhum usuário poderá ver os
-								posts que você salvar, porém o contador
-								continuará a mostrar.
+								Quando habilitado, nenhum usuário poderá ver os posts que você
+								salvar, porém o contador continuará a mostrar.
 							</p>
 						</div>
 						<div>
@@ -104,9 +102,8 @@ export default function GeneralSettings({
 						<div>
 							<h2>Grupos privados</h2>
 							<p className="font-normal">
-								Quando habilitado, nenhum usuário poderá ver em
-								quais grupos você está, exceto os moderadores
-								dos mesmos.
+								Quando habilitado, nenhum usuário poderá ver em quais grupos
+								você está, exceto os moderadores dos mesmos.
 							</p>
 						</div>
 						<div>

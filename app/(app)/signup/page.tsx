@@ -13,9 +13,9 @@ import {
 } from "@heroicons/react/24/outline";
 import { Image } from "@nextui-org/react";
 import { Button, Input, Link } from "@nextui-org/react";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 export default function SignUp() {
 	const [loading, setLoading] = useState(false);
@@ -24,14 +24,13 @@ export default function SignUp() {
 		password: "",
 		repeatPassword: "",
 	});
-	const router = useRouter();
 	const [success, setSucess] = useState(false);
-	const session = useSession();
+	const isSmallScreen = useMediaQuery({ maxWidth: 700 });
 
 	function validateInputs(
 		email: string,
 		password: string,
-		repeatPassword: string
+		repeatPassword: string,
 	) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		const errors = {
@@ -109,19 +108,13 @@ export default function SignUp() {
 					password,
 					redirect: false,
 				});
+				window.location.reload();
 				break;
 			default:
 				break;
 		}
 		setLoading(false);
 	}
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		if (session.data?.user.id) {
-			router.push("/");
-		}
-	}, [session]);
 
 	return (
 		<>
@@ -137,20 +130,15 @@ export default function SignUp() {
 					</div>
 				</div>
 				<div className="h-full lg:min-w-[600px] md:min-w-[600px] grow">
-					<AuthModalWrapper title="Criar conta">
-						<form
-							className="gap-y-6 flex flex-col"
-							onSubmit={handleSignUp}
-						>
+					<AuthModalWrapper title="Criar conta" hideLogo={!isSmallScreen}>
+						<form className="gap-y-6 flex flex-col" onSubmit={handleSignUp}>
 							<Input
 								placeholder="Email"
 								type="text"
 								name="email"
 								isInvalid={Boolean(inputError.email)}
 								errorMessage={inputError.email}
-								startContent={
-									<EnvelopeIcon className="h-6 text-neutral-500" />
-								}
+								startContent={<EnvelopeIcon className="h-6 text-neutral-500" />}
 								onValueChange={() => {
 									setInputError({ ...inputError, email: "" });
 								}}
@@ -161,9 +149,7 @@ export default function SignUp() {
 								name="password"
 								isInvalid={Boolean(inputError.password)}
 								errorMessage={inputError.password}
-								startContent={
-									<KeyIcon className="h-6 text-neutral-500" />
-								}
+								startContent={<KeyIcon className="h-6 text-neutral-500" />}
 								variant="bordered"
 								onValueChange={() => {
 									setInputError({
@@ -176,9 +162,7 @@ export default function SignUp() {
 								placeholder="Senha novamente"
 								name="repeat-password"
 								variant="bordered"
-								startContent={
-									<KeyIcon className="h-6 text-neutral-500" />
-								}
+								startContent={<KeyIcon className="h-6 text-neutral-500" />}
 								isInvalid={Boolean(inputError.repeatPassword)}
 								errorMessage={inputError.repeatPassword}
 								onValueChange={() => {

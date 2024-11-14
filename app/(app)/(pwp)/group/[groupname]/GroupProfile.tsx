@@ -1,18 +1,18 @@
-import { Chip, Image } from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
 import type Group from "@/lib/db/group/type";
 import GroupActions from "./GroupActions";
 // @ts-ignore
-import { Image as NextImage } from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { memberHasPermission } from "@/lib/db/group/groupUtils";
+import RenderImages from "./RenderImages";
 
 export default async function GroupProfile({ group }: { group: Group }) {
 	const session = await getServerSession(authOptions);
 	const isModerator = await memberHasPermission(
 		session?.user.id || "",
 		group.groupname,
-		"moderator"
+		"moderator",
 	);
 
 	return (
@@ -22,23 +22,7 @@ export default async function GroupProfile({ group }: { group: Group }) {
 				className={`w-full relative ${group ? "bg-neutral-800" : ""}`}
 				style={{ aspectRatio: "1000 / 400" }}
 			>
-				<Image
-					src={group ? `${group.banner as string}?size=550` : ""}
-					removeWrapper={true}
-					className="rounded-none w-full h-full object-cover"
-				/>
-				<div className="absolute -bottom-20 left-4 sm:left-10 bg-neutral-800 rounded-large">
-					<Image
-						as={NextImage}
-						src={
-							group?.image
-								? `${group.image}?size=400`
-								: "/brand/default-group.svg"
-						}
-						removeWrapper={false}
-						className="h-[100px] sm:h-60 object-cover aspect-square"
-					/>
-				</div>
+				<RenderImages group={group} />
 			</div>
 
 			{/* Information */}

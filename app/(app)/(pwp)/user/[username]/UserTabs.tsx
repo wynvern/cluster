@@ -32,7 +32,6 @@ function UserPostsTab({
 	const [noMoreData, setNoMoreData] = useState(false);
 
 	async function fetchMorePosts(skip: number, take: number) {
-		alert("TO BUSCANDO POSTS PORRA");
 		setLoading(true);
 		const data = await fetchUserPosts(user.id, { skip, take });
 		if (data.length === 0) {
@@ -134,7 +133,6 @@ export default function UserTabs({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		for (const role of userRoles) {
-			console.log("setting role");
 			setUserRole(role.groupname, role.role);
 		}
 	}, []);

@@ -27,12 +27,10 @@ export default function HomePage({
 	const [noMoreData, setNoMoreData] = useState(false);
 	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
 	const setUserRole = useUserRoleStore((state) => state.setUserRole);
-	console.log(userGroupRoles);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		for (const role of userGroupRoles) {
-			console.log(role);
 			setUserRole(role.groupname, role.role);
 		}
 	}, []);

@@ -9,7 +9,6 @@ interface UserRoleState {
 export const useUserRoleStore = create<UserRoleState>((set, get) => ({
 	userRoles: {},
 	setUserRole: (groupname, role) => {
-		console.log("to set role", groupname, role);
 		set((state) => ({
 			...state,
 			userRoles: {
@@ -20,7 +19,7 @@ export const useUserRoleStore = create<UserRoleState>((set, get) => ({
 	},
 	getUserRole: (groupname) => {
 		const role = get().userRoles[groupname];
-		console.log(role, "to get role");
+
 		return role;
 	},
 }));

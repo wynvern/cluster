@@ -81,7 +81,6 @@ export default async function middleware(req: NextRequest) {
 	const regex = /(?<=\/group\/)(.+?)(?=\/manage)/;
 
 	if (url.pathname.endsWith("manage")) {
-		console.log("manage route");
 		const groupname = (url.pathname.match(regex) || [])[0];
 		if (groupname) {
 			const response = await fetch(

@@ -6,7 +6,6 @@ export async function POST(req: Request) {
 	const { userId, groupname } = body;
 
 	const role = await getMemberRoleByGroupname({ groupname, userId });
-	console.log(role);
 
 	return NextResponse.json({
 		status: role === "owner",

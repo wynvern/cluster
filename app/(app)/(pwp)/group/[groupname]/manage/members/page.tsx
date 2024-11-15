@@ -97,7 +97,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 					userId: member.user.id,
 					reason: "em desenvolvimento", // TODO: ask for a reason.
 				});
-				alert(response);
+
 				if (response && members) {
 					const newMembers = members;
 					setMembers(newMembers);

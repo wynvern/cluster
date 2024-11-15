@@ -29,7 +29,6 @@ export default function NotificationsButton({
 		if (!socket) return;
 
 		socket.on("newNotification", (data) => {
-			console.log(data);
 			setNotifications((prev: any) => [...prev, data.message]);
 		});
 	}, [socket]);
@@ -47,9 +46,7 @@ export default function NotificationsButton({
 		handler();
 	}, [openNotifications]);
 
-	useEffect(() => {
-		console.log(notifications);
-	}, [notifications]);
+	useEffect(() => {}, [notifications]);
 
 	return (
 		<>

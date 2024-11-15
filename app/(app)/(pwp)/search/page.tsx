@@ -56,7 +56,6 @@ export default function SearchPage() {
 
 	async function handleSearch(searchParam: string) {
 		setIsSearching(true);
-		console.log(activeTabX);
 
 		switch (activeTabX) {
 			case "user":
@@ -108,8 +107,6 @@ export default function SearchPage() {
 		const posts = await searchPost(searchParam);
 
 		if (typeof posts === "string") {
-			alert("no posts");
-
 			if (posts === "no-posts")
 				setNotFound((prev) => ({ ...prev, post: true }));
 			return;
@@ -166,9 +163,6 @@ export default function SearchPage() {
 					variant="underlined"
 					className="w-full bottom-border flex items-center justify-center"
 					onSelectionChange={(e: any) => {
-						console.log(
-							["post", "group", "user"][Number.parseInt(e.split(".")[1])],
-						);
 						activeTabX = ["post", "group", "user"][
 							Number.parseInt(e.split(".")[1])
 						];

@@ -74,7 +74,6 @@ export default function VerifyEmail({ onReturn }: { onReturn: () => void }) {
 					startContent={<AtSymbolIcon className="h-6" />}
 					errorMessage={inputError}
 					isInvalid={Boolean(inputError)}
-					classNames={{ inputWrapper: "h-14" }}
 					onChange={() => setInputError("")}
 					variant="bordered"
 				/>

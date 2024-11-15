@@ -26,7 +26,7 @@ export default function ({ message }: { message: MessageProps }) {
 	const session = useSession();
 	const [hasGroupPermission, setHasGroupPermission] = useState(false);
 	const setReplyToMessageId = useMessageAttr(
-		(state) => state.setReplyToMessageContent
+		(state) => state.setReplyToMessageContent,
 	);
 	const socket = useSocket();
 
@@ -95,7 +95,7 @@ export default function ({ message }: { message: MessageProps }) {
 			const permission = await memberHasPermission(
 				session.data.user.id,
 				message.chat.group.groupname,
-				"moderator"
+				"moderator",
 			);
 			setHasGroupPermission(permission);
 		};
@@ -107,7 +107,7 @@ export default function ({ message }: { message: MessageProps }) {
 			{/* @ts-ignore */}
 			<Dropdown backdrop="blur">
 				<DropdownTrigger>
-					<Button size="sm" color="secondary" isIconOnly={true}>
+					<Button size="sm" isIconOnly={true} variant="bordered">
 						<EllipsisHorizontalIcon className="h-6" />
 					</Button>
 				</DropdownTrigger>
@@ -117,7 +117,7 @@ export default function ({ message }: { message: MessageProps }) {
 						(item) =>
 							(session.data?.user.id === message.userId &&
 								item.needUserOwner) ||
-							(hasGroupPermission && item.needAdmin)
+							(hasGroupPermission && item.needAdmin),
 					).map((item) => (
 						<DropdownItem key={item.title} {...item} />
 					))}

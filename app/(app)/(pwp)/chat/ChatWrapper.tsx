@@ -44,30 +44,24 @@ export default function ChatWrapper({
 		setShownUserGroups(
 			userGroups.filter(
 				(group) =>
-					group.groupname
-						.toLowerCase()
-						.includes(value.toLowerCase()) ||
-					group.name?.toLowerCase().includes(value.toLowerCase())
-			)
+					group.groupname.toLowerCase().includes(value.toLowerCase()) ||
+					group.name?.toLowerCase().includes(value.toLowerCase()),
+			),
 		);
 	}
 
 	useEffect(() => {
 		if (!socket) return;
 
-		socket.on(
-			"notificationMessage",
-			(message: { message: MessageProps }) => {
-				console.log("message", message);
-				setLastMessages((prev) => ({
-					...prev,
-					[message.message.chatId]: {
-						username: message.message.user.username || "Anônimo",
-						content: message.message.content || "Imagem",
-					},
-				}));
-			}
-		);
+		socket.on("notificationMessage", (message: { message: MessageProps }) => {
+			setLastMessages((prev) => ({
+				...prev,
+				[message.message.chatId]: {
+					username: message.message.user.username || "Anônimo",
+					content: message.message.content || "Imagem",
+				},
+			}));
+		});
 
 		socket.on("receiveMessage", (message: MessageProps) => {
 			setLastMessages((prev) => ({
@@ -102,12 +96,10 @@ export default function ChatWrapper({
 						<Input
 							placeholder="Pesquisar grupos"
 							variant="bordered"
-							startContent={
-								<MagnifyingGlassIcon className="h-6" />
+							startContent={<MagnifyingGlassIcon className="h-6" />}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+								handleSearch(e.target.value)
 							}
-							onChange={(
-								e: React.ChangeEvent<HTMLInputElement>
-							) => handleSearch(e.target.value)}
 						/>
 					</div>
 					<div>
@@ -123,21 +115,14 @@ export default function ChatWrapper({
 							>
 								<div
 									className="absolute z-10 w-full h-full cursor-pointer"
-									onClick={() =>
-										router.push(`/chat/${group.groupname}`)
-									}
-									onKeyDown={() =>
-										router.push(`/chat/${group.groupname}`)
-									}
+									onClick={() => router.push(`/chat/${group.groupname}`)}
+									onKeyDown={() => router.push(`/chat/${group.groupname}`)}
 								/>
 								<div className="flex items-center gap-x-3">
 									<div>
 										<Image
 											as={NextImage}
-											src={
-												group.image ||
-												"/brand/default-group.svg"
-											}
+											src={group.image || "/brand/default-group.svg"}
 											removeWrapper={true}
 											className="h-12 w-12 z-1"
 										/>
@@ -145,35 +130,19 @@ export default function ChatWrapper({
 									<div className="flex flex-col">
 										<div className="flex gap-x-1 flex-col">
 											<div className="flex items-center gap-x-1">
-												<h3 className="font-semibold">
-													{group.name}
-												</h3>
-												<p className="second-foreground">
-													g/{group.groupname}
-												</p>
+												<h3 className="font-semibold">{group.name}</h3>
+												<p className="second-foreground">g/{group.groupname}</p>
 											</div>
 											{group.GroupChat?.id &&
-												lastMessages[
-													group.GroupChat.id
-												] && (
+												lastMessages[group.GroupChat.id] && (
 													<p>
 														<b>
 															u/
-															{
-																lastMessages[
-																	group
-																		.GroupChat
-																		.id
-																]?.username
-															}
-															:{" "}
+															{lastMessages[group.GroupChat.id]?.username}:{" "}
 														</b>
 														{truncateMessage(
-															lastMessages[
-																group.GroupChat
-																	.id
-															]?.content || "",
-															15
+															lastMessages[group.GroupChat.id]?.content || "",
+															15,
 														)}
 													</p>
 												)}

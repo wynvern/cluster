@@ -33,9 +33,7 @@ export default function sendResetLink() {
 		setLoading(false);
 		switch (data) {
 			case "different-oauth-provider":
-				setInputError(
-					"Este email foi registrado com um provedor diferente."
-				);
+				setInputError("Este email foi registrado com um provedor diferente.");
 				break;
 			case "code-already-sent":
 				setInputError("Código já enviado. Verifique seu email.");
@@ -57,10 +55,7 @@ export default function sendResetLink() {
 			title="Recuperar senha"
 			subtitle="Informe seu email para receber um link de recuperação."
 		>
-			<form
-				className="gap-y-6 flex flex-col"
-				onSubmit={handleSendRequest}
-			>
+			<form className="gap-y-6 flex flex-col" onSubmit={handleSendRequest}>
 				<Input
 					name="email"
 					variant="bordered"
@@ -68,7 +63,6 @@ export default function sendResetLink() {
 					startContent={<AtSymbolIcon className="h-6" />}
 					errorMessage={inputError}
 					isInvalid={Boolean(inputError)}
-					classNames={{ inputWrapper: "h-14" }}
 					onChange={() => setInputError("")}
 				/>
 

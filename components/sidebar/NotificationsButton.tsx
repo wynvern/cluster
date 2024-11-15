@@ -47,6 +47,10 @@ export default function NotificationsButton({
 		handler();
 	}, [openNotifications]);
 
+	useEffect(() => {
+		console.log(notifications);
+	}, [notifications]);
+
 	return (
 		<>
 			<Link
@@ -60,7 +64,7 @@ export default function NotificationsButton({
 				<div className="relative">
 					{notifications.filter((n: any) => !n.viewed).length > 0 && (
 						<div
-							className="rounded-full bg-red-600 text-white flex items-center justify-center absolute w-5 h-5 text-sm right-[-3px] top-[-7px]"
+							className="rounded-full bg-blue-400 text-white flex items-center justify-center absolute w-5 h-5 text-sm right-[-3px] top-[-7px] scale-85"
 							style={{
 								outline:
 									"3px hsl(var(--nextui-background) / var(--nextui-background-opacity, var(--tw-bg-opacity))) solid",
@@ -79,16 +83,16 @@ export default function NotificationsButton({
 				{hasText && (
 					<div className="sidebar-inside">
 						{openNotifications ? (
-							<b>Notificações</b>
+							<p>Notificações</p>
 						) : (
-							<b className="second-foreground">Notificações</b>
+							<p className="second-foreground">Notificações</p>
 						)}
 					</div>
 				)}
 			</Link>
 
 			<Notifications
-				defaultNotifications={notifications}
+				notifications={notifications}
 				isActive={openNotifications}
 				setIsActive={setOpenNotifications}
 			/>

@@ -51,9 +51,9 @@ export default function CreatePost({
 	const [activeTab, setActiveTab] = useState("text");
 	const router = useRouter();
 	const [selectedMedia, setSelectedMedia] = useState<FileBase64Info[]>([]);
-	const [selectedDocuments, setSelectedDocuments] = useState<
-		FileBase64Info[]
-	>([]);
+	const [selectedDocuments, setSelectedDocuments] = useState<FileBase64Info[]>(
+		[],
+	);
 	const [errors, setErrors] = useState({
 		title: "",
 		content: "",
@@ -111,7 +111,7 @@ export default function CreatePost({
 				fileType: i.fileType,
 			})),
 			docToUpload,
-			group.id
+			group.id,
 		);
 
 		if (typeof data === "string") {
@@ -119,8 +119,7 @@ export default function CreatePost({
 				case "no-session":
 					setErrors({
 						...errors,
-						content:
-							"Você precisa estar logado para criar um post.",
+						content: "Você precisa estar logado para criar um post.",
 					});
 					break;
 				default:
@@ -151,9 +150,7 @@ export default function CreatePost({
 		try {
 			const file = await getFilesBase64(
 				supportedFormats.image,
-				Number.parseInt(
-					process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || "4.5"
-				)
+				Number.parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || "4.5"),
 			);
 			if (file.length + selectedMedia.length > 6) {
 				return;
@@ -166,7 +163,7 @@ export default function CreatePost({
 						`Arquivo muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
-						}
+						},
 					);
 					break;
 				case "invalid-file-type":
@@ -195,8 +192,7 @@ export default function CreatePost({
 		}
 
 		confirm({
-			description:
-				"Tem certeza que deseja sair? Seus dados não serão salvos.",
+			description: "Tem certeza que deseja sair? Seus dados não serão salvos.",
 			title: "Cancelar criação de post",
 			onCancel: () => {},
 			onConfirm: () => setActive(false),
@@ -218,7 +214,7 @@ export default function CreatePost({
 						`Arquivo muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
-						}
+						},
 					);
 					break;
 				case "invalid-file-type":
@@ -246,9 +242,7 @@ export default function CreatePost({
 					{/* @ts-ignore */}
 					<Tabs
 						selectedKey={activeTab}
-						onSelectionChange={(key: Key) =>
-							setActiveTab(key as string)
-						}
+						onSelectionChange={(key: Key) => setActiveTab(key as string)}
 						aria-label="Options"
 						color="primary"
 						disableAnimation={false}
@@ -302,9 +296,6 @@ export default function CreatePost({
 									name="title"
 									variant="bordered"
 									label="Título"
-									classNames={{
-										inputWrapper: "h-14",
-									}}
 									maxLength={100}
 									value={title}
 									onValueChange={(e: string) => {
@@ -340,9 +331,7 @@ export default function CreatePost({
 								/>
 								<div>
 									{content.length > 1000 ? (
-										<p className="text-neutral-500">
-											{content.length} / 1500
-										</p>
+										<p className="text-neutral-500">{content.length} / 1500</p>
 									) : (
 										""
 									)}
@@ -364,28 +353,16 @@ export default function CreatePost({
 									<Draggable
 										bulk={true}
 										onFileDrag={(file) => {
-											const filesArray = Array.isArray(
-												file
-											)
-												? file
-												: [file];
+											const filesArray = Array.isArray(file) ? file : [file];
 
-											if (
-												selectedMedia.length +
-													filesArray.length >
-												6
-											) {
-												toast.error(
-													"Você atingiu o limite de 6 imagens.",
-													{ autoClose: 3000 }
-												);
+											if (selectedMedia.length + filesArray.length > 6) {
+												toast.error("Você atingiu o limite de 6 imagens.", {
+													autoClose: 3000,
+												});
 												return;
 											}
 
-											setSelectedMedia((prev) => [
-												...prev,
-												...filesArray,
-											]);
+											setSelectedMedia((prev) => [...prev, ...filesArray]);
 										}}
 										onError={(message) => {
 											toast.error(message, {
@@ -406,11 +383,7 @@ export default function CreatePost({
 														Arraste ou{" "}
 														<Link
 															onClick={() => {
-																if (
-																	!loading &&
-																	selectedMedia.length <
-																		5
-																) {
+																if (!loading && selectedMedia.length < 5) {
 																	handleSelectMedia();
 																}
 															}}
@@ -449,16 +422,9 @@ export default function CreatePost({
 														size="sm"
 														isIconOnly={true}
 														onClick={() => {
-															const newMedia = [
-																...selectedMedia,
-															];
-															newMedia.splice(
-																index,
-																1
-															);
-															setSelectedMedia(
-																newMedia
-															);
+															const newMedia = [...selectedMedia];
+															newMedia.splice(index, 1);
+															setSelectedMedia(newMedia);
 														}}
 													>
 														<XMarkIcon className="h-6" />
@@ -485,37 +451,23 @@ export default function CreatePost({
 									<Draggable
 										bulk={true}
 										onFileDrag={(file) => {
-											const filesArray = Array.isArray(
-												file
-											)
-												? file
-												: [file];
+											const filesArray = Array.isArray(file) ? file : [file];
 
-											if (
-												selectedDocuments.length +
-													filesArray.length >
-												6
-											) {
-												toast.error(
-													"Você atingiu o limite de 6 documentos.",
-													{ autoClose: 3000 }
-												);
+											if (selectedDocuments.length + filesArray.length > 6) {
+												toast.error("Você atingiu o limite de 6 documentos.", {
+													autoClose: 3000,
+												});
 												return;
 											}
 
-											setSelectedDocuments((prev) => [
-												...prev,
-												...filesArray,
-											]);
+											setSelectedDocuments((prev) => [...prev, ...filesArray]);
 										}}
 										onError={(message) => {
 											toast.error(message, {
 												autoClose: 2000,
 											});
 										}}
-										acceptedTypes={
-											supportedFormats.document
-										}
+										acceptedTypes={supportedFormats.document}
 									>
 										<div
 											className={
@@ -529,18 +481,14 @@ export default function CreatePost({
 														Arraste ou{" "}
 														<Link
 															onClick={() => {
-																if (
-																	!loading &&
-																	selectedDocuments.length <
-																		5
-																) {
+																if (!loading && selectedDocuments.length < 5) {
 																	handleSelectDocument();
 																} else {
 																	toast.error(
 																		"Você atingiu o limite de 6 documentos.",
 																		{
 																			autoClose: 3000,
-																		}
+																		},
 																	);
 																}
 															}}
@@ -548,8 +496,7 @@ export default function CreatePost({
 														>
 															<b>clique aqui</b>
 														</Link>{" "}
-														para adicionar
-														documentos.
+														para adicionar documentos.
 													</p>
 												</div>
 											</div>
@@ -566,41 +513,31 @@ export default function CreatePost({
 												Seus documentos aparecerão aqui.
 											</p>
 										)}
-										{selectedDocuments.map(
-											(item, index) => (
-												<div
-													key={item.file?.name}
-													className="default-border relative rounded-large w-full flex p-3 justify-between flex items-center"
-												>
-													<div className="flex gap-x-4">
-														<DocumentIcon className="h-6 w-6" />
-														<p>{item.file?.name}</p>
-													</div>
-													<div>
-														<Button
-															color="secondary"
-															size="sm"
-															isIconOnly={true}
-															onClick={() => {
-																const newDocument =
-																	[
-																		...selectedDocuments,
-																	];
-																newDocument.splice(
-																	index,
-																	1
-																);
-																setSelectedDocuments(
-																	newDocument
-																);
-															}}
-														>
-															<XMarkIcon className="h-6" />
-														</Button>
-													</div>
+										{selectedDocuments.map((item, index) => (
+											<div
+												key={item.file?.name}
+												className="default-border relative rounded-large w-full flex p-3 justify-between flex items-center"
+											>
+												<div className="flex gap-x-4">
+													<DocumentIcon className="h-6 w-6" />
+													<p>{item.file?.name}</p>
 												</div>
-											)
-										)}
+												<div>
+													<Button
+														color="secondary"
+														size="sm"
+														isIconOnly={true}
+														onClick={() => {
+															const newDocument = [...selectedDocuments];
+															newDocument.splice(index, 1);
+															setSelectedDocuments(newDocument);
+														}}
+													>
+														<XMarkIcon className="h-6" />
+													</Button>
+												</div>
+											</div>
+										))}
 									</div>
 								</ScrollShadow>
 							</div>

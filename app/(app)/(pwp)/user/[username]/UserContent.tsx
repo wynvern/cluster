@@ -1,7 +1,7 @@
 import type User from "@/lib/db/user/type";
 import UserTabs from "./UserTabs";
 import { fetchUserBookmarks, fetchUserPosts } from "@/lib/db/post/post";
-import { fetchUserGroups } from "@/lib/db/user/user";
+import { fetchUserGroups, getUserGroupRoles } from "@/lib/db/user/user";
 
 interface UserContentProps {
 	user: User;
@@ -18,6 +18,10 @@ export default async function UserContent({ user }: UserContentProps) {
 	});
 	const groups = await fetchUserGroups(user.id);
 
+	const userRoles = await getUserGroupRoles();
+
+	if (typeof userRoles === "string") return "error";
+
 	return (
 		<div className="w-full">
 			<UserTabs
@@ -25,6 +29,7 @@ export default async function UserContent({ user }: UserContentProps) {
 				initialBookmarks={bookmarks}
 				initialGroups={groups}
 				user={user}
+				userRoles={userRoles}
 			/>
 		</div>
 	);

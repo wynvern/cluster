@@ -165,7 +165,7 @@ function RenderCommentLevel({
 				<div
 					key={comment.id}
 					style={{
-						paddingLeft: level === 0 ? "4rem" : "1.5rem",
+						paddingLeft: level === 0 ? "2rem" : "1.5rem",
 					}}
 					className={`py-4  ${
 						level === 0 && "bottom-border pr-4 sm:pr-6"
@@ -183,7 +183,6 @@ function RenderCommentLevel({
 								size="sm"
 								onClick={() => {
 									if (level > 2) {
-										console.log("too long inside the level");
 									} else {
 										setVisible(!visible);
 									}

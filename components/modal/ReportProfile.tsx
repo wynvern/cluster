@@ -100,7 +100,6 @@ export default function ReportProfile({
 								name="title"
 								label="Título"
 								variant="bordered"
-								classNames={{ inputWrapper: "h-14" }}
 								max={100}
 								errorMessage={inputError.title}
 								isInvalid={inputError.title !== ""}

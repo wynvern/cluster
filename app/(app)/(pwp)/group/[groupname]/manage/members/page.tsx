@@ -78,9 +78,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 				});
 				if (response && members) {
 					const newMembers = members;
-					const index = members.findIndex(
-						(m) => m.user.id === member.user.id
-					);
+					const index = members.findIndex((m) => m.user.id === member.user.id);
 					newMembers[index].role = "moderator";
 					setMembers(newMembers);
 				}
@@ -137,9 +135,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 					userId: member.user.id,
 				});
 				if (response && members) {
-					const index = members.findIndex(
-						(m) => m.user.id === member.user.id
-					);
+					const index = members.findIndex((m) => m.user.id === member.user.id);
 					const newMembers = members;
 					newMembers[index].role = "member";
 					setMembers(newMembers);
@@ -153,7 +149,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 
 	return (
 		<div>
-			<PageHeader title="Geral" />
+			<PageHeader title="Membros" />
 			<div className="pt-10 px-4 sm:px-10">
 				{members ? (
 					<Table>
@@ -167,15 +163,11 @@ export default function ({ params }: { params: { groupname: string } }) {
 							{members.map((member) => (
 								<TableRow key={member.user.id}>
 									<TableCell>
-										<Link
-											href={`/user/${member.user.username}`}
-										>
+										<Link href={`/user/${member.user.username}`}>
 											{member.user.username}
 										</Link>
 									</TableCell>
-									<TableCell>
-										{rolesDictionary[member.role]}
-									</TableCell>
+									<TableCell>{rolesDictionary[member.role]}</TableCell>
 									<TableCell>
 										<PrettyDate date={member.joinedAt} />
 									</TableCell>
@@ -186,13 +178,9 @@ export default function ({ params }: { params: { groupname: string } }) {
 												color="danger"
 												isDisabled={
 													member.role === "owner" ||
-													(member.role ===
-														"moderator" &&
-														role !== "owner")
+													(member.role === "moderator" && role !== "owner")
 												}
-												onClick={() =>
-													handleBanMemeber(member)
-												}
+												onClick={() => handleBanMemeber(member)}
 											>
 												<NoSymbolIcon className="h-6" />
 											</Button>
@@ -201,13 +189,9 @@ export default function ({ params }: { params: { groupname: string } }) {
 												color="danger"
 												isDisabled={
 													member.role === "owner" ||
-													(member.role ===
-														"moderator" &&
-														role !== "owner")
+													(member.role === "moderator" && role !== "owner")
 												}
-												onClick={() =>
-													handleKickMember(member)
-												}
+												onClick={() => handleKickMember(member)}
 											>
 												<XMarkIcon className="h-6" />
 											</Button>
@@ -215,11 +199,7 @@ export default function ({ params }: { params: { groupname: string } }) {
 												<Button
 													isIconOnly={true}
 													color="success"
-													onClick={() =>
-														handlePromoteMember(
-															member
-														)
-													}
+													onClick={() => handlePromoteMember(member)}
 												>
 													<ChevronUpIcon className="h-6" />
 												</Button>
@@ -227,14 +207,8 @@ export default function ({ params }: { params: { groupname: string } }) {
 												<Button
 													isIconOnly={true}
 													color="success"
-													isDisabled={
-														member.role === "owner"
-													}
-													onClick={() =>
-														handleUnpromoteMember(
-															member
-														)
-													}
+													isDisabled={member.role === "owner"}
+													onClick={() => handleUnpromoteMember(member)}
 												>
 													<ChevronDownIcon className="h-6" />
 												</Button>

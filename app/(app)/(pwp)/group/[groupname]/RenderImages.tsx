@@ -3,7 +3,6 @@
 import type Group from "@/lib/db/group/type";
 import { useImageCarousel } from "@/providers/ImageDisplay";
 import { Image } from "@nextui-org/react";
-import NextImage from "next/image";
 
 export default function RenderImages({ group }: { group: Group }) {
 	const { openCarousel } = useImageCarousel();

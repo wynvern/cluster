@@ -26,6 +26,7 @@ export default function UserProfile({ user }: UserProfileProps) {
 						if (user?.banner) openCarousel([user.banner]);
 					}}
 					as={NextImage}
+					removeWrapper={true}
 					src={user ? `${user.banner as string}?size=550` : ""}
 					className="rounded-none w-full object-cover"
 					style={{ aspectRatio: "1000 / 400" }}
@@ -36,6 +37,7 @@ export default function UserProfile({ user }: UserProfileProps) {
 							if (user?.image) openCarousel([user.image]);
 						}}
 						as={NextImage}
+						removeWrapper={true}
 						src={
 							user?.image
 								? `${user.image}?size=400`

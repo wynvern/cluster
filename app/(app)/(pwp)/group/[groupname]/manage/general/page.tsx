@@ -15,7 +15,7 @@ export default function GeneralSettings({
 	params: { groupname: string };
 }) {
 	const [groupSettings, setGroupSettings] = useState<GroupSettings | null>(
-		null
+		null,
 	);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -56,8 +56,8 @@ export default function GeneralSettings({
 						<div>
 							<h2>Membros podem postar</h2>
 							<p className="font-normal">
-								Esta configuração permite que membros possam
-								criar posts dentro do grupo.
+								Esta configuração permite que membros possam criar posts dentro
+								do grupo.
 							</p>
 						</div>
 						<div>
@@ -69,9 +69,7 @@ export default function GeneralSettings({
 										memberPosting: selected,
 									});
 								}}
-								isSelected={
-									groupSettings?.memberPosting || false
-								}
+								isSelected={groupSettings?.memberPosting || false}
 							/>
 						</div>
 					</div>
@@ -79,9 +77,8 @@ export default function GeneralSettings({
 						<div>
 							<h2>Membros podem entrar</h2>
 							<p className="font-normal">
-								Esta configuração permite que membros possam
-								entrar no grupo. Quando desabilitado, os membros
-								presentes continuam.
+								Esta configuração permite que membros possam entrar no grupo.
+								Quando desabilitado, os membros presentes continuam.
 							</p>
 						</div>
 						<div>
@@ -93,9 +90,7 @@ export default function GeneralSettings({
 										memberJoining: selected,
 									});
 								}}
-								isSelected={
-									groupSettings?.memberJoining || false
-								}
+								isSelected={groupSettings?.memberJoining || false}
 							/>
 						</div>
 					</div>
@@ -103,8 +98,8 @@ export default function GeneralSettings({
 						<div>
 							<h2>Membros podem utilizar o Chat</h2>
 							<p className="font-normal">
-								Esta configuração permite que membros possam
-								utilizar o chat do grupo.
+								Esta configuração permite que membros possam utilizar o chat do
+								grupo.
 							</p>
 						</div>
 						<div>
@@ -115,7 +110,6 @@ export default function GeneralSettings({
 										...groupSettings,
 										chatEnabled: selected,
 									});
-									console.log(selected);
 								}}
 								isSelected={groupSettings?.chatEnabled || false}
 							/>

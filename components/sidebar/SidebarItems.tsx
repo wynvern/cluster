@@ -58,9 +58,7 @@ export default function SidebarItems({
 								path === "/" ? "" : "second-foreground"
 							}`}
 						>
-							<p>
-								<b>Home</b>
-							</p>
+							<p>Home</p>
 						</div>
 					</Link>
 					{/* TODO: Load previous notifications */}
@@ -78,14 +76,10 @@ export default function SidebarItems({
 						</div>
 						<div
 							className={`sidebar-inside ${
-								path.startsWith("/search")
-									? ""
-									: "second-foreground"
+								path.startsWith("/search") ? "" : "second-foreground"
 							}`}
 						>
-							<p>
-								<b>Pesquisa</b>
-							</p>
+							<p>Pesquisa</p>
 						</div>
 					</Link>
 					<Link href="/chat" className="flex items-center gap-x-4">
@@ -98,14 +92,10 @@ export default function SidebarItems({
 						</div>
 						<div
 							className={`sidebar-inside ${
-								path.startsWith("/chat")
-									? ""
-									: "second-foreground"
+								path.startsWith("/chat") ? "" : "second-foreground"
 							}`}
 						>
-							<p>
-								<b>Chat</b>
-							</p>
+							<p>Chat</p>
 						</div>
 					</Link>
 					<Link href="/group" className="flex items-center gap-x-4">
@@ -121,9 +111,7 @@ export default function SidebarItems({
 								path === "/group" ? "" : "second-foreground"
 							}`}
 						>
-							<p>
-								<b>Grupos</b>
-							</p>
+							<p>Grupos</p>
 						</div>
 					</Link>
 				</div>

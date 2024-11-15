@@ -50,20 +50,18 @@ export default function ChatPage({
 	latestMessages,
 	isChatDisabledDefault,
 }: ChatPageProps) {
-	const [selectedImages, setSelectedImages] = useState<
-		FileBase64Info[] | null
-	>(null);
+	const [selectedImages, setSelectedImages] = useState<FileBase64Info[] | null>(
+		null,
+	);
 	const [isChatDisabled, setIsChatDisabled] = useState<boolean>(
-		isChatDisabledDefault
+		isChatDisabledDefault,
 	);
 	const [messages, setMessages] = useState<MessageView[]>(latestMessages);
 	const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
 	const session = useSession();
-	const replyToMessageContent = useMessageAttr(
-		(state) => state.replyToMessage
-	);
+	const replyToMessageContent = useMessageAttr((state) => state.replyToMessage);
 	const setReplyToMessageContent = useMessageAttr(
-		(state) => state.setReplyToMessageContent
+		(state) => state.setReplyToMessageContent,
 	);
 	const [isAtBottom, setIsAtBottom] = useState(true);
 	const [loading, setLoading] = useState(true);
@@ -74,7 +72,7 @@ export default function ChatPage({
 		lastMessagesTimestamps.push(timestamp);
 		setTimeout(() => {
 			lastMessagesTimestamps = lastMessagesTimestamps.filter(
-				(time) => time !== timestamp
+				(time) => time !== timestamp,
 			);
 		}, 5000);
 
@@ -99,7 +97,7 @@ export default function ChatPage({
 			},
 			{
 				threshold: 0.5,
-			}
+			},
 		);
 
 		if (endOfMessagesRef.current) {
@@ -140,42 +138,31 @@ export default function ChatPage({
 		socket.on(
 			"chatEnabledStatusClient",
 			(data: { chatId: string; status: boolean }) => {
-				console.log(data);
 				setIsChatDisabled(!data.status);
-			}
+			},
 		);
 
 		socket.on("whoIsTyping", (data) => {
 			const typingUsers = data.filter(
-				(user: string) => user !== session.data?.user?.username
+				(user: string) => user !== session.data?.user?.username,
 			);
 			setWhoIsTyping(typingUsers);
 		});
 
 		socket.on("deleteChatMessage", ({ id }: { id: string }) => {
-			console.log("messages to delete");
 			setMessages((prevMessages) =>
-				prevMessages.filter((msg) => msg.id !== id)
+				prevMessages.filter((msg) => msg.id !== id),
 			);
 		});
 
 		socket.on("receiveMessage", (message: MessageProps) => {
-			console.log(
-				messagesToConfirm,
-				new Date(message.createdAt).valueOf()
-			);
-
-			if (
-				messagesToConfirm.includes(
-					new Date(message.createdAt).valueOf()
-				)
-			) {
+			if (messagesToConfirm.includes(new Date(message.createdAt).valueOf())) {
 				// changes the property notServerConfirmed to false
 				setMessages((prevMessages) => {
 					const index = prevMessages.findIndex(
 						(msg) =>
 							new Date(msg.createdAt).valueOf() ===
-							new Date(message.createdAt).valueOf()
+							new Date(message.createdAt).valueOf(),
 					);
 					if (index !== -1) {
 						const updatedMessages = [...prevMessages];
@@ -190,10 +177,9 @@ export default function ChatPage({
 				});
 				messagesToConfirm.splice(
 					messagesToConfirm.findIndex(
-						(timestamp) =>
-							timestamp === new Date(message.createdAt).valueOf()
+						(timestamp) => timestamp === new Date(message.createdAt).valueOf(),
 					),
-					1
+					1,
 				);
 			} else setMessages((prevMessages) => [...prevMessages, message]);
 
@@ -272,7 +258,7 @@ export default function ChatPage({
 
 			if (file.length > 0) {
 				setSelectedImages((prevImages) =>
-					prevImages ? [...prevImages, ...file] : [...file]
+					prevImages ? [...prevImages, ...file] : [...file],
 				);
 			}
 		} catch (e) {
@@ -282,7 +268,7 @@ export default function ChatPage({
 						`Arquivo muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
-						}
+						},
 					);
 					break;
 				case "invalid-file-type":
@@ -339,7 +325,7 @@ export default function ChatPage({
 				username: session.data?.user?.username,
 			});
 		}, 2000),
-		[socket]
+		[socket],
 	);
 
 	function formatWhoIsTyping() {
@@ -390,9 +376,7 @@ export default function ChatPage({
 					<div className="w-full absolute bottom-2 left-10">
 						{whoIsTyping.length > 0 && (
 							<div className="text-white text-xs px-2">
-								<p className="second-foreground">
-									{formatWhoIsTyping()}
-								</p>
+								<p className="second-foreground">{formatWhoIsTyping()}</p>
 							</div>
 						)}
 					</div>
@@ -427,9 +411,7 @@ export default function ChatPage({
 								<Button
 									isIconOnly={true}
 									color="secondary"
-									onClick={() =>
-										setReplyToMessageContent(null)
-									}
+									onClick={() => setReplyToMessageContent(null)}
 								>
 									<XMarkIcon className="h-6" />
 								</Button>
@@ -448,9 +430,7 @@ export default function ChatPage({
 							isDisabled={isChatDisabled}
 							name="message"
 							classNames={{ inputWrapper: "border-none" }}
-							onChange={(
-								e: React.ChangeEvent<HTMLInputElement>
-							) => {
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 								if (e.target.value.length > 0) {
 									emitTypingEvent();
 								}
@@ -460,10 +440,7 @@ export default function ChatPage({
 						{selectedImages && selectedImages.length > 0 && (
 							<div className="flex gap-x-2">
 								{selectedImages.map((image, index) => (
-									<div
-										className="relative"
-										key={image.preview}
-									>
+									<div className="relative" key={image.preview}>
 										<Button
 											color="secondary"
 											size="sm"
@@ -471,13 +448,10 @@ export default function ChatPage({
 											isDisabled={isChatDisabled}
 											className="absolute z-50 left-2 top-2"
 											onClick={() => {
-												const newSelectedImages =
-													selectedImages.filter(
-														(_, i) => i !== index
-													);
-												setSelectedImages(
-													newSelectedImages
+												const newSelectedImages = selectedImages.filter(
+													(_, i) => i !== index,
 												);
+												setSelectedImages(newSelectedImages);
 											}}
 										>
 											<XMarkIcon className="h-4" />

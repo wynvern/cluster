@@ -88,10 +88,7 @@ export default function NewPassword() {
 			title="Atualizar Senha"
 			subtitle="Escolha uma nova senha e guarde-a."
 		>
-			<form
-				className="gap-y-6 flex flex-col"
-				onSubmit={handleUpdatePassword}
-			>
+			<form className="gap-y-6 flex flex-col" onSubmit={handleUpdatePassword}>
 				<PasswordInput
 					name="password"
 					variant="bordered"
@@ -99,10 +96,7 @@ export default function NewPassword() {
 					startContent={<KeyIcon className="h-6" />}
 					errorMessage={inputErrors.password}
 					isInvalid={Boolean(inputErrors.password)}
-					classNames={{ inputWrapper: "h-14" }}
-					onChange={() =>
-						setInputErrors({ ...inputErrors, password: "" })
-					}
+					onChange={() => setInputErrors({ ...inputErrors, password: "" })}
 				/>
 				<PasswordInput
 					name="repeatPassword"
@@ -111,7 +105,6 @@ export default function NewPassword() {
 					startContent={<KeyIcon className="h-6" />}
 					errorMessage={inputErrors.repeatPassword}
 					isInvalid={Boolean(inputErrors.repeatPassword)}
-					classNames={{ inputWrapper: "h-14" }}
 					onChange={() =>
 						setInputErrors({
 							...inputErrors,

@@ -24,18 +24,15 @@ async function getUserIdsFromChat(chatId: string): Promise<string[]> {
 export async function POST(req: Request) {
 	const body = await req.json();
 	const mediaUrl = [];
-	console.log(body);
 
 	const permission = await memberHasPermission(
 		body.userId,
 		body.chat.group.groupname,
-		"moderator"
+		"moderator",
 	);
 	const groupSettings = await fetchGroupSettings({
 		groupname: body.chat.group.groupname,
 	});
-
-	console.log(permission, body.userId);
 
 	if (!permission && !groupSettings?.chatEnabled) {
 		return NextResponse.json({

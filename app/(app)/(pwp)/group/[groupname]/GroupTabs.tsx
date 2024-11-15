@@ -6,7 +6,9 @@ import PostsList from "@/components/post/PostsList";
 import { fetchGroupPosts } from "@/lib/db/post/post";
 import type Post from "@/lib/db/post/type";
 import type Group from "@/lib/db/group/type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getMemberRole } from "@/lib/db/group/groupMember";
+import { useUserRoleStore } from "@/hooks/role";
 
 interface GroupTabsProps {
 	initialPosts: Post[] | null;
@@ -23,6 +25,15 @@ function GroupPosts({
 	const [posts, setPosts] = useState<Post[] | null>(initialPosts);
 	const [loading, setLoading] = useState(false);
 	const [noMoreData, setNoMoreData] = useState(false);
+	const setUserRole = useUserRoleStore((state) => state.setUserRole);
+
+	useEffect(() => {
+		async function handleGetRole() {
+			const role = await getMemberRole({ groupname: group.groupname });
+			setUserRole(group.groupname, role || "");
+		}
+		handleGetRole();
+	}, []);
 
 	async function fetchMorePosts(skip: number, take: number) {
 		setLoading(true);

@@ -15,7 +15,8 @@ export default function UserGroupActions({
 	setReportGroup,
 }: UserGroupActionsProps) {
 	return (
-		<Dropdown className="default-border shadow-none">
+		// @ts-ignore
+		<Dropdown backdrop="blur" className="default-border shadow-none">
 			<DropdownTrigger>
 				<Button isIconOnly={true} variant="bordered" size="sm">
 					<EllipsisHorizontalIcon className="h-8" />
@@ -25,9 +26,7 @@ export default function UserGroupActions({
 			<DropdownMenu>
 				<DropdownItem
 					description="Reportar grupo"
-					startContent={
-						<FlagIcon className="h-8" aria-label="Sign Out" />
-					}
+					startContent={<FlagIcon className="h-8" aria-label="Sign Out" />}
 					aria-label="report group"
 					onClick={() => setReportGroup(true)}
 					className="text-danger"

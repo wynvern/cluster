@@ -4,18 +4,20 @@ import InfoMessage from "@/components/card/InfoMessage";
 import ScrollPagination from "@/components/general/ScrollPagination";
 import GroupList from "@/components/group/GroupList";
 import PostsList from "@/components/post/PostsList";
+import { useUserRoleStore } from "@/hooks/role";
 import type { GroupCard } from "@/lib/db/group/type";
 import { fetchUserBookmarks, fetchUserPosts } from "@/lib/db/post/post";
 import type Post from "@/lib/db/post/type";
 import type User from "@/lib/db/user/type";
 import { Tabs, Tab } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface UserTabsProps {
 	initialBookmarks: Post[] | null | string;
 	initialPosts: Post[] | null;
 	initialGroups: GroupCard[] | null | string;
 	user: User;
+	userRoles: { groupname: string; role: string }[];
 }
 
 function UserPostsTab({
@@ -48,7 +50,7 @@ function UserPostsTab({
 			loading={loading}
 			onBottomReached={fetchMorePosts}
 		>
-			<PostsList posts={posts} />
+			<PostsList posts={posts} isUserPage={false} />
 			{noMoreData && initialPosts && initialPosts.length >= 1 && (
 				<div className="mt-4 py-6">
 					<InfoMessage message="Fim dos posts." />
@@ -122,10 +124,20 @@ export default function UserTabs({
 	initialPosts,
 	initialGroups,
 	user,
+	userRoles,
 }: UserTabsProps) {
 	const [groups, setGroups] = useState<GroupCard[] | null | string>(
 		initialGroups,
 	);
+	const setUserRole = useUserRoleStore((state) => state.setUserRole);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		for (const role of userRoles) {
+			console.log("setting role");
+			setUserRole(role.groupname, role.role);
+		}
+	}, []);
 
 	return (
 		//  @ts-ignore

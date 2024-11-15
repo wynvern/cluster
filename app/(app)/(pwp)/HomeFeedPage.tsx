@@ -5,13 +5,20 @@ import PageHeader from "@/components/general/PageHeader";
 import ScrollPagination from "@/components/general/ScrollPagination";
 import PostList from "@/components/post/PostsList";
 import { useSidebarStore } from "@/hooks/MobileHomeSidebar";
+import { useUserRoleStore } from "@/hooks/role";
 import { fetchUserFeed } from "@/lib/db/feed/feed";
 import type Post from "@/lib/db/post/type";
 import { Bars2Icon } from "@heroicons/react/24/outline";
 import { Button } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
+export default function HomePage({
+	firstPosts,
+	userGroupRoles,
+}: {
+	firstPosts: Post[];
+	userGroupRoles: { groupname: string; role: string }[];
+}) {
 	const [posts, setPosts] = useState<Post[]>(firstPosts);
 	const [loading, setLoading] = useState(false);
 	const [offset, setOffset] = useState(
@@ -19,6 +26,18 @@ export default function HomePage({ firstPosts }: { firstPosts: Post[] }) {
 	);
 	const [noMoreData, setNoMoreData] = useState(false);
 	const setIsSidebarOpen = useSidebarStore((state) => state.setIsSidebarOpen);
+	const setUserRole = useUserRoleStore((state) => state.setUserRole);
+	console.log(userGroupRoles);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		for (const role of userGroupRoles) {
+			console.log(role);
+			setUserRole(role.groupname, role.role);
+		}
+	}, []);
+
+	//  Fetch all group roles for the user to update zustand
 
 	async function fetchMorePosts() {
 		if (noMoreData) return;

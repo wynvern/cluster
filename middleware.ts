@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { type NextRequest, NextResponse } from "next/server";
+import { getMemberRole } from "./lib/db/group/groupMember";
 
 interface RedirectStatement {
 	redirection: {
@@ -76,21 +77,42 @@ export default async function middleware(req: NextRequest) {
 		},
 	];
 
+	// if the user is trying to access the manage route of a group he is not the owner
+	const regex = /(?<=\/group\/)(.+?)(?=\/manage)/;
+
+	if (url.pathname.endsWith("manage")) {
+		console.log("manage route");
+		const groupname = (url.pathname.match(regex) || [])[0];
+		if (groupname) {
+			const response = await fetch(
+				`${req.nextUrl.origin}/api/middleware/manage-group`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ groupname, userId: session?.id }),
+				},
+			);
+			const { status } = await response.json();
+
+			if (!status) {
+				return NextResponse.redirect(new URL(`/group/${groupname}`, req.url));
+			}
+		}
+	}
+
 	const abc = redirection.findIndex(
 		(rule) =>
-			rule.redirection.condition && url.pathname.startsWith(rule.location)
+			rule.redirection.condition && url.pathname.startsWith(rule.location),
 	);
 
 	if (abc === -1) {
-		return setCacheControl(NextResponse.next());
+		return NextResponse.next();
 	}
 
 	const redirectUrl = new URL(redirection[abc].redirection.to, req.url);
-	return setCacheControl(NextResponse.redirect(redirectUrl));
-}
-
-function setCacheControl(response: NextResponse): NextResponse {
-	return response;
+	return NextResponse.redirect(redirectUrl);
 }
 
 // TODO: Check if is up to date with all the routes

@@ -59,7 +59,7 @@ export default function CustomizeProfile({
 		if (selectedImages.avatar.base64) {
 			const response = await uploadUserAvatar(
 				selectedImages.avatar.base64,
-				selectedImages.avatar.fileType
+				selectedImages.avatar.fileType,
 			);
 			if (typeof response !== "string") {
 				update({ image: response.url });
@@ -68,7 +68,7 @@ export default function CustomizeProfile({
 		if (selectedImages.banner.base64) {
 			await uploadUserBanner(
 				selectedImages.banner.base64,
-				selectedImages.banner.fileType
+				selectedImages.banner.fileType,
 			);
 		}
 
@@ -100,7 +100,7 @@ export default function CustomizeProfile({
 						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
-						}
+						},
 					);
 					break;
 				case "invalid-file-type":
@@ -132,7 +132,7 @@ export default function CustomizeProfile({
 						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
-						}
+						},
 					);
 					break;
 				case "invalid-file-type":
@@ -212,11 +212,7 @@ export default function CustomizeProfile({
 								<div className="w-full h-full absolute bg-neutral-500 ">
 									<Image
 										removeWrapper={true}
-										src={
-											selectedImages.banner.preview ||
-											user.banner ||
-											""
-										}
+										src={selectedImages.banner.preview || user.banner || ""}
 										className="absolute w-full h-full object-cover z-1"
 									/>
 								</div>
@@ -286,8 +282,7 @@ export default function CustomizeProfile({
 									(selectedImages.banner.error && (
 										<div className="bg-red-950 rounded-large p-2 pl-4 flex items-center">
 											<p className="text-danger">
-												{selectedImages.banner.error ||
-													""}
+												{selectedImages.banner.error || ""}
 											</p>
 										</div>
 									))}
@@ -295,7 +290,6 @@ export default function CustomizeProfile({
 									name="name"
 									label="Nome"
 									variant="bordered"
-									classNames={{ inputWrapper: "h-14" }}
 									max={50}
 									defaultValue={user.name || ""}
 								/>

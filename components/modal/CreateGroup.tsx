@@ -44,7 +44,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 
 	function matchCategory(e: string) {
 		const category = supportedCategories.find(
-			(i) => i.toLowerCase() === e.toLowerCase()
+			(i) => i.toLowerCase() === e.toLowerCase(),
 		);
 		return !!category;
 	}
@@ -111,9 +111,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 		setErrors(throwErrors);
 
 		// Check if there are any errors by looking for non-empty error messages in throwErrors
-		const hasErrors = Object.values(throwErrors).some(
-			(error) => error !== ""
-		);
+		const hasErrors = Object.values(throwErrors).some((error) => error !== "");
 		return !hasErrors; // Return true if there are no errors, false otherwise
 	}
 
@@ -131,12 +129,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			return;
 		}
 
-		const data = await createGroup(
-			name,
-			groupname,
-			description,
-			categories
-		);
+		const data = await createGroup(name, groupname, description, categories);
 
 		switch (data) {
 			case "no-session":
@@ -166,14 +159,14 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 			await uploadGroupImage(
 				data,
 				selectedImages.image.base64,
-				selectedImages.image.fileType
+				selectedImages.image.fileType,
 			);
 		}
 		if (selectedImages.banner) {
 			await uploadGroupBanner(
 				data,
 				selectedImages.banner.base64,
-				selectedImages.banner.fileType
+				selectedImages.banner.fileType,
 			);
 		}
 
@@ -200,7 +193,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
-						}
+						},
 					);
 					break;
 				case "invalid-file-type":
@@ -234,7 +227,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 						`Imagem muito grande. Máximo de ${process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE} MB.`,
 						{
 							autoClose: 3000,
-						}
+						},
 					);
 					break;
 				case "invalid-file-type":
@@ -333,8 +326,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								<Image
 									className="h-[100px] sm:h-[140px] w-[100px] sm:w-[140px] object-cover z-1"
 									src={
-										selectedImages.image?.preview ||
-										"/brand/default-group.svg"
+										selectedImages.image?.preview || "/brand/default-group.svg"
 									}
 									removeWrapper={true}
 								/>
@@ -351,10 +343,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								name="groupname"
 								placeholder="Nome do Grupo"
 								variant="bordered"
-								classNames={{ inputWrapper: "h-14" }}
-								startContent={
-									<AtSymbolIcon className="h-6 text-neutral-500" />
-								}
+								startContent={<AtSymbolIcon className="h-6 text-neutral-500" />}
 								max={20}
 								errorMessage={errors.groupname}
 								isInvalid={errors.groupname !== ""}
@@ -369,20 +358,13 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 							<Input
 								placeholder="Categorias"
 								variant="bordered"
-								classNames={{ inputWrapper: "h-14" }}
-								startContent={
-									<CubeIcon className="h-6 text-neutral-500" />
-								}
+								startContent={<CubeIcon className="h-6 text-neutral-500" />}
 								errorMessage={errors.categories}
 								isInvalid={errors.categories !== ""}
 								max={20}
 								value={category}
-								onValueChange={(e: string) =>
-									handleAddCategory(e)
-								}
-								onKeyDown={(
-									e: React.KeyboardEvent<HTMLInputElement>
-								) => {
+								onValueChange={(e: string) => handleAddCategory(e)}
+								onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
 									if (e.key === "Enter") {
 										e.preventDefault();
 									}
@@ -394,11 +376,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 										<Chip
 											key={category}
 											onClose={() => {
-												setCategories(
-													categories.filter(
-														(_, i) => i !== index
-													)
-												);
+												setCategories(categories.filter((_, i) => i !== index));
 											}}
 										>
 											{category}
@@ -412,10 +390,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 								name="name"
 								placeholder="Nome"
 								variant="bordered"
-								classNames={{ inputWrapper: "h-14" }}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
+								startContent={<PencilIcon className="h-6 text-neutral-500" />}
 								max={50}
 							/>
 							<Textarea
@@ -427,9 +402,7 @@ export default function CreateGroup({ active, setActive }: CreateGroupProps) {
 									input: "mt-[2px]",
 								}}
 								max={200}
-								startContent={
-									<PencilIcon className="h-6 text-neutral-500" />
-								}
+								startContent={<PencilIcon className="h-6 text-neutral-500" />}
 							/>
 						</form>
 					</div>

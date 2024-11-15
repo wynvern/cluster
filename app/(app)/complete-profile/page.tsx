@@ -31,9 +31,7 @@ export default function Finish() {
 
 	async function assignRandomUsername() {
 		const word1 =
-			words.adjectives[
-				Math.floor(Math.random() * words.adjectives.length)
-			];
+			words.adjectives[Math.floor(Math.random() * words.adjectives.length)];
 		const word2 =
 			words.subjects[Math.floor(Math.random() * words.subjects.length)];
 		const generatedUsername = `${word1}.${word2}`;
@@ -108,7 +106,6 @@ export default function Finish() {
 					variant="bordered"
 					isInvalid={inputValidation.active}
 					errorMessage={inputValidation.message}
-					classNames={{ inputWrapper: "h-14" }}
 					value={username}
 					isDisabled={isLoading || success}
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,9 +136,7 @@ export default function Finish() {
 					<div>
 						<Link
 							onClick={() => {
-								!success &&
-									!isLoading &&
-									assignRandomUsername();
+								!success && !isLoading && assignRandomUsername();
 							}}
 						>
 							Nome aleatório

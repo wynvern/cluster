@@ -7,15 +7,26 @@ import type Post from "@/lib/db/post/type";
 import ChatSection from "./ChatSection";
 import ImageViewer from "./ImageViewer";
 import { useMediaQuery } from "react-responsive";
+import { useUserRoleStore } from "@/hooks/role";
+import { useEffect } from "react";
 
 export default function PostWrapper({
 	post,
 	comments,
+	userRole,
 }: {
 	post: Post;
 	comments: RecursiveComments[];
+	userRole: string | null;
 }) {
 	const isSmallScreen = useMediaQuery({ maxWidth: 1000 });
+	const setUserRole = useUserRoleStore((state) => state.setUserRole);
+
+	useEffect(() => {
+		if (userRole) {
+			setUserRole(post.group.groupname, userRole);
+		}
+	}, []);
 
 	return (
 		<div

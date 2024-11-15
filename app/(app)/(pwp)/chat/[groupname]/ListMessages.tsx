@@ -1,4 +1,4 @@
-import { Link, Image, Chip } from "@nextui-org/react";
+import { Link, Image, Chip, CircularProgress } from "@nextui-org/react";
 import { useSession } from "next-auth/react";
 import MessageActions from "./MessageActions";
 import type { MessageProps, MessageView } from "@/lib/db/group/type";
@@ -16,8 +16,7 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 	return (
 		<>
 			{messages.map((message, i) => {
-				const isUserMessage =
-					session.data?.user?.id === message.user.id;
+				const isUserMessage = session.data?.user?.id === message.user.id;
 				const isNewDay =
 					i === 0 ||
 					new Date(messages[i - 1].createdAt).getDate() !==
@@ -34,9 +33,7 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 						<div className="w-full flex justify-center">
 							{isNewDay && (
 								<div className="my-8 text-neutral-600 ">
-									{new Date(
-										message.createdAt
-									).toLocaleDateString()}
+									{new Date(message.createdAt).toLocaleDateString()}
 								</div>
 							)}
 						</div>
@@ -49,10 +46,7 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 								<MessageActions message={message} />
 							</div>
 							<Link href={`/user/${message.user.username}`}>
-								<UserAvatar
-									avatarURL={message.user.image}
-									size="8"
-								/>
+								<UserAvatar avatarURL={message.user.image} size="8" />
 							</Link>
 							<div
 								className={`flex flex-col gap-y-1 grow ${
@@ -66,32 +60,19 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 								>
 									<div
 										className={`flex items-center gap-x-2 ${
-											isUserMessage
-												? "flex-row-reverse"
-												: ""
+											isUserMessage ? "flex-row-reverse" : ""
 										}`}
 									>
-										<Link
-											href={`/user/${message.user.username}`}
-										>
+										<Link href={`/user/${message.user.username}`}>
 											<b>{message.user.username}</b>
 										</Link>
-										<PrettyDate
-											date={new Date(message.createdAt)}
-										/>
+										<PrettyDate date={new Date(message.createdAt)} />
 										{message.replyToId && (
-											<Chip
-												startContent={
-													<ChevronLeftIcon className="h-5\" />
-												}
-											>
+											<Chip startContent={<ChevronLeftIcon className="h-5\" />}>
 												Respondendo{" "}
 												{
-													messages.find(
-														(m) =>
-															m.id ===
-															message.replyToId
-													)?.user.username
+													messages.find((m) => m.id === message.replyToId)?.user
+														.username
 												}
 											</Chip>
 										)}
@@ -108,9 +89,7 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 								}
 							>
 								<p
-									className={`${
-										isUserMessage ? "text-right" : ""
-									}`}
+									className={`${isUserMessage ? "text-right" : ""}`}
 									style={{ wordBreak: "break-all" }}
 								>
 									{message.content}
@@ -125,14 +104,16 @@ export function ListMessages({ messages }: { messages: MessageView[] }) {
 										: "flex items-start mt-2 ml-20 pl-2"
 								}
 							>
-								<div className="max-w-[300px] max-h-[400px]">
+								<div className="max-w-[300px] max-h-[400px] overflow-hidden rounded-large relative flex items-center justify-center">
+									{message.notServerConfirmed && (
+										<CircularProgress className="absolute z-50" />
+									)}
 									<Image
+										className={message.notServerConfirmed ? "" : "opacity-50"}
 										as={NextImage}
 										src={message.media[0]}
 										removeWrapper={true}
-										onClick={() =>
-											openCarousel(message.media)
-										}
+										onClick={() => openCarousel(message.media)}
 									/>
 								</div>
 								<div />

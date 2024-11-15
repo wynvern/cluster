@@ -70,6 +70,8 @@ export default function UserActions({ user }: { user: User }) {
 	return (
 		<>
 			<Dropdown
+				// @ts-ignore
+				backdrop="blur"
 				className="default-border shadow-none"
 				// @ts-ignore
 				placement="bottom-end"
@@ -85,7 +87,7 @@ export default function UserActions({ user }: { user: User }) {
 						.filter((item) =>
 							session.data?.user.id === user.id
 								? item.isUserPrivate
-								: !item.isUserPrivate
+								: !item.isUserPrivate,
 						)
 						.map((item) => (
 							<DropdownItem

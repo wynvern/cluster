@@ -23,7 +23,8 @@ export default function ModeratorGroupActions({
 	group,
 }: ModeratorGroupActionsProps) {
 	return (
-		<Dropdown className="default-border shadow-none">
+		// @ts-ignore
+		<Dropdown backdrop="blur" className="default-border shadow-none">
 			<DropdownTrigger>
 				<Button isIconOnly={true} variant="bordered" size="sm">
 					<EllipsisHorizontalIcon className="h-8" />
@@ -33,9 +34,7 @@ export default function ModeratorGroupActions({
 			<DropdownMenu>
 				<DropdownItem
 					description="Customize o grupo"
-					startContent={
-						<PencilIcon className="h-8" aria-label="Sign Out" />
-					}
+					startContent={<PencilIcon className="h-8" aria-label="Sign Out" />}
 					aria-label="customize group"
 					onClick={() => setCustomizeGroupActive(true)}
 				>
@@ -44,15 +43,10 @@ export default function ModeratorGroupActions({
 				<DropdownItem
 					description="Gerenciar o grupo"
 					startContent={
-						<Cog6ToothIcon
-							className="h-8"
-							aria-label="gerenciar-grupo"
-						/>
+						<Cog6ToothIcon className="h-8" aria-label="gerenciar-grupo" />
 					}
 					aria-label="manage group"
-					onClick={() =>
-						router.push(`/group/${group.groupname}/manage`)
-					}
+					onClick={() => router.push(`/group/${group.groupname}/manage`)}
 				>
 					Gerenciar Grupo
 				</DropdownItem>

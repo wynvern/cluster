@@ -1,15 +1,5 @@
-import { use, useEffect, useState } from "react";
 import BaseModal from "./BaseModal";
-import {
-	ScrollShadow,
-	CircularProgress,
-	Link,
-	Image,
-	Button,
-} from "@nextui-org/react";
-import { cleanUserNotifications, getNotifications } from "@/lib/db/user/user";
-import prettyDate from "@/util/prettyDate";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ScrollShadow, Image } from "@nextui-org/react";
 import InfoMessage from "../card/InfoMessage";
 import { useConfirmationModal } from "@/providers/ConfirmationModal";
 import PrettyDate from "../general/PrettyDate";
@@ -17,7 +7,7 @@ import PrettyDate from "../general/PrettyDate";
 interface NotificationsProps {
 	isActive: boolean;
 	setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
-	defaultNotifications?: Notification[];
+	notifications: Notification[];
 }
 
 type Notification = {
@@ -33,32 +23,10 @@ type Notification = {
 
 export default function Notifications({
 	isActive,
-	defaultNotifications,
+	notifications,
 	setIsActive,
 }: NotificationsProps) {
 	const { confirm } = useConfirmationModal();
-	const [notifications, setNotifications] = useState(
-		defaultNotifications || []
-	);
-
-	async function handleCleanNotifications() {
-		await confirm({
-			onConfirm: async () => {
-				const response = await cleanUserNotifications();
-
-				switch (response) {
-					case "ok":
-						setNotifications([]);
-						break;
-				}
-			},
-			title: "Limpar notificações",
-			description:
-				"Deseja limpar todas as notificações? Esta ação é irreversível.",
-			onCancel: () => {},
-			isDanger: true,
-		});
-	}
 
 	return (
 		<BaseModal
@@ -72,7 +40,7 @@ export default function Notifications({
 					// @ts-ignore
 					orientation="vertical"
 				>
-					{Object.values(notifications).length === 0 && (
+					{notifications.length === 0 && (
 						<div className="w-full h-full flex items-center justify-center my-10">
 							<InfoMessage message="Nenhuma notificação." />
 						</div>
@@ -82,7 +50,7 @@ export default function Notifications({
 						{notifications.reverse().map((n) => (
 							<div
 								key={n.id}
-								className="relative flex justify-center gap-x-2 items-center"
+								className={`relative flex justify-center gap-x-2 items-center ${n.viewed ? "opacity-50" : ""}`}
 							>
 								<div>
 									<Image
@@ -94,9 +62,7 @@ export default function Notifications({
 								<div>
 									<div className="flex items-center gap-x-1">
 										<b>{n.title}</b>
-										<PrettyDate
-											date={new Date(n.createdAt)}
-										/>
+										<PrettyDate date={new Date(n.createdAt)} />
 									</div>
 									<div>
 										<p>{n.body}</p>
@@ -106,16 +72,6 @@ export default function Notifications({
 						))}
 					</div>
 				</ScrollShadow>
-			}
-			footer={
-				<Button
-					isDisabled={Object.values(notifications).length === 0}
-					isIconOnly={true}
-					variant={"bordered"}
-					onClick={handleCleanNotifications}
-				>
-					<XMarkIcon className="h-6" />
-				</Button>
 			}
 		/>
 	);

@@ -20,13 +20,12 @@ export default async function ({ params }: { params: { groupname: string } }) {
 	const isModerator = await memberHasPermission(
 		userSession?.user.id || "",
 		group.groupname,
-		"moderator"
+		"moderator",
 	);
 
 	let latestMessges = await fetchMessages(group.id, 0);
 	if (typeof latestMessges === "string") latestMessges = [];
 
-	console.log("is moderator", isModerator);
 	const isChatDisabled = !isModerator && !groupSettings?.chatEnabled;
 
 	return (

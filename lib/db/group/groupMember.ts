@@ -154,6 +154,29 @@ export async function removeMember({
 	return "ok";
 }
 
+export async function getMemberRoleByGroupname({
+	groupname,
+	userId,
+}: {
+	groupname: string;
+	userId: string;
+}) {
+	const group = await db.group.findUnique({
+		where: { groupname },
+	});
+
+	if (!group) return null;
+
+	const member = await db.groupMember.findFirst({
+		where: { groupId: group.id, userId },
+		select: { role: true },
+	});
+
+	if (!member) return null;
+
+	return member.role;
+}
+
 // Gets the role of a member in a group
 export async function getMemberRole({ groupname }: { groupname: string }) {
 	const session = await getServerSession(authOptions);

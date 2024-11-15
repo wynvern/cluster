@@ -8,7 +8,7 @@ import * as webPush from "web-push";
 webPush.setVapidDetails(
 	"mailto:wynvernn@gmail.com",
 	process.env.VAPID_PUBLIC_KEY || "",
-	process.env.VAPID_PRIVATE_KEY || ""
+	process.env.VAPID_PRIVATE_KEY || "",
 );
 
 export default async function registerSubscription({
@@ -62,7 +62,16 @@ export async function sendNotification({
 			image: message.image,
 			link: message.url,
 		},
-		select: { viewed: true, createdAt: true },
+		select: {
+			viewed: true,
+			createdAt: true,
+			id: true,
+			body: true,
+			title: true,
+			image: true,
+			link: true,
+			userId: true,
+		},
 	});
 
 	for (const sub of subscriptions) {

@@ -13,7 +13,10 @@ import { useCallback, useEffect, useState } from "react";
 import _ from "lodash";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useUserRoleStore } from "@/hooks/role";
+import { getUserGroupRoles } from "@/lib/db/user/user";
 
+let activeTabX = "post";
 let searchString = "";
 
 export default function SearchPage() {
@@ -33,11 +36,29 @@ export default function SearchPage() {
 		post?: boolean;
 	}>({});
 	const [activeTab, setActiveTab] = useState("post");
+	const setUserRole = useUserRoleStore((state) => state.setUserRole);
+
+	useEffect(() => {
+		async function fetchRole() {
+			const roles = await getUserGroupRoles();
+
+			if (typeof roles === "string") {
+				return;
+			}
+
+			for (const i of roles) {
+				setUserRole(i.groupname, i.role);
+			}
+		}
+
+		fetchRole();
+	}, []);
 
 	async function handleSearch(searchParam: string) {
 		setIsSearching(true);
+		console.log(activeTabX);
 
-		switch (activeTab) {
+		switch (activeTabX) {
 			case "user":
 				await searchUsers(searchParam);
 				break;
@@ -108,9 +129,8 @@ export default function SearchPage() {
 		[],
 	);
 
-	// Esta porra faz com que a função de fazer fetch das coisas rode quando o hook das tabs muda fds
 	useEffect(() => {
-		handleSearch(searchString);
+		if (searchString) handleSearch(searchString);
 	}, [activeTab]);
 
 	return (
@@ -124,7 +144,7 @@ export default function SearchPage() {
 						onValueChange={(e: string) => {
 							searchString = e;
 
-							if (searchString.length === 0) {
+							if (searchString === "") {
 								setResults({
 									groups: [],
 									users: [],
@@ -146,7 +166,15 @@ export default function SearchPage() {
 					variant="underlined"
 					className="w-full bottom-border flex items-center justify-center"
 					onSelectionChange={(e: any) => {
-						setActiveTab(["post", "group", "user"][e.split(".")[1]]);
+						console.log(
+							["post", "group", "user"][Number.parseInt(e.split(".")[1])],
+						);
+						activeTabX = ["post", "group", "user"][
+							Number.parseInt(e.split(".")[1])
+						];
+						setActiveTab(
+							["post", "group", "user"][Number.parseInt(e.split(".")[1])],
+						);
 					}}
 				>
 					<Tab title={<h3 className="p-2">Posts</h3>} className="px-0 w-full">
@@ -165,7 +193,7 @@ export default function SearchPage() {
 							</div>
 
 							{isSearching && (
-								<div>
+								<div className="w-full flex items-center justify-center h-40">
 									{/* @ts-ignore */}
 									<CircularProgress size="lg" />
 								</div>
@@ -193,7 +221,7 @@ export default function SearchPage() {
 							</div>
 
 							{isSearching && (
-								<div>
+								<div className="w-full flex items-center justify-center h-40">
 									{/* @ts-ignore */}
 									<CircularProgress size="lg" />
 								</div>
@@ -234,7 +262,7 @@ export default function SearchPage() {
 							))}
 
 							{isSearching && (
-								<div>
+								<div className="w-full flex items-center justify-center h-40">
 									{/* @ts-ignore */}
 									<CircularProgress size="lg" />
 								</div>
@@ -245,4 +273,7 @@ export default function SearchPage() {
 			</div>
 		</div>
 	);
+}
+function useStoreActions(arg0: (actions: any) => any) {
+	throw new Error("Function not implemented.");
 }

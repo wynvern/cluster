@@ -14,8 +14,6 @@ export default async function Sidebar() {
 
 	const loggedUser = await fetchUser({ username: session?.user?.username });
 
-	console.log(loggedUser);
-
 	return (
 		<>
 			<SidebarItems

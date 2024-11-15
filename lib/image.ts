@@ -6,11 +6,11 @@ export async function squareImage(buffer: Buffer): Promise<Buffer> {
 
 		if (metadata.width && metadata.height) {
 			const processedImage = await sharp(buffer)
-				.png({ compressionLevel: 9 })
+				.png({ quality: 20 })
 				.withMetadata()
 				.resize({
-					width: 500,
-					height: 500,
+					width: 300,
+					height: 300,
 					fit: "cover",
 					position: "centre",
 				})
@@ -28,16 +28,12 @@ export async function squareImage(buffer: Buffer): Promise<Buffer> {
 export async function compressImage(buffer: Buffer): Promise<Buffer> {
 	try {
 		const metadata = await sharp(buffer).metadata();
+		const processedImage = await sharp(buffer)
+			.png({ quality: 20 })
+			.withMetadata()
+			.toBuffer();
 
-		if (metadata.width && metadata.height) {
-			const processedImage = await sharp(buffer)
-				.png({ compressionLevel: 9 })
-				.withMetadata()
-				.toBuffer();
-
-			return processedImage;
-		}
-		throw new Error("Some metadata is missing.");
+		return processedImage;
 	} catch (error) {
 		console.error("Error processing image:", error);
 		throw error;

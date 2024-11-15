@@ -10,7 +10,6 @@ export default function GoogleLoginButton() {
 
 	async function signInGoogle() {
 		const result = await signIn("google", { callbackUrl: "/" });
-		console.log(result);
 	}
 
 	return (

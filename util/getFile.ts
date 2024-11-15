@@ -7,7 +7,7 @@ export interface FileBase64Info {
 
 export default function getFileBase64(
 	acceptedTypes: string[],
-	maxSize = 5
+	maxSize = Number.parseInt(process.env.NEXT_PUBLIC_MAX_UPLOAD_SIZE || "5"),
 ): Promise<FileBase64Info> {
 	return new Promise((resolve, reject) => {
 		const fileInput = document.createElement("input");
@@ -23,7 +23,7 @@ export default function getFileBase64(
 
 			const fileType = file.name.split(".").pop() || "";
 			const isAcceptedType = acceptedTypes.some((type) =>
-				fileType.includes(type)
+				fileType.includes(type),
 			);
 
 			if (file.size > maxSize * 1024 * 1024) {
@@ -64,7 +64,7 @@ export default function getFileBase64(
 
 export function getFilesBase64(
 	acceptedTypes: string[],
-	maxSize = 5
+	maxSize = 5,
 ): Promise<FileBase64Info[]> {
 	return new Promise((resolve, reject) => {
 		const fileInput = document.createElement("input");
@@ -83,7 +83,7 @@ export function getFilesBase64(
 			for (const file of files) {
 				const fileType = file.name.split(".").pop() || "";
 				const isAcceptedType = acceptedTypes.some((type) =>
-					fileType.includes(type)
+					fileType.includes(type),
 				);
 
 				if (file.size > maxSize * 1024 * 1024) {

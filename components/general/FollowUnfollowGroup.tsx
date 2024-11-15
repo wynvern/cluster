@@ -28,7 +28,7 @@ export default function ({
 			const role = await memberHasPermission(
 				session.data.user.id,
 				groupname,
-				"member"
+				"member",
 			);
 			const settings = await fetchGroupSettings({ groupname });
 
@@ -44,7 +44,12 @@ export default function ({
 		e.preventDefault();
 
 		if (isFollowing) {
-			await exitGroup({ groupname });
+			const status = await exitGroup({ groupname });
+
+			if (status === "owner-cannot-exit") {
+				return;
+			}
+
 			setIsFollowing(false);
 
 			// Hide create post button
@@ -54,9 +59,7 @@ export default function ({
 			}
 
 			// Hide enter group chat button
-			const divToHide2 = document.getElementById(
-				"enter-group-chat-button"
-			);
+			const divToHide2 = document.getElementById("enter-group-chat-button");
 			if (divToHide2) {
 				divToHide2.style.display = "none";
 			}
@@ -71,9 +74,7 @@ export default function ({
 			}
 
 			// Show enter group chat button
-			const divToShow2 = document.getElementById(
-				"enter-group-chat-button"
-			);
+			const divToShow2 = document.getElementById("enter-group-chat-button");
 			if (divToShow2) {
 				divToShow2.style.display = "flex";
 			}
@@ -89,9 +90,7 @@ export default function ({
 				e.stopPropagation();
 				handleClick(e);
 			}}
-			isDisabled={
-				userRole === "owner" || (isJoiningDisabled && !isFollowing)
-			}
+			isDisabled={userRole === "owner" || (isJoiningDisabled && !isFollowing)}
 		>
 			{isFollowing ? "Seguindo" : "Seguir"}
 		</Button>

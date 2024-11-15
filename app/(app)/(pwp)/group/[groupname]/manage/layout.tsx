@@ -2,14 +2,8 @@
 
 import InfoMessage from "@/components/card/InfoMessage";
 import PageHeader from "@/components/general/PageHeader";
-import {
-	ChevronLeftIcon,
-	ChevronRightIcon,
-	CubeIcon,
-	NoSymbolIcon,
-	UserIcon,
-} from "@heroicons/react/24/outline";
-import { Button, Link } from "@nextui-org/react";
+import { CubeIcon, NoSymbolIcon, UserIcon } from "@heroicons/react/24/outline";
+import { Link } from "@nextui-org/react";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -30,12 +24,8 @@ export default function ManageGroup({
 			<div className="side-borders w-full max-w-[1200px] h-full relative flex">
 				<div
 					className={`sidebar-border w-1/3 ${
-						!path.endsWith("manage") && isSmallScreen
-							? "hidden"
-							: ""
-					} ${
-						path.endsWith("manage") && isSmallScreen ? "w-full" : ""
-					}`}
+						!path.endsWith("manage") && isSmallScreen ? "hidden" : ""
+					} ${path.endsWith("manage") && isSmallScreen ? "w-full" : ""}`}
 				>
 					<PageHeader
 						title={`Gerenciar g/${params.groupname}`}
@@ -75,7 +65,7 @@ export default function ManageGroup({
 					</Link>
 				</div>
 				<b
-					className={`w-2/3 ${
+					className={`w-full md:w-2/3 ${
 						path.endsWith("manage") && isSmallScreen ? "hidden" : ""
 					}`}
 				>

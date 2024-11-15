@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { hash } from "bcrypt";
 import { user } from "@nextui-org/react";
+import { group } from "console";
 
 type UserId = { id: string; username?: string };
 type UserName = { id?: string; username: string };
@@ -13,7 +14,7 @@ type UserName = { id?: string; username: string };
 export async function createUser(
 	email: string,
 	password: string,
-	numberval: string
+	numberval: string,
 ) {
 	if (numberval) return "error"; // Honeypot
 
@@ -42,7 +43,7 @@ export async function createUser(
 }
 
 export default async function fetchUser(
-	params: UserId | UserName
+	params: UserId | UserName,
 ): Promise<User | string> {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
@@ -131,7 +132,7 @@ export async function getNotifications() {
 
 export async function fetchUserGroups(
 	userId: string,
-	options?: { groupChatId?: boolean }
+	options?: { groupChatId?: boolean },
 ) {
 	const user = await db.user.findFirst({
 		where: { id: userId },
@@ -245,6 +246,10 @@ export async function exitGroup({ groupname }: { groupname: string }) {
 
 	if (!member) return "not-member";
 
+	if (member.role === "owner") {
+		return "owner-cannot-exit";
+	}
+
 	await db.groupMember.delete({
 		where: {
 			groupId_userId: { groupId: group.id, userId: session.user.id },
@@ -257,7 +262,7 @@ export async function exitGroup({ groupname }: { groupname: string }) {
 export async function reportUser(
 	username: string,
 	title: string,
-	reason: string
+	reason: string,
 ) {
 	const session = await getServerSession(authOptions);
 	if (!session) return "no-session";
@@ -386,4 +391,27 @@ export async function fetchUserReports() {
 	});
 
 	return reports;
+}
+
+export async function getUserGroupRoles() {
+	const session = await getServerSession(authOptions);
+
+	if (!session) return "no-session";
+
+	const roles = await db.groupMember.findMany({
+		where: { userId: session.user.id },
+		select: {
+			role: true,
+			group: {
+				select: {
+					groupname: true,
+				},
+			},
+		},
+	});
+
+	return roles.map((role) => ({
+		groupname: role.group.groupname,
+		role: role.role,
+	}));
 }

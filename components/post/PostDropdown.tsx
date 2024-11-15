@@ -30,6 +30,7 @@ import { getMemberRole } from "@/lib/db/group/groupMember";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import ReportPost from "../modal/ReportPost";
+import { useUserRoleStore } from "@/hooks/role";
 
 interface DropdownItemProps {
 	description: string;
@@ -52,24 +53,23 @@ export default function PostDropdown({
 	const { confirm } = useConfirmationModal();
 	const router = useRouter();
 	const [activePostReport, setActivePostReport] = useState(false);
+	const getUserRole = useUserRoleStore((state) => state.getUserRole);
+	const userRoles = useUserRoleStore((state) => state.userRoles);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		async function handleGetRole() {
-			const role = await getMemberRole({
-				groupname: post.group.groupname,
-			});
+			const role = getUserRole(post.group.groupname);
 			setUserRole(role);
 		}
 
 		handleGetRole();
-	}, []);
+	}, [userRoles]);
 
 	async function handlePinPost() {
 		await confirm({
 			title: "Pin Post",
-			description:
-				"Tem certeza que deseja fixar o post ao topo do grupo?",
+			description: "Tem certeza que deseja fixar o post ao topo do grupo?",
 			onCancel: () => {},
 			onConfirm: async () => {
 				await pinPost({ postId: post.id });
@@ -102,9 +102,7 @@ export default function PostDropdown({
 				url: window.location.href,
 			});
 		} else {
-			navigator.clipboard.writeText(
-				`${window.location.host}/post/${post.id}`
-			);
+			navigator.clipboard.writeText(`${window.location.host}/post/${post.id}`);
 			toast.success("Link copiado para a área de transferência", {
 				autoClose: 3000,
 			});
@@ -127,16 +125,11 @@ export default function PostDropdown({
 			? {
 					description: "Aprovar post",
 					className: "text-success",
-					icon: (
-						<ShieldCheckIcon
-							className="h-8"
-							aria-label="Pin Post"
-						/>
-					),
+					icon: <ShieldCheckIcon className="h-8" aria-label="Pin Post" />,
 					ariaLabel: "approve-post",
 					text: "Aprovar Post",
 					onClick: handleApprovePost,
-			  }
+				}
 			: null,
 
 		// Pin Post action
@@ -147,15 +140,12 @@ export default function PostDropdown({
 					description: "Fixar post ao topo do grupo.",
 					className: "text-success",
 					icon: (
-						<ArrowUpOnSquareStackIcon
-							className="h-8"
-							aria-label="Pin Post"
-						/>
+						<ArrowUpOnSquareStackIcon className="h-8" aria-label="Pin Post" />
 					),
 					ariaLabel: "pin-post",
 					text: "Pin Post",
 					onClick: handlePinPost,
-			  }
+				}
 			: null,
 
 		// Unpin post action
@@ -166,18 +156,14 @@ export default function PostDropdown({
 					description: "Desafixar post do topo do grupo.",
 					className: "text-danger",
 					icon: (
-						<ArrowUpOnSquareStackIcon
-							className="h-8"
-							aria-label="Unpin Post"
-						/>
+						<ArrowUpOnSquareStackIcon className="h-8" aria-label="Unpin Post" />
 					),
 					ariaLabel: "unpin-post",
 					text: "Desafixar Post",
 					onClick: async () => {
 						await confirm({
 							title: "Unpin Post",
-							description:
-								"Are you sure you want to unpin this post?",
+							description: "Are you sure you want to unpin this post?",
 							onConfirm: async () => {
 								await unpinPost({ postId: post.id });
 								toast.success("Post unpinned successfully", {
@@ -189,7 +175,7 @@ export default function PostDropdown({
 							onCancel: () => {},
 						});
 					},
-			  }
+				}
 			: null,
 
 		// Delete post approval action
@@ -199,19 +185,13 @@ export default function PostDropdown({
 			? {
 					description: "Desaprovar post",
 					className: "text-danger",
-					icon: (
-						<ShieldCheckIcon
-							className="h-8"
-							aria-label="Unapprove Post"
-						/>
-					),
+					icon: <ShieldCheckIcon className="h-8" aria-label="Unapprove Post" />,
 					ariaLabel: "unapprove-post",
 					text: "Desaprovar Post",
 					onClick: async () => {
 						await confirm({
 							title: "Desaprovar Post",
-							description:
-								"Tem certeza que deseja desaprovar este post?",
+							description: "Tem certeza que deseja desaprovar este post?",
 							onConfirm: async () => {
 								await disapprovePost({ postId: post.id });
 								toast.success("Post desaprovado com sucesso", {
@@ -223,7 +203,7 @@ export default function PostDropdown({
 							onCancel: () => {},
 						});
 					},
-			  }
+				}
 			: null,
 
 		// Delete Post action
@@ -236,13 +216,11 @@ export default function PostDropdown({
 						session.data?.user.id !== post.authorId
 							? "text-success"
 							: "text-danger",
-					icon: (
-						<TrashIcon className="h-8" aria-label="Delete Post" />
-					),
+					icon: <TrashIcon className="h-8" aria-label="Delete Post" />,
 					ariaLabel: "delete-post",
 					text: "Deletar Post",
 					onClick: handleDeletePost,
-			  }
+				}
 			: null,
 
 		// Report Post action
@@ -263,13 +241,11 @@ export default function PostDropdown({
 			description: "Tem certeza que deseja excluír o post?",
 			onConfirm: async () => {
 				const result = await deletePost(post.id);
-				console.log(result, "result");
+
 				// Delete div with id post.id
 				switch (result) {
 					case "ok": {
-						const postElement = document.getElementById(
-							`post-${post.id}`
-						);
+						const postElement = document.getElementById(`post-${post.id}`);
 						if (postElement?.parentElement) {
 							postElement.parentElement.remove();
 						}
@@ -297,6 +273,8 @@ export default function PostDropdown({
 	return (
 		<>
 			<Dropdown
+				// @ts-ignore
+				backdrop="blur"
 				className="default-border shadow-none"
 				// @ts-ignore
 				placement="right"

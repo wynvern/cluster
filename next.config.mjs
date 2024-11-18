@@ -1,4 +1,17 @@
 const nextConfig = {
+	async headers() {
+		return [
+			{
+				source: "/:path*{/}?",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=30",
+					},
+				],
+			},
+		];
+	},
 	reactStrictMode: true,
 	swcMinify: true,
 	experimental: {

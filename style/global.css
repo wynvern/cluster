@@ -16,6 +16,14 @@
 	font-family: "Inter", sans-serif;
 }
 
+.rounded-large {
+   border-radius: 10px !important;
+}
+
+.rounded-medium {
+   border-radius: 7px !important;
+}
+
 .second-foreground {
 	color: var(--second-foreground);
 }

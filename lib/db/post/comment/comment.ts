@@ -5,7 +5,6 @@ import type RecursiveComments from "./type";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { sendNotification } from "@/lib/notification";
-import { FileBase64Info } from "@/util/getFile";
 import { createBlob } from "@/lib/blob";
 import { compressImage } from "@/lib/image";
 
@@ -29,6 +28,7 @@ async function recursiveFetchComments(
 			parentId: true,
 			media: true,
 			document: true,
+			deleted: true,
 			author: {
 				select: {
 					id: true,
@@ -37,6 +37,9 @@ async function recursiveFetchComments(
 					name: true,
 				},
 			},
+		},
+		orderBy: {
+			createdAt: "desc",
 		},
 	});
 	for (const comment of comments) {
@@ -142,4 +145,24 @@ export async function createComment({
 			},
 		},
 	});
+}
+
+export async function deleteComment(id: string) {
+	const session = await getServerSession(authOptions);
+
+	const comment = await db.comment.findUnique({
+		where: { id },
+		select: { authorId: true },
+	});
+
+	if (comment?.authorId !== session?.user.id) {
+		return "unauthorized";
+	}
+
+	await db.comment.update({
+		where: { id },
+		data: { deleted: true, text: "", document: [], media: [] },
+	});
+
+	return "ok";
 }

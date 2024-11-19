@@ -14,4 +14,5 @@ export default interface RecursiveComments {
 		username: string | null;
 		name: string | null;
 	};
+	deleted: boolean;
 }

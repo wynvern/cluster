@@ -27,9 +27,8 @@ export async function squareImage(buffer: Buffer): Promise<Buffer> {
 
 export async function compressImage(buffer: Buffer): Promise<Buffer> {
 	try {
-		const metadata = await sharp(buffer).metadata();
 		const processedImage = await sharp(buffer)
-			.png({ quality: 20 })
+			.png({ quality: 20, compressionLevel: 9 })
 			.withMetadata()
 			.toBuffer();
 

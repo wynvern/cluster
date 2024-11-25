@@ -5,6 +5,7 @@ import { db } from "./db";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
+import { AddUserToMain } from "./db/user/user";
 
 export const authOptions: NextAuthOptions = {
 	session: {
@@ -17,7 +18,7 @@ export const authOptions: NextAuthOptions = {
 			clientId: process.env.GOOGLE_CLIENT_ID ?? "",
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
 			httpOptions: {
-				timeout: 10000,
+				timeout: 20000,
 			},
 		}),
 		CredentialsProvider({
@@ -48,7 +49,7 @@ export const authOptions: NextAuthOptions = {
 
 				const passwordMatch = await compare(
 					credentials.password,
-					existingUser.password
+					existingUser.password,
 				);
 				if (!passwordMatch) {
 					throw new Error("password-not-match");
@@ -73,6 +74,8 @@ export const authOptions: NextAuthOptions = {
 				token.image = user.image;
 				token.banner = user.banner;
 				token.emailVerified = user.emailVerified as Date;
+
+				await AddUserToMain(user.id);
 			}
 
 			if (trigger === "update") {

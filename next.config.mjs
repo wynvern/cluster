@@ -2,7 +2,34 @@ const nextConfig = {
 	async headers() {
 		return [
 			{
-				source: "/:path*{/}?",
+				source: "/post/:path*{/}?",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=30",
+					},
+				],
+			},
+			{
+				source: "/group/:path*{/}?",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=30",
+					},
+				],
+			},
+			{
+				source: "/user/:path*{/}?",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=30",
+					},
+				],
+			},
+			{
+				source: "/",
 				headers: [
 					{
 						key: "Cache-Control",
@@ -16,7 +43,7 @@ const nextConfig = {
 	swcMinify: true,
 	experimental: {
 		serverActions: {
-			bodySizeLimit: "10mb",
+			bodySizeLimit: "20mb",
 			allowedOrigins: [
 				process.env.SERVER_HOSTNAME,
 				"localhost:3000",

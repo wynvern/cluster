@@ -5,8 +5,6 @@ import type User from "./type";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { hash } from "bcrypt";
-import { user } from "@nextui-org/react";
-import { group } from "console";
 
 type UserId = { id: string; username?: string };
 type UserName = { id?: string; username: string };
@@ -34,12 +32,32 @@ export async function createUser(
 				password: hashedPassword,
 			},
 		});
+
+		AddUserToMain(newUser.id);
+
 		await db.userSettings.create({ data: { userId: newUser.id } });
 	} catch (e) {
 		return "error";
 	}
 
 	return "ok";
+}
+
+export async function AddUserToMain(userId: string) {
+	await db.groupMember.upsert({
+		create: {
+			groupId: process.env.GROUP_UUID_TO_ADD || "",
+			userId: userId,
+			role: "member",
+		},
+		update: {},
+		where: {
+			groupId_userId: {
+				userId,
+				groupId: process.env.GROUP_UUID_TO_ADD || "",
+			},
+		},
+	});
 }
 
 export default async function fetchUser(

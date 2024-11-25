@@ -11,29 +11,29 @@ import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-	return (
-		<>
-			<ThemeProvider attribute="class" defaultTheme="dark">
-				<NextUIProvider>
-					<SessionProvider>
-						<ConfirmationModalProvider>
-							<ImageCarouselProvider>
-								<SocketProvider>{children}</SocketProvider>
-							</ImageCarouselProvider>
-							<ServiceWorkerHandler />
-						</ConfirmationModalProvider>
-					</SessionProvider>
-				</NextUIProvider>
-			</ThemeProvider>
+   return (
+      <>
+         <ThemeProvider attribute="class" defaultTheme="dark">
+            <NextUIProvider locale="pt-BR">
+               <SessionProvider>
+                  <ConfirmationModalProvider>
+                     <ImageCarouselProvider>
+                        <SocketProvider>{children}</SocketProvider>
+                     </ImageCarouselProvider>
+                     <ServiceWorkerHandler />
+                  </ConfirmationModalProvider>
+               </SessionProvider>
+            </NextUIProvider>
+         </ThemeProvider>
 
-			<ToastContainer
-				stacked={true}
-				newestOnTop={true}
-				position="bottom-center"
-				theme="dark"
-				transition={Slide}
-				limit={1}
-			/>
-		</>
-	);
+         <ToastContainer
+            stacked={true}
+            newestOnTop={true}
+            position="bottom-center"
+            theme="dark"
+            transition={Slide}
+            limit={1}
+         />
+      </>
+   );
 }
